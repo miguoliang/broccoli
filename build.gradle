@@ -28,14 +28,15 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-hibernate-reactive")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.vertx:vertx-pg-client")
+    implementation("io.micronaut.security:micronaut-security-oauth2")
+    implementation("io.micronaut.security:micronaut-security-jwt")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:testcontainers")
-    testImplementation("io.micronaut.testresources:micronaut-test-resources-extensions-core")
-    testImplementation("io.micronaut.testresources:micronaut-test-resources-extensions-junit-platform")
+    testImplementation('com.github.dasniko:testcontainers-keycloak:3.2.0')
 }
 
 application {
