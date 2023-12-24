@@ -13,12 +13,12 @@ services:
       - postgres-data:/var/lib/postgresql/data
   iam:
     image: quay.io/keycloak/keycloak:23.0.3
-    command: start-dev --http-port=8888
+    command: start-dev
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - 8888:8888
+      - 8081:8080
 
 volumes:
   postgres-data:

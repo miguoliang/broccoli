@@ -1,0 +1,8 @@
+{
+    "realm": "master",
+    "auth-server-url": "http://localhost:8888",
+    "resource": "test-cli",
+    "credentials": {
+        "secret": "WGTCleOPj0iyRu0b3jZU5bD861I3uKeP"
+    }
+}

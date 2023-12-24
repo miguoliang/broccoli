@@ -2,8 +2,8 @@ package broccoli.repositories;
 
 import broccoli.models.Vertex;
 import io.micronaut.data.annotation.Repository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import io.micronaut.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface VertexRepository extends ReactorPageableRepository<Vertex, String> {
+public interface VertexRepository extends JpaRepository<Vertex, String> {
 }
