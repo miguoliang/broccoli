@@ -17,7 +17,7 @@ class EdgeControllerTest {
     HttpClient client;
 
     @Test
-    void testIndex() throws Exception {
+    void testIndex() {
         assertEquals(HttpStatus.OK, client.toBlocking().exchange("/edge").status());
     }
 }

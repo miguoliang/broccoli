@@ -5,6 +5,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
@@ -12,16 +13,15 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.keycloak.adapters.authorization.PolicyEnforcer;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.keycloak.test.FluentTestsHelper.*;
 
 @MicronautTest
@@ -45,7 +45,7 @@ class PolicyEnforcerFilterTest implements TestPropertyProvider {
     FluentTestsHelper testsHelper;
 
     @BeforeAll
-    public void setup() throws IOException {
+    public void setup() {
         testsHelper = new FluentTestsHelper(
             keycloak.getAuthServerUrl(),
             DEFAULT_ADMIN_USERNAME,
@@ -70,8 +70,11 @@ class PolicyEnforcerFilterTest implements TestPropertyProvider {
     @Test
     void testItWorks() {
 
-        final var code = client.toBlocking().exchange(HttpRequest.GET("/vertex")).status().getCode();
-        assertEquals(401, code);
+        final var thrown = assertThrowsExactly(
+            HttpClientResponseException.class,
+            () -> client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain")),
+            "No access token was supplied to the request");
+        assertEquals(401, thrown.getStatus().getCode());
     }
 
     @MockBean(PolicyEnforcerConfig.class)

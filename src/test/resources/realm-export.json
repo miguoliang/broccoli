@@ -73,7 +73,7 @@
                 "resources": [
                     {
                         "name": "Protected Resource",
-                        "uri": "/*",
+                        "uri": "/vertex",
                         "type": "http://servlet-authz/protected/resource",
                         "scopes": [
                             {
@@ -83,7 +83,7 @@
                     },
                     {
                         "name": "Premium Resource",
-                        "uri": "/protected/premium/*",
+                        "uri": "/edge",
                         "type": "urn:servlet-authz:protected:resource",
                         "scopes": [
                             {
