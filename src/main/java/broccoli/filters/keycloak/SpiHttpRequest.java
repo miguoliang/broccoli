@@ -76,6 +76,9 @@ public class SpiHttpRequest implements HttpRequest {
 
     @Override
     public TokenPrincipal getPrincipal() {
-        return () -> request.getHeaders().getAuthorization().orElse(null);
+        return () -> {
+            final var token = request.getHeaders().getAuthorization().orElse("");
+            return token.replaceFirst("^[Bb]earer\\s+", "");
+        };
     }
 }

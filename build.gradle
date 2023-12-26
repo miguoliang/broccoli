@@ -28,6 +28,7 @@ dependencies {
     implementation("io.micrometer:context-propagation")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
     implementation("io.micronaut.liquibase:micronaut-liquibase")
+    implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
@@ -51,7 +52,7 @@ dependencies {
     testImplementation('com.github.dasniko:testcontainers-keycloak:3.2.0')
     testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("org.keycloak:keycloak-test-helper:${keycloakVersion}")
-    testImplementation("com.h2database:h2")
+    testRuntimeOnly("com.h2database:h2")
 }
 
 application {
