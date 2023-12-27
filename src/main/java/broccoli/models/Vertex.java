@@ -2,12 +2,18 @@ package broccoli.models;
 
 import io.micronaut.configuration.hibernate.jpa.proxy.GenerateProxy;
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

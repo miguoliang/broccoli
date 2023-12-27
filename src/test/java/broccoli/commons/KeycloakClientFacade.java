@@ -1,16 +1,6 @@
 package broccoli.commons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.keycloak.OAuth2Constants;
-import org.keycloak.TokenVerifier;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.common.VerificationException;
-import org.keycloak.jose.jws.JWSHeader;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.KeysMetadataRepresentation;
-
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.KeyFactory;
@@ -22,6 +12,15 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import org.keycloak.OAuth2Constants;
+import org.keycloak.TokenVerifier;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.common.VerificationException;
+import org.keycloak.jose.jws.JWSHeader;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.KeysMetadataRepresentation;
 
 @SuppressWarnings("unused")
 public class KeycloakClientFacade {
@@ -34,7 +33,8 @@ public class KeycloakClientFacade {
 
   private final String clientSecret;
 
-  public KeycloakClientFacade(String serverUrl, String realmId, String clientId, String clientSecret) {
+  public KeycloakClientFacade(String serverUrl, String realmId, String clientId,
+                              String clientSecret) {
     this.serverUrl = serverUrl;
     this.realmId = realmId;
     this.clientId = clientId;
@@ -54,7 +54,8 @@ public class KeycloakClientFacade {
   }
 
   public String getAccessTokenString(String username, String password) {
-    return getAccessTokenString(newKeycloakBuilderWithPasswordCredentials(username, password).build());
+    return getAccessTokenString(
+        newKeycloakBuilderWithPasswordCredentials(username, password).build());
   }
 
   private AccessToken getAccessToken(Keycloak keycloak) {
@@ -79,20 +80,21 @@ public class KeycloakClientFacade {
     }
   }
 
-  private KeycloakBuilder newKeycloakBuilderWithPasswordCredentials(String username, String password) {
+  private KeycloakBuilder newKeycloakBuilderWithPasswordCredentials(String username,
+                                                                    String password) {
     return newKeycloakBuilderWithClientCredentials()
-      .username(username)
-      .password(password)
-      .grantType(OAuth2Constants.PASSWORD);
+        .username(username)
+        .password(password)
+        .grantType(OAuth2Constants.PASSWORD);
   }
 
   private KeycloakBuilder newKeycloakBuilderWithClientCredentials() {
     return KeycloakBuilder.builder()
-      .realm(realmId)
-      .serverUrl(serverUrl)
-      .clientId(clientId)
-      .clientSecret(clientSecret)
-      .grantType(OAuth2Constants.CLIENT_CREDENTIALS);
+        .realm(realmId)
+        .serverUrl(serverUrl)
+        .clientId(clientId)
+        .clientSecret(clientSecret)
+        .grantType(OAuth2Constants.CLIENT_CREDENTIALS);
   }
 
   private AccessTokenResponse getAccessTokenResponse(Keycloak keycloak) {
@@ -128,7 +130,8 @@ public class KeycloakClientFacade {
     try {
       ObjectMapper om = new ObjectMapper();
       @SuppressWarnings("unchecked")
-      Map<String, Object> certInfos = om.readValue(URI.create(getRealmCertsUrl()).toURL().openStream(), Map.class);
+      Map<String, Object> certInfos =
+          om.readValue(URI.create(getRealmCertsUrl()).toURL().openStream(), Map.class);
       @SuppressWarnings("unchecked")
       List<Map<String, Object>> keys = (List<Map<String, Object>>) certInfos.get("keys");
 
@@ -168,7 +171,8 @@ public class KeycloakClientFacade {
     try {
       ObjectMapper om = new ObjectMapper();
       @SuppressWarnings("unchecked")
-      Map<String, Object> realmInfo = om.readValue(URI.create(getRealmUrl()).toURL().openStream(), Map.class);
+      Map<String, Object> realmInfo =
+          om.readValue(URI.create(getRealmUrl()).toURL().openStream(), Map.class);
       return toPublicKey((String) realmInfo.get("public_key"));
     } catch (Exception e) {
       e.printStackTrace();
@@ -177,9 +181,11 @@ public class KeycloakClientFacade {
     return null;
   }
 
-  private PublicKey retrieveActivePublicKeyFromKeysEndpoint(Keycloak keycloak, JWSHeader jwsHeader) {
+  private PublicKey retrieveActivePublicKeyFromKeysEndpoint(Keycloak keycloak,
+                                                            JWSHeader jwsHeader) {
 
-    List<KeysMetadataRepresentation.KeyMetadataRepresentation> keys = keycloak.realm(realmId).keys().getKeyMetadata().getKeys();
+    List<KeysMetadataRepresentation.KeyMetadataRepresentation> keys =
+        keycloak.realm(realmId).keys().getKeyMetadata().getKeys();
 
     String publicKeyString = null;
     for (KeysMetadataRepresentation.KeyMetadataRepresentation key : keys) {

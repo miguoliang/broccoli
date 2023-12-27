@@ -1,5 +1,12 @@
 package broccoli.security.keycloak;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
+
 import broccoli.commons.KeycloakClientFacade;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.annotation.NonNull;
@@ -11,17 +18,17 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.*;
+import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestInstance;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.keycloak.test.FluentTestsHelper.*;
 
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
@@ -30,9 +37,9 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
 
   @Container
   static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:23.0.0")
-    .withRealmImportFile("realm-export.json")
-    .withContextPath("/auth")
-    .withReuse(true);
+      .withRealmImportFile("realm-export.json")
+      .withContextPath("/auth")
+      .withReuse(true);
   @Inject
   @Client("/")
   HttpClient client;
@@ -40,26 +47,27 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   KeycloakClientFacade keycloakClientFacade;
 
   static String getJwksUri() {
-    return String.format("http://%s", keycloak.getHost() + ":" + keycloak.getFirstMappedPort() + "/auth/realms/quickstart/protocol/openid-connect/certs");
+    return String.format("http://%s", keycloak.getHost() + ":" + keycloak.getFirstMappedPort() +
+        "/auth/realms/quickstart/protocol/openid-connect/certs");
   }
 
   @BeforeAll
   public void setup() {
     fluentTestsHelper = new FluentTestsHelper(
-      keycloak.getAuthServerUrl(),
-      DEFAULT_ADMIN_USERNAME,
-      DEFAULT_ADMIN_PASSWORD,
-      DEFAULT_ADMIN_REALM,
-      DEFAULT_ADMIN_CLIENT,
-      "quickstart"
+        keycloak.getAuthServerUrl(),
+        DEFAULT_ADMIN_USERNAME,
+        DEFAULT_ADMIN_PASSWORD,
+        DEFAULT_ADMIN_REALM,
+        DEFAULT_ADMIN_CLIENT,
+        "quickstart"
     );
     fluentTestsHelper.init();
 
     keycloakClientFacade = new KeycloakClientFacade(
-      keycloak.getAuthServerUrl(),
-      "quickstart",
-      "authz-servlet",
-      "secret"
+        keycloak.getAuthServerUrl(),
+        "quickstart",
+        "authz-servlet",
+        "secret"
     );
   }
 
@@ -69,7 +77,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       keycloak.start();
     }
     return Map.of(
-      "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
+        "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
     );
   }
 
@@ -77,9 +85,9 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   void testSecurity_ShouldBeUnauthorizedWhenTokenNotFound() {
 
     final var thrown = assertThrowsExactly(
-      HttpClientResponseException.class,
-      () -> client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain")),
-      "No access token was supplied to the request");
+        HttpClientResponseException.class,
+        () -> client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain")),
+        "No access token was supplied to the request");
     assertEquals(401, thrown.getStatus().getCode());
   }
 
@@ -87,9 +95,10 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   void testSecurity_ShouldBeForbiddenWhenTokenIsInvalid() {
 
     final var thrown = assertThrowsExactly(
-      HttpClientResponseException.class,
-      () -> client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth("invalid")),
-      "Access token is invalid");
+        HttpClientResponseException.class,
+        () -> client.toBlocking()
+            .exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth("invalid")),
+        "Access token is invalid");
     assertEquals(401, thrown.getStatus().getCode());
   }
 
@@ -97,18 +106,21 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   void testSecurity_ShouldBeForbiddenWhenBeRejectedByKeycloak(TestInfo testInfo) {
 
     fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), "user");
-    final var accessToken = keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
+    final var accessToken =
+        keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
     final var thrown = assertThrowsExactly(
-      HttpClientResponseException.class,
-      () -> client.toBlocking().exchange(HttpRequest.GET("/edge").accept("text/plain").bearerAuth(accessToken)),
-      "Access token does not have expected scope");
+        HttpClientResponseException.class,
+        () -> client.toBlocking()
+            .exchange(HttpRequest.GET("/edge").accept("text/plain").bearerAuth(accessToken)),
+        "Access token does not have expected scope");
     assertEquals(403, thrown.getStatus().getCode());
   }
 
   @Test
   void testSecurity_ShouldBeAllowedWhenAnonymousIsAccepted() {
 
-    final var response = client.toBlocking().exchange(HttpRequest.GET("/vertex/anonymous").accept("text/plain"));
+    final var response =
+        client.toBlocking().exchange(HttpRequest.GET("/vertex/anonymous").accept("text/plain"));
     assertEquals(200, response.getStatus().getCode());
   }
 
@@ -116,8 +128,10 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   void testSecurity_ShouldBePermittedWhenBeAllowedByKeycloak(TestInfo testInfo) {
 
     fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), "user");
-    final var accessToken = keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
-    final var response = client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth(accessToken));
+    final var accessToken =
+        keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
+    final var response = client.toBlocking()
+        .exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth(accessToken));
     assertEquals(200, response.getStatus().getCode());
   }
 
