@@ -1,4 +1,4 @@
-package broccoli.models;
+package broccoli.model.entity;
 
 import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.DateUpdated;

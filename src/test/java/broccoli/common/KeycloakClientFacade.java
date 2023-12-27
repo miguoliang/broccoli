@@ -1,4 +1,4 @@
-package broccoli.commons;
+package broccoli.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigInteger;

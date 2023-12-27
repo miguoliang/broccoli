@@ -1,6 +1,5 @@
-package broccoli.models;
+package broccoli.model.entity;
 
-import io.micronaut.configuration.hibernate.jpa.proxy.GenerateProxy;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -13,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The {@link Vertex} entity.
@@ -21,7 +22,6 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "vertex")
-@GenerateProxy
 public class Vertex {
   @Id
   @Column(name = "id", nullable = false)
@@ -45,4 +45,36 @@ public class Vertex {
   @Version
   @Column(name = "version", nullable = false)
   private Integer version = 0;
+
+  /**
+   * Set vertex name.
+   *
+   * @param name Vertex name
+   */
+  public void setName(String name) {
+    this.name = name;
+    this.id = getId(name, type);
+  }
+
+  /**
+   * Set vertex type.
+   *
+   * @param type Vertex type
+   */
+  public void setType(String type) {
+    this.type = type;
+    this.id = getId(name, type);
+  }
+
+  /**
+   * Calculate vertex id.
+   *
+   * @param name Vertex name
+   * @param type Vertex type
+   * @return Vertex id
+   */
+  public static String getId(String name, String type) {
+    return DigestUtils.sha512Hex(
+        StringUtils.defaultString(type) + ":" + StringUtils.defaultString(name));
+  }
 }

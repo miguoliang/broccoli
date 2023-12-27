@@ -11,9 +11,9 @@
   <component name="JpaPluginProjectSettings" reExcludeTablePrefixes="" reExcludeColumnPrefixes="" reExcludeTableSuffixes="" reExcludeColumnSuffixes="" />
   <component name="PersistenceUnitSettings">
     <persistence-units>
-      <persistence-unit name="Default" defaultIncludeChangeLogFile="src/main/resources/db/liquibase-changelog.xml">
+      <persistence-unit name="Default">
         <packages>
-          <package value="broccoli.models" />
+          <package value="broccoli.model.entity" />
         </packages>
       </persistence-unit>
     </persistence-units>

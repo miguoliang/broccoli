@@ -7,7 +7,7 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 
-import broccoli.commons.KeycloakClientFacade;
+import broccoli.common.KeycloakClientFacade;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpRequest;

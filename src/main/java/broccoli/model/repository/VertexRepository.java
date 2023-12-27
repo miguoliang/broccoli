@@ -1,6 +1,6 @@
-package broccoli.repositories;
+package broccoli.model.repository;
 
-import broccoli.models.Vertex;
+import broccoli.model.entity.Vertex;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
 

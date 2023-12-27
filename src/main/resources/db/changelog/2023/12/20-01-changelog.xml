@@ -5,20 +5,16 @@
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="1703122141949-1"
+    <changeSet id="1703661881860-1"
                author="miguoliang">
         <createTable tableName="edge">
-            <column name="version"
-                    type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="inVertex_id"
+            <column name="in_vertex_id"
                     type="VARCHAR(255)">
                 <constraints nullable="false"
                              primaryKey="true"
                              primaryKeyName="pk_edge"/>
             </column>
-            <column name="outVertex_id"
+            <column name="out_vertex_id"
                     type="VARCHAR(255)">
                 <constraints nullable="false"
                              primaryKey="true"
@@ -36,13 +32,17 @@
                              primaryKey="true"
                              primaryKeyName="pk_edge"/>
             </column>
+            <column name="version"
+                    type="INT">
+                <constraints nullable="false"/>
+            </column>
             <column name="date_created"
                     type="DATETIME"/>
             <column name="date_updated"
                     type="DATETIME"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703122141949-2"
+    <changeSet id="1703661881860-2"
                author="miguoliang">
         <createTable tableName="vertex">
             <column name="id"
@@ -69,19 +69,19 @@
                     type="DATETIME"/>
         </createTable>
     </changeSet>
-    <changeSet id="1703122141949-3"
+    <changeSet id="1703661881860-3"
                author="miguoliang">
-        <addForeignKeyConstraint baseColumnNames="inVertex_id"
+        <addForeignKeyConstraint baseColumnNames="in_vertex_id"
                                  baseTableName="edge"
-                                 constraintName="FK_EDGE_ON_INVERTEX"
+                                 constraintName="FK_EDGE_ON_IN_VERTEX"
                                  referencedColumnNames="id"
                                  referencedTableName="vertex"/>
     </changeSet>
-    <changeSet id="1703122141949-4"
+    <changeSet id="1703661881860-4"
                author="miguoliang">
-        <addForeignKeyConstraint baseColumnNames="outVertex_id"
+        <addForeignKeyConstraint baseColumnNames="out_vertex_id"
                                  baseTableName="edge"
-                                 constraintName="FK_EDGE_ON_OUTVERTEX"
+                                 constraintName="FK_EDGE_ON_OUT_VERTEX"
                                  referencedColumnNames="id"
                                  referencedTableName="vertex"/>
     </changeSet>
