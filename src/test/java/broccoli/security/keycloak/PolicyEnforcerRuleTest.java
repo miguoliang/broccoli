@@ -40,10 +40,13 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       .withRealmImportFile("realm-export.json")
       .withContextPath("/auth")
       .withReuse(true);
+
   @Inject
   @Client("/")
   HttpClient client;
+
   FluentTestsHelper fluentTestsHelper;
+
   KeycloakClientFacade keycloakClientFacade;
 
   static String getJwksUri() {
@@ -82,6 +85,10 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       keycloak.start();
     }
     return Map.of(
+        "datasources.default.driverClassName", "org.h2.Driver",
+        "datasources.default.password", "",
+        "datasources.default.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+        "datasources.default.username", "sa",
         "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
     );
   }
@@ -125,7 +132,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   void testSecurity_ShouldBeAllowedWhenAnonymousIsAccepted() {
 
     final var response =
-        client.toBlocking().exchange(HttpRequest.GET("/vertex/anonymous").accept("text/plain"));
+        client.toBlocking().exchange(HttpRequest.GET("/foo/anonymous").accept("text/plain"));
     assertEquals(200, response.getStatus().getCode());
   }
 
@@ -136,10 +143,9 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     final var accessToken =
         keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
     final var response = client.toBlocking()
-        .exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth(accessToken));
+        .exchange(HttpRequest.GET("/vertex").bearerAuth(accessToken));
     assertEquals(200, response.getStatus().getCode());
   }
-
 
   @AfterEach
   void cleanup(TestInfo testInfo) {

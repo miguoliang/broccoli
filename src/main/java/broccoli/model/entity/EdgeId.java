@@ -1,12 +1,14 @@
 package broccoli.model.entity;
 
 import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * The {@link EdgeId}.
  */
 
 @SuppressWarnings("unused")
+@EqualsAndHashCode
 public class EdgeId implements Serializable {
 
   private int inVertex;
