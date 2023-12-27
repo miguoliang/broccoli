@@ -6,8 +6,8 @@ import io.micronaut.http.annotation.Get;
 @Controller("/edge")
 public class EdgeController {
 
-    @Get(uri="/", produces="text/plain")
-    public String index() {
-        return "Example Response";
-    }
+  @Get(produces = "text/plain")
+  public String index() {
+    return "Example Response";
+  }
 }

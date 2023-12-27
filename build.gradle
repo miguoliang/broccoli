@@ -3,6 +3,7 @@ plugins {
     id("io.micronaut.application") version "4.2.1"
     id("io.micronaut.test-resources") version "4.2.1"
     id("io.micronaut.aot") version "4.2.1"
+    id("checkstyle")
 }
 
 version = "0.1"
@@ -15,6 +16,11 @@ repositories {
 
 ext {
     keycloakVersion = '23.0.3'
+}
+
+checkstyle {
+    toolVersion '10.12.5'
+    enableExternalDtdLoad = true
 }
 
 dependencies {

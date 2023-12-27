@@ -1,4 +1,4 @@
-package broccoli.filters.keycloak;
+package broccoli.security.keycloak;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
@@ -17,18 +17,18 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class PolicyEnforcerRule implements SecurityRule<HttpRequest<?>> {
 
-    private final PolicyEnforcer policyEnforcer;
+  private final PolicyEnforcer policyEnforcer;
 
-    public PolicyEnforcerRule(PolicyEnforcer policyEnforcer) {
-        this.policyEnforcer = policyEnforcer;
-    }
+  public PolicyEnforcerRule(PolicyEnforcer policyEnforcer) {
+    this.policyEnforcer = policyEnforcer;
+  }
 
-    @Override
-    public Publisher<SecurityRuleResult> check(@Nullable HttpRequest<?> request, @Nullable Authentication authentication) {
-        if (authentication == null) {
-            return Mono.just(SecurityRuleResult.REJECTED);
-        }
-        final var authzContext = policyEnforcer.enforce(new SpiHttpRequest(request), new SpiHttpResponse());
-        return Mono.just(authzContext.isGranted() ? SecurityRuleResult.ALLOWED : SecurityRuleResult.REJECTED);
+  @Override
+  public Publisher<SecurityRuleResult> check(@Nullable HttpRequest<?> request, @Nullable Authentication authentication) {
+    if (authentication == null) {
+      return Mono.just(SecurityRuleResult.REJECTED);
     }
+    final var authzContext = policyEnforcer.enforce(new SpiHttpRequest(request), new SpiHttpResponse());
+    return Mono.just(authzContext.isGranted() ? SecurityRuleResult.ALLOWED : SecurityRuleResult.REJECTED);
+  }
 }
