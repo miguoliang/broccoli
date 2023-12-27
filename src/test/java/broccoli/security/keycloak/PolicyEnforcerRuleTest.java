@@ -47,8 +47,13 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   KeycloakClientFacade keycloakClientFacade;
 
   static String getJwksUri() {
-    return String.format("http://%s", keycloak.getHost() + ":" + keycloak.getFirstMappedPort() +
-        "/auth/realms/quickstart/protocol/openid-connect/certs");
+    return String.format("http://%s", keycloak.getHost() + ":" + keycloak.getFirstMappedPort()
+        + "/auth/realms/quickstart/protocol/openid-connect/certs");
+  }
+
+  @BeforeEach
+  void setup(TestInfo testInfo) {
+    fluentTestsHelper.createTestUser(testInfo.getDisplayName(), "password");
   }
 
   @BeforeAll
@@ -135,10 +140,6 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     assertEquals(200, response.getStatus().getCode());
   }
 
-  @BeforeEach
-  void setup(TestInfo testInfo) {
-    fluentTestsHelper.createTestUser(testInfo.getDisplayName(), "password");
-  }
 
   @AfterEach
   void cleanup(TestInfo testInfo) {

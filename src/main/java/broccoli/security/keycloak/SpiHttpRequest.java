@@ -1,13 +1,15 @@
 package broccoli.security.keycloak;
 
 import io.micronaut.http.MediaType;
-import org.keycloak.adapters.authorization.TokenPrincipal;
-import org.keycloak.adapters.authorization.spi.HttpRequest;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.List;
+import org.keycloak.adapters.authorization.TokenPrincipal;
+import org.keycloak.adapters.authorization.spi.HttpRequest;
 
+/**
+ * The {@link SpiHttpRequest} class.
+ */
 public class SpiHttpRequest implements HttpRequest {
 
   private final io.micronaut.http.HttpRequest<?> request;
@@ -63,7 +65,8 @@ public class SpiHttpRequest implements HttpRequest {
 
   @Override
   public InputStream getInputStream(boolean buffered) {
-    if (request.getBody().isPresent() && request.getContentType().map(MediaType::isTextBased).orElse(false)) {
+    if (request.getBody().isPresent()
+        && request.getContentType().map(MediaType::isTextBased).orElse(false)) {
       // Get the InputStream from the request body
       InputStream inputStream = request.getBody(InputStream.class).orElse(null);
       if (inputStream != null && buffered && (!(inputStream instanceof BufferedInputStream))) {

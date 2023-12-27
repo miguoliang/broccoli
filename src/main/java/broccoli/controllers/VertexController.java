@@ -5,6 +5,9 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
+/**
+ * The {@link VertexController} class.
+ */
 @Controller("/vertex")
 public class VertexController {
 

@@ -2,6 +2,9 @@ package broccoli.security.keycloak;
 
 import org.keycloak.adapters.authorization.spi.HttpResponse;
 
+/**
+ * The {@link SpiHttpResponse} class.
+ */
 public class SpiHttpResponse implements HttpResponse {
 
   @Override

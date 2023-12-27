@@ -22,6 +22,9 @@ import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.KeysMetadataRepresentation;
 
+/**
+ * KeycloakClientFacade.
+ */
 @SuppressWarnings("unused")
 public class KeycloakClientFacade {
 
@@ -33,6 +36,14 @@ public class KeycloakClientFacade {
 
   private final String clientSecret;
 
+  /**
+   * KeycloakClientFacade.
+   *
+   * @param serverUrl    serverUrl
+   * @param realmId      realmId
+   * @param clientId     clientId
+   * @param clientSecret clientSecret
+   */
   public KeycloakClientFacade(String serverUrl, String realmId, String clientId,
                               String clientSecret) {
     this.serverUrl = serverUrl;
@@ -41,21 +52,19 @@ public class KeycloakClientFacade {
     this.clientSecret = clientSecret;
   }
 
-  public AccessToken getAccessToken() {
-    return getAccessToken(newKeycloakBuilderWithClientCredentials().build());
-  }
-
-  public String getAccessTokenString() {
-    return getAccessTokenString(newKeycloakBuilderWithClientCredentials().build());
-  }
-
+  /**
+   * Get User's AccessToken.
+   *
+   * @param username Username.
+   * @param password User password.
+   * @return {@link AccessToken}
+   */
   public AccessToken getAccessToken(String username, String password) {
     return getAccessToken(newKeycloakBuilderWithPasswordCredentials(username, password).build());
   }
 
-  public String getAccessTokenString(String username, String password) {
-    return getAccessTokenString(
-        newKeycloakBuilderWithPasswordCredentials(username, password).build());
+  public AccessToken getAccessToken() {
+    return getAccessToken(newKeycloakBuilderWithClientCredentials().build());
   }
 
   private AccessToken getAccessToken(Keycloak keycloak) {
@@ -65,6 +74,16 @@ public class KeycloakClientFacade {
   private String getAccessTokenString(Keycloak keycloak) {
     AccessTokenResponse tokenResponse = getAccessTokenResponse(keycloak);
     return tokenResponse == null ? null : tokenResponse.getToken();
+  }
+
+
+  public String getAccessTokenString() {
+    return getAccessTokenString(newKeycloakBuilderWithClientCredentials().build());
+  }
+
+  public String getAccessTokenString(String username, String password) {
+    return getAccessTokenString(
+        newKeycloakBuilderWithPasswordCredentials(username, password).build());
   }
 
   private AccessToken extractAccessTokenFrom(Keycloak keycloak, String token) {
@@ -115,15 +134,15 @@ public class KeycloakClientFacade {
 
   private PublicKey getRealmPublicKey(Keycloak keycloak, JWSHeader jwsHeader) {
 
-// Variant 1: use openid-connect /certs endpoint
+    // Variant 1: use openid-connect /certs endpoint
     return retrievePublicKeyFromCertsEndpoint(jwsHeader);
 
-// Variant 2: use the Public Key referenced by the "kid" in the JWSHeader
-// in order to access realm public key we need at least realm role... e.g. view-realm
-//      return retrieveActivePublicKeyFromKeysEndpoint(keycloak, jwsHeader);
+    // Variant 2: use the Public Key referenced by the "kid" in the JWSHeader
+    // in order to access realm public key we need at least realm role... e.g. view-realm
+    //      return retrieveActivePublicKeyFromKeysEndpoint(keycloak, jwsHeader);
 
-// Variant 3: use the active RSA Public Key exported by the PublicRealmResource representation
-//      return retrieveActivePublicKeyFromPublicRealmEndpoint();
+    // Variant 3: use the active RSA Public Key exported by the PublicRealmResource representation
+    //      return retrieveActivePublicKeyFromPublicRealmEndpoint();
   }
 
   private PublicKey retrievePublicKeyFromCertsEndpoint(JWSHeader jwsHeader) {
@@ -198,6 +217,12 @@ public class KeycloakClientFacade {
     return toPublicKey(publicKeyString);
   }
 
+  /**
+   * Convert public key string to PublicKey.
+   *
+   * @param publicKeyString public key string
+   * @return {@link PublicKey}
+   */
   public PublicKey toPublicKey(String publicKeyString) {
     try {
       byte[] publicBytes = Base64.getDecoder().decode(publicKeyString);

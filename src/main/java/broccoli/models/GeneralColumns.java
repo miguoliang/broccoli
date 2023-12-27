@@ -2,20 +2,20 @@ package broccoli.models;
 
 import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.DateUpdated;
-import io.micronaut.serde.annotation.Serdeable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
+/**
+ * The {@link GeneralColumns} entity.
+ */
 @Getter
 @Setter
 @Embeddable
-@Serdeable
 public class GeneralColumns {
 
   @DateCreated

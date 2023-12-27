@@ -3,6 +3,9 @@ package broccoli.controllers;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 
+/**
+ * The {@link EdgeController} class.
+ */
 @Controller("/edge")
 public class EdgeController {
 

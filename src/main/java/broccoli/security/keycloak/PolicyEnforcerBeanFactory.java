@@ -7,15 +7,25 @@ import org.keycloak.adapters.authorization.PolicyEnforcer;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.util.JsonSerialization;
 
+/**
+ * The {@link PolicyEnforcerBeanFactory} class.
+ */
 @Factory
 public class PolicyEnforcerBeanFactory {
 
   @Singleton
   @SneakyThrows
   public PolicyEnforcerConfig policyEnforcerConfig() {
-    return JsonSerialization.readValue(getClass().getResourceAsStream("/policy-enforcer.json"), PolicyEnforcerConfig.class);
+    return JsonSerialization.readValue(getClass()
+        .getResourceAsStream("/policy-enforcer.json"), PolicyEnforcerConfig.class);
   }
 
+  /**
+   * The {@link PolicyEnforcer} bean.
+   *
+   * @param enforcerConfig The {@link PolicyEnforcerConfig} bean.
+   * @return The {@link PolicyEnforcer} bean.
+   */
   @Singleton
   @SneakyThrows
   public PolicyEnforcer policyEnforcer(PolicyEnforcerConfig enforcerConfig) {
