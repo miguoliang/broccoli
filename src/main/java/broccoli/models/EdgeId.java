@@ -6,14 +6,5 @@ import java.io.Serializable;
  * The {@link EdgeId}.
  */
 
-@SuppressWarnings("unused")
-public class EdgeId implements Serializable {
-
-  private int inVertex;
-
-  private int outVertex;
-
-  private String name;
-
-  private String scope;
+record EdgeId(int inVertex, int outVertex, String name, String scope) implements Serializable {
 }
