@@ -131,4 +131,28 @@ public class UserController {
   public void resetPassword(@PathVariable String id) {
     keycloak.realm(keycloakRealm).users().get(id).executeActionsEmail(List.of("UPDATE_PASSWORD"));
   }
+
+  /**
+   * Assign role to user.
+   *
+   * @param userId User id
+   * @param roleId Role id
+   */
+  @Post("/{userId}/role/{roleId}")
+  public void assignRoleToUser(String userId, String roleId) {
+    final var role = keycloak.realm(keycloakRealm).roles().get(roleId).toRepresentation();
+    keycloak.realm(keycloakRealm).users().get(userId).roles().realmLevel().add(List.of(role));
+  }
+
+  /**
+   * Unassign role from user.
+   *
+   * @param userId User id
+   * @param roleId Role id
+   */
+  @Delete("/{userId}/role/{roleId}")
+  public void unassignRoleFromUser(String userId, String roleId) {
+    final var role = keycloak.realm(keycloakRealm).roles().get(roleId).toRepresentation();
+    keycloak.realm(keycloakRealm).users().get(userId).roles().realmLevel().remove(List.of(role));
+  }
 }

@@ -17,5 +17,5 @@ public class KeycloakAdminClientConfiguration {
   private String clientId = "admin-cli";
   private String clientSecret = "secret";
   private String username = "admin";
-  private String password = "admin";
+  private String password;
 }

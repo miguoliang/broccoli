@@ -39,7 +39,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
 
   @Container
   static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:23.0.0")
-      .withRealmImportFile("realm-export.json")
+      .withRealmImportFile("realm-quickstart.json")
       .withContextPath("/auth")
       .withReuse(true);
 
