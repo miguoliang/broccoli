@@ -16,4 +16,14 @@ public class FooController {
   public String anonymous() {
     return "Hello, Anonymous";
   }
+
+  @Get(value = "protected", produces = "text/plain")
+  public String protectedResource() {
+    return "Hello, Protected";
+  }
+
+  @Get(value = "protected/premium", produces = "text/plain")
+  public String protectedPremiumResource() {
+    return "Hello, Protected Premium";
+  }
 }

@@ -25,6 +25,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Container;
@@ -98,7 +100,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
 
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(HttpRequest.GET("/vertex").accept("text/plain")),
+        () -> client.toBlocking().exchange(HttpRequest.GET("/foo/protected").accept("text/plain")),
         "No access token was supplied to the request");
     assertEquals(401, thrown.getStatus().getCode());
   }
@@ -109,42 +111,45 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(HttpRequest.GET("/vertex").accept("text/plain").bearerAuth("invalid")),
+            .exchange(HttpRequest.GET("/foo/protected").accept("text/plain").bearerAuth("invalid")),
         "Access token is invalid");
     assertEquals(401, thrown.getStatus().getCode());
   }
 
   @Test
-  void testSecurity_ShouldBeForbiddenWhenBeRejectedByKeycloak(TestInfo testInfo) {
-
-    fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), "user");
-    final var accessToken =
-        keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
-    final var thrown = assertThrowsExactly(
-        HttpClientResponseException.class,
-        () -> client.toBlocking()
-            .exchange(HttpRequest.GET("/edge").accept("text/plain").bearerAuth(accessToken)),
-        "Access token does not have expected scope");
-    assertEquals(403, thrown.getStatus().getCode());
-  }
-
-  @Test
-  void testSecurity_ShouldBeAllowedWhenAnonymousIsAccepted() {
+  void testSecurity_UnauthenticatedUserCanAccessAnonymousResource() {
 
     final var response =
         client.toBlocking().exchange(HttpRequest.GET("/foo/anonymous").accept("text/plain"));
     assertEquals(200, response.getStatus().getCode());
   }
 
-  @Test
-  void testSecurity_ShouldBePermittedWhenBeAllowedByKeycloak(TestInfo testInfo) {
+  @ParameterizedTest
+  @CsvSource({
+      "user, /foo/anonymous, 200",
+      "user, /foo/protected, 200",
+      "user, /foo/protected/premium, 403",
+      "user_premium, /foo/anonymous, 200",
+      "user_premium, /foo/protected/premium, 200",
+  })
+  void testSecurity_NonPremiumUserCanAccessAnonymousResource(
+      String role, String path, Integer expectedStatus, TestInfo testInfo) {
 
-    fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), "user");
+    fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), role);
     final var accessToken =
         keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
-    final var response = client.toBlocking()
-        .exchange(HttpRequest.GET("/vertex").bearerAuth(accessToken));
-    assertEquals(200, response.getStatus().getCode());
+    if (expectedStatus == 200) {
+      final var response = client.toBlocking().exchange(
+          HttpRequest.GET(path).accept("text/plain").bearerAuth(accessToken));
+      assertEquals(expectedStatus, response.getStatus().getCode());
+    } else {
+      final var thrown = assertThrowsExactly(
+          HttpClientResponseException.class,
+          () -> client.toBlocking()
+              .exchange(HttpRequest.GET(path).accept("text/plain").bearerAuth(accessToken)),
+          "Access is denied");
+      assertEquals(expectedStatus, thrown.getStatus().getCode());
+    }
   }
 
   @AfterEach
