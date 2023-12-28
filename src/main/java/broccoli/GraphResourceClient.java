@@ -9,10 +9,10 @@ import io.micronaut.http.client.annotation.Client;
 import org.reactivestreams.Publisher;
 
 /**
- * The {@link ResourceClient} class.
+ * The {@link GraphResourceClient} class.
  */
-@Client("/")
-public interface ResourceClient {
+@Client("/graph")
+public interface GraphResourceClient {
 
   @Post("vertex")
   @SingleResult

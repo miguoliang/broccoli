@@ -3,7 +3,7 @@ package broccoli.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import broccoli.ResourceClient;
+import broccoli.GraphResourceClient;
 import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.http.request.CreateVertexRequest;
 import io.micronaut.context.annotation.Property;
@@ -12,8 +12,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
@@ -26,18 +24,8 @@ import reactor.core.publisher.Mono;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VertexControllerTest {
 
-  @Container
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-      .withDatabaseName("postgres")
-      .withUsername("postgres")
-      .withPassword("postgres");
-
-  static {
-    postgres.start();
-  }
-
   @Inject
-  ResourceClient client;
+  GraphResourceClient client;
 
   @Test
   void testCreateVertex_ShouldReturnCreated(TestInfo testInfo) {

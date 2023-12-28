@@ -87,10 +87,6 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       keycloak.start();
     }
     return Map.of(
-        "datasources.default.driverClassName", "org.h2.Driver",
-        "datasources.default.password", "",
-        "datasources.default.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-        "datasources.default.username", "sa",
         "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
     );
   }
