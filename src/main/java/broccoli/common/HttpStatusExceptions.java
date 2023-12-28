@@ -18,4 +18,8 @@ public class HttpStatusExceptions {
   public static HttpStatusException conflict() {
     return new HttpStatusException(HttpStatus.CONFLICT, "Resource already exists");
   }
+
+  public static HttpStatusException raw(int code, String message) {
+    return new HttpStatusException(HttpStatus.valueOf(code), message);
+  }
 }

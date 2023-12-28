@@ -1,7 +1,7 @@
 package broccoli;
 
-import broccoli.model.http.request.CreateVertexRequest;
-import broccoli.model.http.response.CreateVertexResponse;
+import broccoli.model.graph.http.request.CreateVertexRequest;
+import broccoli.model.graph.http.response.CreateVertexResponse;
 import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Post;

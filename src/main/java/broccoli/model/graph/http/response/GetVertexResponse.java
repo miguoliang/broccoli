@@ -1,6 +1,6 @@
-package broccoli.model.http.response;
+package broccoli.model.graph.http.response;
 
-import broccoli.model.entity.Vertex;
+import broccoli.model.graph.entity.Vertex;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micronaut.serde.annotation.Serdeable;
 

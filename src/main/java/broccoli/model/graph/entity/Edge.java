@@ -1,4 +1,4 @@
-package broccoli.model.entity;
+package broccoli.model.graph.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

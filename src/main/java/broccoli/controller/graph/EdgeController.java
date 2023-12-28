@@ -1,4 +1,4 @@
-package broccoli.controller;
+package broccoli.controller.graph;
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -6,7 +6,7 @@ import io.micronaut.http.annotation.Get;
 /**
  * The {@link EdgeController} class.
  */
-@Controller("/edge")
+@Controller("/graph/edge")
 public class EdgeController {
 
   @Get(produces = "text/plain")

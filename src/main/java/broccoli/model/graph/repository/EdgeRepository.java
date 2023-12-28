@@ -1,7 +1,7 @@
-package broccoli.model.repository;
+package broccoli.model.graph.repository;
 
-import broccoli.model.entity.Edge;
-import broccoli.model.entity.EdgeId;
+import broccoli.model.graph.entity.Edge;
+import broccoli.model.graph.entity.EdgeId;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
 

@@ -1,12 +1,12 @@
-package broccoli.controller;
+package broccoli.controller.graph;
 
 import static broccoli.common.HttpStatusExceptions.conflict;
 
 import broccoli.common.HttpStatusExceptions;
-import broccoli.model.http.request.CreateVertexRequest;
-import broccoli.model.http.response.CreateVertexResponse;
-import broccoli.model.http.response.GetVertexResponse;
-import broccoli.model.repository.VertexRepository;
+import broccoli.model.graph.http.request.CreateVertexRequest;
+import broccoli.model.graph.http.response.CreateVertexResponse;
+import broccoli.model.graph.http.response.GetVertexResponse;
+import broccoli.model.graph.repository.VertexRepository;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -19,7 +19,7 @@ import jakarta.validation.constraints.NotBlank;
 /**
  * The {@link VertexController} class.
  */
-@Controller("/vertex")
+@Controller("/graph/vertex")
 public class VertexController {
 
   private final VertexRepository vertexRepository;

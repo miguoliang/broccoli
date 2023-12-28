@@ -1,4 +1,4 @@
-package broccoli.model.entity;
+package broccoli.model.graph.entity;
 
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;

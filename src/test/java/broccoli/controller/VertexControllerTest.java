@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import broccoli.ResourceClient;
-import broccoli.model.entity.Vertex;
-import broccoli.model.http.request.CreateVertexRequest;
+import broccoli.model.graph.entity.Vertex;
+import broccoli.model.graph.http.request.CreateVertexRequest;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
