@@ -7,15 +7,15 @@ import lombok.Setter;
 /**
  * The {@link KeycloakAdminClientConfiguration} class.
  */
-@ConfigurationProperties("keycloak-admin-client")
+@ConfigurationProperties("keycloak.admin-client")
 @Getter
 @Setter
 public class KeycloakAdminClientConfiguration {
 
-  private String serverUrl;
-  private String realm;
-  private String clientId;
-  private String clientSecret;
-  private String username;
-  private String password;
+  private String serverUrl = "http://localhost:8080/auth";
+  private String realm = "master";
+  private String clientId = "admin-cli";
+  private String clientSecret = "secret";
+  private String username = "admin";
+  private String password = "admin";
 }
