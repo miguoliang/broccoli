@@ -4,6 +4,8 @@ plugins {
     id("io.micronaut.test-resources") version "4.2.1"
     id("io.micronaut.aot") version "4.2.1"
     id("checkstyle")
+    id('jacoco')
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 version = "0.1"
@@ -93,6 +95,19 @@ micronaut {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
+
