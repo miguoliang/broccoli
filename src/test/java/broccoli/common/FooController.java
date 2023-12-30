@@ -2,6 +2,7 @@ package broccoli.common;
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
@@ -25,5 +26,10 @@ public class FooController {
   @Get(value = "protected/premium", produces = "text/plain")
   public String protectedPremiumResource() {
     return "Hello, Protected Premium";
+  }
+
+  @Post(value = "protected", produces = "text/plain")
+  public String protectedResourcePost() {
+    return "Hello, Protected (Post)";
   }
 }

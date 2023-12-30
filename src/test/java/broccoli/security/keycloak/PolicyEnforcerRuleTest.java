@@ -10,6 +10,7 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 import broccoli.common.KeycloakClientFacade;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -22,11 +23,13 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Container;
@@ -35,6 +38,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class PolicyEnforcerRuleTest implements TestPropertyProvider {
 
   @Container
@@ -87,62 +91,76 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       keycloak.start();
     }
     return Map.of(
+        "logger.levels.org.keycloak", "DEBUG",
+        "logger.levels.io.micronaut.security", "DEBUG",
         "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
     );
   }
 
-  @Test
-  void testSecurity_ShouldBeUnauthorizedWhenTokenNotFound() {
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "",
+      "invalid"
+  })
+  void testSecurity_BadToken(String token) {
 
+    final var rawRequest = HttpRequest.GET("/foo/protected").accept("text/plain");
+    final var httpRequest = token.isEmpty() ? rawRequest : rawRequest.bearerAuth(token);
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(HttpRequest.GET("/foo/protected").accept("text/plain")),
+        () -> client.toBlocking().exchange(httpRequest),
         "No access token was supplied to the request");
     assertEquals(401, thrown.getStatus().getCode());
   }
 
-  @Test
-  void testSecurity_ShouldBeForbiddenWhenTokenIsInvalid() {
+  @ParameterizedTest
+  @CsvSource({
+      "get, /foo/anonymous, 200",
+      "get, /foo/protected, 401",
+      "post, /foo/protected, 401",
+      "get, /foo/protected/premium, 401",
+      "get, /foo/protected/premium, 401",
+  })
+  void testSecurity_AnonymousAccess(String method, String path, Integer expectedStatus) {
 
-    final var thrown = assertThrowsExactly(
-        HttpClientResponseException.class,
-        () -> client.toBlocking()
-            .exchange(HttpRequest.GET("/foo/protected").accept("text/plain").bearerAuth("invalid")),
-        "Access token is invalid");
-    assertEquals(401, thrown.getStatus().getCode());
-  }
-
-  @Test
-  void testSecurity_UnauthenticatedUserCanAccessAnonymousResource() {
-
-    final var response =
-        client.toBlocking().exchange(HttpRequest.GET("/foo/anonymous").accept("text/plain"));
-    assertEquals(200, response.getStatus().getCode());
+    final var httpMethod = HttpMethod.valueOf(method.toUpperCase());
+    final var httpRequest = HttpRequest.create(httpMethod, path).accept("text/plain");
+    if (expectedStatus == 200) {
+      assertEquals(expectedStatus, client.toBlocking().exchange(httpRequest).getStatus().getCode());
+    } else {
+      final var thrown = assertThrowsExactly(
+          HttpClientResponseException.class,
+          () -> client.toBlocking().exchange(httpRequest),
+          "Access is denied");
+      assertEquals(expectedStatus, thrown.getStatus().getCode());
+    }
   }
 
   @ParameterizedTest
   @CsvSource({
-      "user, /foo/anonymous, 200",
-      "user, /foo/protected, 200",
-      "user, /foo/protected/premium, 403",
-      "user_premium, /foo/anonymous, 200",
-      "user_premium, /foo/protected/premium, 200",
+      "user, get, /foo/anonymous, 200",
+      "user, get, /foo/protected, 200",
+      "user, post, /foo/protected, 200",
+      "user, get, /foo/protected/premium, 403",
+      "user_premium, get, /foo/anonymous, 200",
+      "user_premium, get, /foo/protected/premium, 200",
   })
-  void testSecurity_NonPremiumUserCanAccessAnonymousResource(
-      String role, String path, Integer expectedStatus, TestInfo testInfo) {
+  void testSecurity_UserAccess(
+      String role, String method, String path, Integer expectedStatus, TestInfo testInfo) {
 
     fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), role);
     final var accessToken =
         keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
+    final var httpMethod = HttpMethod.valueOf(method.toUpperCase());
+    final var httpRequest =
+        HttpRequest.create(httpMethod, path).accept("text/plain").bearerAuth(accessToken);
     if (expectedStatus == 200) {
-      final var response = client.toBlocking().exchange(
-          HttpRequest.GET(path).accept("text/plain").bearerAuth(accessToken));
+      final var response = client.toBlocking().exchange(httpRequest);
       assertEquals(expectedStatus, response.getStatus().getCode());
     } else {
       final var thrown = assertThrowsExactly(
           HttpClientResponseException.class,
-          () -> client.toBlocking()
-              .exchange(HttpRequest.GET(path).accept("text/plain").bearerAuth(accessToken)),
+          () -> client.toBlocking().exchange(httpRequest),
           "Access is denied");
       assertEquals(expectedStatus, thrown.getStatus().getCode());
     }
