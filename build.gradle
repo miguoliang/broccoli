@@ -72,7 +72,6 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
     targetCompatibility = JavaVersion.toVersion("21")
-    sourceSets.main.java.srcDirs = ['src']
 }
 
 graalvmNative.toolchainDetection = false
@@ -116,8 +115,8 @@ tasks.named('sonar') {
     properties.put("sonar.projectKey", "miguoliang_broccoli")
     properties.put("sonar.organization", "miguoliang")
     properties.put("sonar.host.url", "https://sonarcloud.io")
-    properties.put("sonar.sources", "src/main")
-    properties.put("sonar.tests", "src/test")
+    properties.put("sonar.sources", "${layout.projectDirectory}/src/main")
+    properties.put("sonar.tests", "${layout.projectDirectory}/src/test")
 }
 
 
