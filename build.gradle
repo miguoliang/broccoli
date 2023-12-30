@@ -115,8 +115,12 @@ tasks.named('sonar') {
     properties.put("sonar.projectKey", "miguoliang_broccoli")
     properties.put("sonar.organization", "miguoliang")
     properties.put("sonar.host.url", "https://sonarcloud.io")
-    properties.put("sonar.sources", "${layout.projectDirectory}/src/main")
-    properties.put("sonar.tests", "${layout.projectDirectory}/src/test")
+    properties.put("sonar.coverage.jacoco.xmlReportPaths",
+            layout.getBuildDirectory().file("reports/jacoco/test/jacocoTestReport.xml").get().getAsFile().getAbsolutePath())
+    properties.put("sonar.sources",
+            layout.getProjectDirectory().dir("src/main").getAsFile().getAbsolutePath())
+    properties.put("sonar.tests",
+            layout.getProjectDirectory().dir("src/test").getAsFile().getAbsolutePath())
 }
 
 
