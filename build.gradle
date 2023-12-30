@@ -115,6 +115,8 @@ tasks.named('sonar') {
     properties.put("sonar.projectKey", "miguoliang_broccoli")
     properties.put("sonar.organization", "miguoliang")
     properties.put("sonar.host.url", "https://sonarcloud.io")
+    properties.put("sonar.projectBaseDir",
+            layout.getProjectDirectory().getAsFile().getAbsolutePath())
     properties.put("sonar.coverage.jacoco.xmlReportPaths",
             layout.getBuildDirectory().file("reports/jacoco/test/jacocoTestReport.xml").get().getAsFile().getAbsolutePath())
     properties.put("sonar.sources",
