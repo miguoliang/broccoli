@@ -115,7 +115,7 @@ tasks.named('sonar') {
     properties.put("sonar.projectKey", "miguoliang_broccoli")
     properties.put("sonar.organization", "miguoliang")
     properties.put("sonar.host.url", "https://sonarcloud.io")
-    properties.put("sonar.scm.provider", "git")
+    properties.put("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
     dependsOn jacocoTestReport
 }
 

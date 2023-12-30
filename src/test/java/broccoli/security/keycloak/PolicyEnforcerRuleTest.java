@@ -91,8 +91,8 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
       keycloak.start();
     }
     return Map.of(
-        "logger.levels.org.keycloak", "DEBUG",
-        "logger.levels.io.micronaut.security", "DEBUG",
+        "logger.levels.org.keycloak", "INFO",
+        "logger.levels.io.micronaut.security", "INFO",
         "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
     );
   }
