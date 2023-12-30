@@ -5,6 +5,7 @@ plugins {
     id("io.micronaut.aot") version "4.2.1"
     id("checkstyle")
     id('jacoco')
+    id "org.sonarqube" version "4.4.1.3373"
 }
 
 version = "0.1"
@@ -107,6 +108,11 @@ jacoco {
 
 test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
+    finalizedBy tasks.named("sonarqube")
 }
+
+tasks.named('sonarqube').configure {
+    dependsOn jacocoTestReport
+}
+
 
