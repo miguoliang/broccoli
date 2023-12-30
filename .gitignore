@@ -4,7 +4,7 @@ Thumbs.db
 build/
 target/
 out/
-.micronaut/
+/.micronaut/
 .idea
 *.iml
 *.ipr
@@ -13,3 +13,4 @@ out/
 .settings
 .classpath
 .factorypath
+/.scannerwork/
