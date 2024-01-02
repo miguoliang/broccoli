@@ -24,15 +24,14 @@ public class GraphTestHelper {
    * @param name Vertex name
    * @param type Vertex type
    */
-  public void create(String name, String type) {
+  public void createVertex(String name, String type) {
     final var vertex = new Vertex();
     vertex.setName(name);
     vertex.setType(type);
     vertexRepository.saveAndFlush(vertex);
   }
 
-  public void delete(String name, String type) {
-    final var id = Vertex.getId(name, type);
-    vertexRepository.deleteById(id);
+  public boolean vertexExists(String name, String type) {
+    return vertexRepository.existsById(Vertex.getId(name, type));
   }
 }

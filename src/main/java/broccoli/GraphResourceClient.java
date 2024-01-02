@@ -7,6 +7,7 @@ import broccoli.model.identity.http.response.QueryVertexResponse;
 import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
@@ -35,5 +36,5 @@ public interface GraphResourceClient {
   Publisher<Page<QueryVertexResponse>> getVertices(@QueryValue String q, Pageable pageable);
 
   @Delete("vertex/{id}")
-  Publisher<Void> deleteVertex(String id);
+  Publisher<HttpResponse<Void>> deleteVertex(String id);
 }

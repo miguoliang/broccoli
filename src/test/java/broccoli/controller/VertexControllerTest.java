@@ -1,13 +1,17 @@
 package broccoli.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import broccoli.GraphResourceClient;
 import broccoli.common.GraphTestHelper;
 import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.http.request.CreateVertexRequest;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -55,7 +59,7 @@ class VertexControllerTest {
     // Setup
     final var name = testInfo.getDisplayName();
     final var type = "foo";
-    helper.create(name, type);
+    helper.createVertex(name, type);
 
     // Execute
     final var id = Vertex.getId(name, type);
@@ -66,5 +70,59 @@ class VertexControllerTest {
     assertEquals(id, found.id());
     assertEquals(name, found.name());
     assertEquals(type, found.type());
+  }
+
+  @Test
+  void testCreateVertex_ShouldReturnConflict(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+    final var request = new CreateVertexRequest(name, type);
+    helper.createVertex(name, type);
+
+    // Execute
+    final var thrown = assertThrowsExactly(
+        HttpClientResponseException.class,
+        () -> Mono.from(client.createVertex(request)).block(),
+        "Vertex already exists");
+
+    // Verify
+    assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
+  }
+
+  @Test
+  void testDeleteVertex_ShouldReturnNoContentIfNotExists(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+
+    // Execute
+    final var id = Vertex.getId(name, type);
+    final var response = Mono.from(client.deleteVertex(id)).block();
+
+    // Verify
+    assertNotNull(response);
+    assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+    assertFalse(helper.vertexExists(name, type));
+  }
+
+  @Test
+  void testDeleteVertex_ShouldReturnNoContentIfExists(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+    helper.createVertex(name, type);
+
+    // Execute
+    final var id = Vertex.getId(name, type);
+    final var response = Mono.from(client.deleteVertex(id)).block();
+
+    // Verify
+    assertNotNull(response);
+    assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+    assertFalse(helper.vertexExists(name, type));
   }
 }

@@ -74,6 +74,7 @@ public class VertexController {
    * @param id Vertex id
    */
   @Delete("{id}")
+  @Status(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable @NotBlank String id) {
     vertexRepository.deleteById(id);
   }
