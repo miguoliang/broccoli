@@ -140,10 +140,11 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   @CsvSource({
       "user, get, /foo/anonymous, 200",
       "user, get, /foo/protected, 200",
-      "user, post, /foo/protected, 200",
+      "user, post, /foo/protected, 403",
       "user, get, /foo/protected/premium, 403",
       "user_premium, get, /foo/anonymous, 200",
       "user_premium, get, /foo/protected/premium, 200",
+      "user_premium, post, /foo/protected, 201",
   })
   void testSecurity_UserAccess(
       String role, String method, String path, Integer expectedStatus, TestInfo testInfo) {
@@ -154,7 +155,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     final var httpMethod = HttpMethod.valueOf(method.toUpperCase());
     final var httpRequest =
         HttpRequest.create(httpMethod, path).accept("text/plain").bearerAuth(accessToken);
-    if (expectedStatus == 200) {
+    if (expectedStatus < 400) {
       final var response = client.toBlocking().exchange(httpRequest);
       assertEquals(expectedStatus, response.getStatus().getCode());
     } else {
@@ -178,6 +179,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     enforcerConfig.setAuthServerUrl(keycloak.getAuthServerUrl());
     enforcerConfig.setRealm("quickstart");
     enforcerConfig.setResource("authz-servlet");
+    enforcerConfig.setHttpMethodAsScope(true);
     enforcerConfig.setCredentials(Map.of("secret", "secret"));
     return enforcerConfig;
   }

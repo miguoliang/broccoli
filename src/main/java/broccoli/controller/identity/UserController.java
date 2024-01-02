@@ -8,6 +8,7 @@ import broccoli.model.identity.http.response.QueryUserResponse;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -16,6 +17,7 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -48,6 +50,7 @@ public class UserController {
    * @return User just created
    */
   @Post
+  @Status(HttpStatus.CREATED)
   public CreateUserResponse create(@Body @Valid CreateUserRequest createUserRequest) {
     final var response =
         keycloak.realm("broccoli").users().create(createUserRequest.toRepresentation());

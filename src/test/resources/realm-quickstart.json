@@ -1,172 +1,202 @@
 {
-    "realm": "quickstart",
-    "enabled": true,
-    "requiredCredentials": [
-        "password"
-    ],
-    "users": [
+  "realm": "quickstart",
+  "enabled": true,
+  "requiredCredentials": [
+    "password"
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "credentials": [
         {
-            "username": "alice",
-            "enabled": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "alice"
-                }
-            ],
-            "realmRoles": [
-                "user"
-            ]
-        },
-        {
-            "username": "jdoe",
-            "enabled": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "jdoe"
-                }
-            ],
-            "realmRoles": [
-                "user",
-                "user_premium"
-            ]
-        },
-        {
-            "username": "service-account-authz-servlet",
-            "enabled": true,
-            "serviceAccountClientId": "authz-servlet",
-            "clientRoles": {
-                "authz-servlet": [
-                    "uma_protection"
-                ]
-            }
+          "type": "password",
+          "value": "alice"
         }
-    ],
-    "roles": {
-        "realm": [
-            {
-                "name": "user",
-                "description": "User privileges"
-            },
-            {
-                "name": "user_premium",
-                "description": "User Premium privileges"
-            }
-        ]
+      ],
+      "realmRoles": [
+        "user"
+      ]
     },
-    "clients": [
+    {
+      "username": "jdoe",
+      "enabled": true,
+      "credentials": [
         {
-            "clientId": "authz-servlet",
-            "enabled": true,
-            "baseUrl": "http://localhost:8080/authz-servlet",
-            "adminUrl": "http://localhost:8080/authz-servlet",
-            "bearerOnly": false,
-            "redirectUris": [
-                "http://localhost:8080/authz-servlet/*",
-                "http://127.0.0.1:8080/authz-servlet/*"
-            ],
-            "secret": "secret",
-            "authorizationServicesEnabled": true,
-            "directAccessGrantsEnabled": true,
-            "authorizationSettings": {
-                "resources": [
-                    {
-                        "name": "Protected Resource",
-                        "uri": "/foo/protected/*",
-                        "type": "http://servlet-authz/protected/resource",
-                        "scopes": [
-                            {
-                                "name": "urn:servlet-authz:protected:resource:access"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "Premium Resource",
-                        "uri": "/foo/protected/premium/*",
-                        "type": "urn:servlet-authz:protected:resource",
-                        "scopes": [
-                            {
-                                "name": "urn:servlet-authz:protected:premium:access"
-                            }
-                        ]
-                    }
-                ],
-                "policies": [
-                    {
-                        "name": "Any User Policy",
-                        "description": "Defines that any user can do something",
-                        "type": "role",
-                        "logic": "POSITIVE",
-                        "decisionStrategy": "UNANIMOUS",
-                        "config": {
-                            "roles": "[{\"id\":\"user\"}]"
-                        }
-                    },
-                    {
-                        "name": "Only Premium User Policy",
-                        "description": "Defines that only premium users can do something",
-                        "type": "role",
-                        "logic": "POSITIVE",
-                        "decisionStrategy": "UNANIMOUS",
-                        "config": {
-                            "roles": "[{\"id\":\"user_premium\"}]"
-                        }
-                    },
-                    {
-                        "name": "All Users Policy",
-                        "description": "Defines that all users can do something",
-                        "type": "aggregate",
-                        "logic": "POSITIVE",
-                        "decisionStrategy": "AFFIRMATIVE",
-                        "config": {
-                            "applyPolicies": "[\"Any User Policy\",\"Only Premium User Policy\"]"
-                        }
-                    },
-                    {
-                        "name": "Premium Resource Permission",
-                        "description": "A policy that defines access to premium resources",
-                        "type": "resource",
-                        "logic": "POSITIVE",
-                        "decisionStrategy": "UNANIMOUS",
-                        "config": {
-                            "resources": "[\"Premium Resource\"]",
-                            "applyPolicies": "[\"Only Premium User Policy\"]"
-                        }
-                    },
-                    {
-                        "name": "Protected Resource Permission",
-                        "description": "A policy that defines access to any protected resource",
-                        "type": "resource",
-                        "logic": "POSITIVE",
-                        "decisionStrategy": "UNANIMOUS",
-                        "config": {
-                            "resources": "[\"Protected Resource\"]",
-                            "applyPolicies": "[\"All Users Policy\"]"
-                        }
-                    }
-                ],
-                "scopes": [
-                    {
-                        "name": "urn:servlet-authz:protected:admin:access"
-                    },
-                    {
-                        "name": "urn:servlet-authz:protected:resource:access"
-                    },
-                    {
-                        "name": "urn:servlet-authz:protected:premium:access"
-                    },
-                    {
-                        "name": "urn:servlet-authz:page:main:actionForPremiumUser"
-                    },
-                    {
-                        "name": "urn:servlet-authz:page:main:actionForAdmin"
-                    },
-                    {
-                        "name": "urn:servlet-authz:page:main:actionForUser"
-                    }
-                ]
-            }
+          "type": "password",
+          "value": "jdoe"
         }
+      ],
+      "realmRoles": [
+        "user",
+        "user_premium"
+      ]
+    },
+    {
+      "username": "service-account-authz-servlet",
+      "enabled": true,
+      "serviceAccountClientId": "authz-servlet",
+      "clientRoles": {
+        "authz-servlet": [
+          "uma_protection"
+        ]
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User privileges"
+      },
+      {
+        "name": "user_premium",
+        "description": "User Premium privileges"
+      }
     ]
+  },
+  "clients": [
+    {
+      "clientId": "authz-servlet",
+      "enabled": true,
+      "baseUrl": "http://localhost:8080/authz-servlet",
+      "adminUrl": "http://localhost:8080/authz-servlet",
+      "bearerOnly": false,
+      "redirectUris": [
+        "http://localhost:8080/authz-servlet/*",
+        "http://127.0.0.1:8080/authz-servlet/*"
+      ],
+      "secret": "secret",
+      "authorizationServicesEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "authorizationSettings": {
+        "allowRemoteResourceManagement": true,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "Protected Resource",
+            "ownerManagedAccess": false,
+            "displayName": "",
+            "attributes": {},
+            "_id": "d4808610-8a24-4558-b2ac-444b7888c894",
+            "uris": [
+              "/foo/protected/*"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Premium Resource",
+            "ownerManagedAccess": false,
+            "displayName": "",
+            "attributes": {},
+            "_id": "0748dcf3-2712-4d67-8758-170d495a1153",
+            "uris": [
+              "/foo/protected/premium/*"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          }
+        ],
+        "policies": [
+          {
+            "id": "95ca90fa-0ade-48f8-9ca9-5c02d7bdf49d",
+            "name": "Any User Policy",
+            "description": "Defines that any user can do something",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"user\",\"required\":false}]"
+            }
+          },
+          {
+            "id": "537a69bf-1858-4ec9-9aaf-53cbd0cecfaf",
+            "name": "Only Premium User Policy",
+            "description": "Defines that only premium users can do something",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"user_premium\",\"required\":false}]"
+            }
+          },
+          {
+            "id": "d005ec9d-8f10-47bf-a688-cdd0e8a3e005",
+            "name": "All Users Policy",
+            "description": "Defines that all users can do something",
+            "type": "aggregate",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "applyPolicies": "[\"Any User Policy\",\"Only Premium User Policy\"]"
+            }
+          },
+          {
+            "id": "0fe50771-4887-45fd-9fdc-905afa55ceaa",
+            "name": "Read Only Protected Resource",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Protected Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"All Users Policy\"]"
+            }
+          },
+          {
+            "id": "f10d899a-000c-4ee8-9257-b8588a54c746",
+            "name": "Create Protected Resource",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Protected Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Only Premium User Policy\"]"
+            }
+          },
+          {
+            "id": "5e8495f4-2f1b-439e-afc7-a86766e64c3b",
+            "name": "Get Premium Resource",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Premium Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Only Premium User Policy\"]"
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "id": "c33578c7-b769-4118-9d9a-a901f2afc50f",
+            "name": "GET",
+            "iconUri": ""
+          },
+          {
+            "id": "aacee6e9-af5b-4fac-a158-a440096f2d08",
+            "name": "POST",
+            "iconUri": ""
+          }
+        ],
+        "decisionStrategy": "UNANIMOUS"
+      }
+    }
+  ]
 }
