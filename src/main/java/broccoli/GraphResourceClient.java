@@ -3,6 +3,8 @@ package broccoli;
 import broccoli.model.graph.http.request.CreateVertexRequest;
 import broccoli.model.graph.http.response.CreateVertexResponse;
 import broccoli.model.graph.http.response.GetVertexResponse;
+import broccoli.model.identity.http.request.CreateEdgeRequest;
+import broccoli.model.identity.http.response.CreateEdgeResponse;
 import broccoli.model.identity.http.response.QueryEdgeResponse;
 import broccoli.model.identity.http.response.QueryVertexResponse;
 import io.micronaut.core.async.annotation.SingleResult;
@@ -44,8 +46,12 @@ public interface GraphResourceClient {
   @Get("edge")
   @SingleResult
   Publisher<Page<QueryEdgeResponse>> queryEdges(
-      @QueryValue Set<String> vertexId,
+      @QueryValue Set<String> vid,
       @QueryValue Set<String> name,
       @QueryValue Set<String> scope,
       @Nullable Pageable pageable);
+
+  @Post("edge")
+  @SingleResult
+  Publisher<HttpResponse<CreateEdgeResponse>> createEdge(@Body CreateEdgeRequest request);
 }

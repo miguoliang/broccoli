@@ -3,6 +3,8 @@ package broccoli.controller.graph;
 import static broccoli.common.HttpStatusExceptions.conflict;
 
 import broccoli.common.HttpStatusExceptions;
+import broccoli.model.graph.entity.Edge;
+import broccoli.model.graph.entity.EdgeId;
 import broccoli.model.graph.repository.EdgeRepository;
 import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.spec.EdgeSpecifications;
@@ -11,12 +13,15 @@ import broccoli.model.identity.http.response.CreateEdgeResponse;
 import broccoli.model.identity.http.response.QueryEdgeResponse;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -47,17 +52,30 @@ public class EdgeController {
    */
   @Post
   @Transactional
+  @Status(HttpStatus.CREATED)
   public CreateEdgeResponse create(@Body @Valid CreateEdgeRequest createEdgeRequest) {
-
-    if (edgeRepository.existsById(createEdgeRequest.toEdgeId())) {
-      throw conflict();
-    }
 
     final var inVertex = vertexRepository.findById(createEdgeRequest.inVertexId())
         .orElseThrow(HttpStatusExceptions::notFound);
     final var outVertex = vertexRepository.findById(createEdgeRequest.outVertexId())
         .orElseThrow(HttpStatusExceptions::notFound);
-    final var edge = createEdgeRequest.toEntity(inVertex, outVertex);
+
+    final var edgeId = new EdgeId();
+    edgeId.setInVertex(inVertex);
+    edgeId.setOutVertex(outVertex);
+    edgeId.setName(createEdgeRequest.name());
+    edgeId.setScope(createEdgeRequest.scope());
+
+    if (edgeRepository.existsById(edgeId)) {
+      throw conflict();
+    }
+
+    final var edge = new Edge();
+    edge.setInVertex(inVertex);
+    edge.setOutVertex(outVertex);
+    edge.setName(createEdgeRequest.name());
+    edge.setScope(createEdgeRequest.scope());
+
     return CreateEdgeResponse.of(edgeRepository.save(edge));
   }
 
@@ -74,7 +92,7 @@ public class EdgeController {
   public Page<QueryEdgeResponse> query(@QueryValue @NotEmpty Set<String> vid,
                                        @QueryValue @NotEmpty Set<String> name,
                                        @QueryValue @NotEmpty Set<String> scope,
-                                       Pageable pageable) {
+                                       @Nullable Pageable pageable) {
 
     final var specs = EdgeSpecifications.associatedWithVertices(vid)
         .and(EdgeSpecifications.nameIn(name))

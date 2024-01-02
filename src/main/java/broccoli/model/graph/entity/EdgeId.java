@@ -1,6 +1,6 @@
 package broccoli.model.graph.entity;
 
-import java.io.Serializable;
+import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +14,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EdgeId implements Serializable {
+@Introspected
+public class EdgeId {
 
-  private String inVertex;
-  private String outVertex;
+  private Vertex inVertex;
+  private Vertex outVertex;
   private String name;
   private String scope;
 }

@@ -1,10 +1,12 @@
 package broccoli.model.identity.http.response;
 
 import broccoli.model.graph.entity.Edge;
+import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * The {@link CreateEdgeResponse} class.
  */
+@Serdeable
 public record CreateEdgeResponse(String inVertexId, String inVertexName, String inVertexType,
                                  String outVertexId, String outVertexName, String outVertexType,
                                  String name, String scope) {
