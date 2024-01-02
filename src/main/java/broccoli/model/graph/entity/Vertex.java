@@ -11,6 +11,7 @@ import jakarta.persistence.Version;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 @Entity
 @Table(name = "vertex")
+@NoArgsConstructor
 public class Vertex {
   @Id
   @Column(name = "id", nullable = false)

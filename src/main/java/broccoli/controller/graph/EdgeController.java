@@ -76,10 +76,6 @@ public class EdgeController {
                                        @QueryValue @NotEmpty Set<String> scope,
                                        Pageable pageable) {
 
-    if (vid.isEmpty() && name.isEmpty() && scope.isEmpty()) {
-      throw HttpStatusExceptions.badRequest();
-    }
-
     final var specs = EdgeSpecifications.associatedWithVertices(vid)
         .and(EdgeSpecifications.nameIn(name))
         .and(EdgeSpecifications.scopeIn(scope));

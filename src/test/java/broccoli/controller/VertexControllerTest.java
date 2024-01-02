@@ -73,6 +73,24 @@ class VertexControllerTest {
   }
 
   @Test
+  void testGetVertex_ShouldReturnNotFound(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+
+    // Execute
+    final var id = Vertex.getId(name, type);
+    final var thrown = assertThrowsExactly(
+        HttpClientResponseException.class,
+        () -> Mono.from(client.getVertex(id)).block(),
+        "Vertex not found");
+
+    // Verify
+    assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+  }
+
+  @Test
   void testCreateVertex_ShouldReturnConflict(TestInfo testInfo) {
 
     // Setup

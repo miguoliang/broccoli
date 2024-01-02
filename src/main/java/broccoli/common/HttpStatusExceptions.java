@@ -22,8 +22,4 @@ public class HttpStatusExceptions {
   public static HttpStatusException raw(int code, String message) {
     return new HttpStatusException(HttpStatus.valueOf(code), message);
   }
-
-  public static HttpStatusException badRequest() {
-    return new HttpStatusException(HttpStatus.BAD_REQUEST, "Bad request");
-  }
 }

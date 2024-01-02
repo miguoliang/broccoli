@@ -13,6 +13,11 @@ import org.keycloak.util.JsonSerialization;
 @Factory
 public class PolicyEnforcerBeanFactory {
 
+  /**
+   * The {@link PolicyEnforcerConfig} bean.
+   *
+   * @return The {@link PolicyEnforcerConfig} bean.
+   */
   @Singleton
   @SneakyThrows
   public PolicyEnforcerConfig policyEnforcerConfig() {
