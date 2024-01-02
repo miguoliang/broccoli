@@ -7,6 +7,10 @@ import broccoli.model.graph.http.request.CreateVertexRequest;
 import broccoli.model.graph.http.response.CreateVertexResponse;
 import broccoli.model.graph.http.response.GetVertexResponse;
 import broccoli.model.graph.repository.VertexRepository;
+import broccoli.model.graph.spec.VertexSpecifications;
+import broccoli.model.identity.http.response.QueryVertexResponse;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -14,14 +18,19 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.annotation.Status;
+import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The {@link VertexController} class.
  */
 @Controller("/graph/vertex")
+@Validated
 public class VertexController {
 
   private final VertexRepository vertexRepository;
@@ -51,7 +60,7 @@ public class VertexController {
    */
   @Post
   @Status(HttpStatus.CREATED)
-  public CreateVertexResponse create(@Body CreateVertexRequest createVertexRequest) {
+  public CreateVertexResponse create(@Body @Valid CreateVertexRequest createVertexRequest) {
     final var vertex = createVertexRequest.toEntity();
     if (vertexRepository.existsById(vertex.getId())) {
       throw conflict();
@@ -67,5 +76,23 @@ public class VertexController {
   @Delete("{id}")
   public void delete(@PathVariable @NotBlank String id) {
     vertexRepository.deleteById(id);
+  }
+
+  /**
+   * Query vertices.
+   *
+   * @param q        query string
+   * @param pageable page info
+   * @return vertices
+   */
+  @Get
+  public Page<QueryVertexResponse> query(@QueryValue String q, Pageable pageable) {
+
+    if (StringUtils.isBlank(q)) {
+      return vertexRepository.findAll(pageable).map(QueryVertexResponse::of);
+    }
+
+    final var specs = VertexSpecifications.nameLike(q);
+    return vertexRepository.findAll(specs, pageable).map(QueryVertexResponse::of);
   }
 }

@@ -5,19 +5,23 @@ import static broccoli.common.HttpStatusExceptions.conflict;
 import broccoli.common.HttpStatusExceptions;
 import broccoli.model.graph.repository.EdgeRepository;
 import broccoli.model.graph.repository.VertexRepository;
+import broccoli.model.graph.spec.EdgeSpecifications;
 import broccoli.model.identity.http.request.CreateEdgeRequest;
-import broccoli.model.identity.http.request.QueryEdgeRequest;
 import broccoli.model.identity.http.response.CreateEdgeResponse;
 import broccoli.model.identity.http.response.QueryEdgeResponse;
 import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.Set;
 
 /**
  * The {@link EdgeController} class.
@@ -60,14 +64,25 @@ public class EdgeController {
   /**
    * Query edges.
    *
-   * @param queryEdgeRequest query edge request
-   * @return page of query edge response
+   * @param vid      vertex id
+   * @param name     edge name
+   * @param scope    edge scope
+   * @param pageable page info
+   * @return edges
    */
   @Get
-  public Page<QueryEdgeResponse> query(@Body @Valid QueryEdgeRequest queryEdgeRequest) {
+  public Page<QueryEdgeResponse> query(@QueryValue @NotEmpty Set<String> vid,
+                                       @QueryValue @NotEmpty Set<String> name,
+                                       @QueryValue @NotEmpty Set<String> scope,
+                                       Pageable pageable) {
 
-    final var page = edgeRepository.findAll(queryEdgeRequest.toSpecification(), queryEdgeRequest);
-    final var content = page.getContent().stream().map(QueryEdgeResponse::of).toList();
-    return Page.of(content, page.getPageable(), page.getTotalSize());
+    if (vid.isEmpty() && name.isEmpty() && scope.isEmpty()) {
+      throw HttpStatusExceptions.badRequest();
+    }
+
+    final var specs = EdgeSpecifications.associatedWithVertices(vid)
+        .and(EdgeSpecifications.nameIn(name))
+        .and(EdgeSpecifications.scopeIn(scope));
+    return edgeRepository.findAll(specs, pageable).map(QueryEdgeResponse::of);
   }
 }
