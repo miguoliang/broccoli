@@ -19,12 +19,12 @@ public class KeycloakBeanFactory {
   @Singleton
   public Keycloak keycloak(KeycloakAdminClientConfiguration keycloakAdminClientConfiguration) {
     return Keycloak.getInstance(
-        keycloakAdminClientConfiguration.getServerUrl(),
-        keycloakAdminClientConfiguration.getRealm(),
-        keycloakAdminClientConfiguration.getUsername(),
-        keycloakAdminClientConfiguration.getPassword(),
-        keycloakAdminClientConfiguration.getClientId(),
-        keycloakAdminClientConfiguration.getClientSecret()
+        keycloakAdminClientConfiguration.serverUrl(),
+        keycloakAdminClientConfiguration.realm(),
+        keycloakAdminClientConfiguration.username(),
+        keycloakAdminClientConfiguration.password(),
+        keycloakAdminClientConfiguration.clientId(),
+        keycloakAdminClientConfiguration.clientSecret()
     );
   }
 }
