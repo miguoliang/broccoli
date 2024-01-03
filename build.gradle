@@ -44,8 +44,9 @@ dependencies {
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    implementation("org.keycloak:keycloak-policy-enforcer:${keycloakVersion}")
+    implementation("io.micronaut.validation:micronaut-validation")
     implementation("org.keycloak:keycloak-admin-client:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-policy-enforcer:${keycloakVersion}")
     compileOnly("io.micronaut:micronaut-http-client")
     compileOnly("org.projectlombok:lombok")
 

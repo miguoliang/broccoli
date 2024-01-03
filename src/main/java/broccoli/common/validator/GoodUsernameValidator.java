@@ -1,7 +1,11 @@
 package broccoli.common.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+
+import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.validation.validator.constraints.ConstraintValidator;
+import io.micronaut.validation.validator.constraints.ConstraintValidatorContext;
 
 /**
  * The {@link GoodUsernameValidator} class.
@@ -10,19 +14,17 @@ import jakarta.validation.ConstraintValidatorContext;
  * <p>Good username requirements:</p>
  * <ul>
  * <li>Contains only alphanumeric characters and underscores</li>
+ * <li>Is between 5 and 10 characters long</li>
  * </ul>
  */
 public class GoodUsernameValidator implements ConstraintValidator<GoodUsername, String> {
 
-  private static final String USERNAME_PATTERN = "^\\w+$";
+  private static final String USERNAME_PATTERN = "^\\w{5,10}$";
 
   @Override
-  public void initialize(GoodUsername constraintAnnotation) {
-    // nothing to do
-  }
-
-  @Override
-  public boolean isValid(String username, ConstraintValidatorContext context) {
-    return username != null && username.matches(USERNAME_PATTERN);
+  public boolean isValid(@Nullable String value,
+                         @NonNull AnnotationValue<GoodUsername> annotationMetadata,
+                         @NonNull ConstraintValidatorContext context) {
+    return value != null && value.matches(USERNAME_PATTERN);
   }
 }

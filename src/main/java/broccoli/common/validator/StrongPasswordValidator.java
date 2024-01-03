@@ -1,7 +1,10 @@
 package broccoli.common.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.validation.validator.constraints.ConstraintValidator;
+import io.micronaut.validation.validator.constraints.ConstraintValidatorContext;
 
 /**
  * The {@link StrongPasswordValidator} class.
@@ -23,12 +26,9 @@ public class StrongPasswordValidator implements ConstraintValidator<StrongPasswo
       "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
 
   @Override
-  public void initialize(StrongPassword constraintAnnotation) {
-    // nothing to do
-  }
-
-  @Override
-  public boolean isValid(String password, ConstraintValidatorContext context) {
-    return password != null && password.matches(PATTERN);
+  public boolean isValid(@Nullable String value,
+                         @NonNull AnnotationValue<StrongPassword> annotationMetadata,
+                         @NonNull ConstraintValidatorContext context) {
+    return value != null && value.matches(PATTERN);
   }
 }
