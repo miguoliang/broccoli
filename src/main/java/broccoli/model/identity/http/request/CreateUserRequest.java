@@ -3,6 +3,7 @@ package broccoli.model.identity.http.request;
 import broccoli.common.validator.GoodUsername;
 import broccoli.common.validator.StrongPassword;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.micronaut.core.annotation.Introspected;
 import jakarta.validation.constraints.Email;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -15,6 +16,7 @@ import org.keycloak.representations.idm.UserRepresentation;
  * @param lastName  User last name
  * @param email     User email
  */
+@Introspected
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateUserRequest(@GoodUsername String username, @StrongPassword String password,
                                 String firstName, String lastName, @Email String email) {

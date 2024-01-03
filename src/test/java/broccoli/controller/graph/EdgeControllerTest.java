@@ -1,4 +1,4 @@
-package broccoli.controller;
+package broccoli.controller.graph;
 
 import static io.micronaut.http.HttpRequest.GET;
 import static io.micronaut.http.HttpRequest.POST;
@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import broccoli.common.GraphTestHelper;
+import broccoli.model.graph.http.request.CreateEdgeRequest;
 import broccoli.model.graph.http.response.CreateEdgeResponse;
 import broccoli.model.graph.http.response.QueryEdgeResponse;
-import broccoli.model.identity.http.request.CreateEdgeRequest;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;

@@ -1,17 +1,17 @@
 package broccoli.common.identity;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * The {@link KeycloakAdminClientConfiguration} class.
  */
 @ConfigurationProperties("keycloak.admin-client")
 public record KeycloakAdminClientConfiguration(
-    @NotNull String serverUrl,
-    @NotNull String realm,
-    @NotNull String clientId,
-    @NotNull String clientSecret,
-    @NotNull String username,
-    @NotNull String password) {
+    @NotBlank String serverUrl,
+    @NotBlank String realm,
+    @NotBlank String clientId,
+    @NotBlank String clientSecret,
+    @NotBlank String username,
+    @NotBlank String password) {
 }

@@ -1,13 +1,17 @@
 package broccoli.controller.identity;
 
 import broccoli.common.HttpStatusExceptions;
+import broccoli.common.identity.KeycloakDefaultRealmConfiguration;
+import broccoli.model.identity.http.request.AssignRoleToUserRequest;
 import broccoli.model.identity.http.request.CreateUserRequest;
+import broccoli.model.identity.http.request.DeleteUserRequest;
+import broccoli.model.identity.http.request.QueryUserRequest;
+import broccoli.model.identity.http.request.RemoveRoleFromUserRequest;
+import broccoli.model.identity.http.request.ResetPasswordRequest;
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.CreateUserResponse;
 import broccoli.model.identity.http.response.QueryUserResponse;
-import io.micronaut.context.annotation.Value;
 import io.micronaut.data.model.Page;
-import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -16,7 +20,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.RequestBean;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
@@ -38,9 +42,9 @@ public class UserController {
 
   @Inject
   public UserController(Keycloak keycloak,
-                        @Value("${keycloak.realm:broccoli}") String keycloakRealm) {
+                        KeycloakDefaultRealmConfiguration keycloakDefaultRealmConfiguration) {
     this.keycloak = keycloak;
-    this.keycloakRealm = keycloakRealm;
+    this.keycloakRealm = keycloakDefaultRealmConfiguration.realm();
   }
 
   /**
@@ -53,7 +57,7 @@ public class UserController {
   @Status(HttpStatus.CREATED)
   public CreateUserResponse create(@Body @Valid CreateUserRequest createUserRequest) {
     final var response =
-        keycloak.realm("broccoli").users().create(createUserRequest.toRepresentation());
+        keycloak.realm(keycloakRealm).users().create(createUserRequest.toRepresentation());
     final var code = response.getStatus();
     if (code != 201) {
       throw HttpStatusExceptions.raw(code, response.getStatusInfo().getReasonPhrase());
@@ -71,16 +75,16 @@ public class UserController {
   /**
    * Query users.
    *
-   * @param q        query string
-   * @param pageable page info
-   * @return users
+   * @param queryUserRequest Query conditions
+   * @return Users
    */
-  @Get
-  public Page<QueryUserResponse> query(@QueryValue String q, Pageable pageable) {
+  @Get("/{?q}")
+  public Page<QueryUserResponse> query(@Valid @RequestBean QueryUserRequest queryUserRequest) {
 
-    final var users = keycloak.realm(keycloakRealm).users().search(q,
-        Math.toIntExact(pageable.getOffset()),
-        pageable.getSize());
+    final var users = keycloak.realm(keycloakRealm).users().search(
+        queryUserRequest.q(),
+        Math.toIntExact(queryUserRequest.pageable().getOffset()),
+        queryUserRequest.pageable().getSize());
     final var total = keycloak.realm(keycloakRealm).users().count();
     return Page.of(users.stream().map(userRepresentation -> new QueryUserResponse(
         userRepresentation.getId(),
@@ -90,17 +94,17 @@ public class UserController {
         userRepresentation.getFirstName(),
         userRepresentation.getLastName(),
         userRepresentation.isEnabled()
-    )).toList(), pageable, total);
+    )).toList(), queryUserRequest.pageable(), total);
   }
 
   /**
    * Delete user by id.
    *
-   * @param id User id
+   * @param deleteUserRequest Parameters
    */
-  @Delete("{id}")
-  public void delete(@PathVariable String id) {
-    keycloak.realm(keycloakRealm).users().delete(id);
+  @Delete("/{id}")
+  public void delete(@Valid @RequestBean DeleteUserRequest deleteUserRequest) {
+    keycloak.realm(keycloakRealm).users().delete(deleteUserRequest.id());
   }
 
   /**
@@ -110,7 +114,7 @@ public class UserController {
    * @param updateUserRequest User info
    * @return User just updated
    */
-  @Put("{id}")
+  @Put("/{id}")
   public CreateUserResponse update(@PathVariable String id,
                                    @Body @Valid UpdateUserRequest updateUserRequest) {
     keycloak.realm(keycloakRealm).users().get(id)
@@ -126,36 +130,44 @@ public class UserController {
   }
 
   /**
-   * Reset user password by id.
+   * Reset password.
    *
-   * @param id User id
+   * @param resetPasswordRequest Parameters
    */
   @Post("/{id}/password")
-  public void resetPassword(@PathVariable String id) {
-    keycloak.realm(keycloakRealm).users().get(id).executeActionsEmail(List.of("UPDATE_PASSWORD"));
+  @Status(HttpStatus.NO_CONTENT)
+  public void resetPassword(@Valid @RequestBean ResetPasswordRequest resetPasswordRequest) {
+    keycloak.realm(keycloakRealm).users().get(resetPasswordRequest.id())
+        .executeActionsEmail(List.of("UPDATE_PASSWORD"));
   }
 
   /**
    * Assign role to user.
    *
-   * @param userId User id
-   * @param roleId Role id
+   * @param assignRoleToUserRequest Parameters
    */
   @Post("/{userId}/role/{roleId}")
-  public void assignRoleToUser(String userId, String roleId) {
-    final var role = keycloak.realm(keycloakRealm).roles().get(roleId).toRepresentation();
-    keycloak.realm(keycloakRealm).users().get(userId).roles().realmLevel().add(List.of(role));
+  @Status(HttpStatus.NO_CONTENT)
+  public void assignRoleToUser(
+      @Valid @RequestBean AssignRoleToUserRequest assignRoleToUserRequest) {
+    final var role = keycloak.realm(keycloakRealm).roles().get(assignRoleToUserRequest.roleId())
+        .toRepresentation();
+    keycloak.realm(keycloakRealm).users().get(assignRoleToUserRequest.userId()).roles().realmLevel()
+        .add(List.of(role));
   }
 
   /**
-   * Unassign role from user.
+   * remove role from user.
    *
-   * @param userId User id
-   * @param roleId Role id
+   * @param removeRoleFromUserRequest Parameters
    */
   @Delete("/{userId}/role/{roleId}")
-  public void unassignRoleFromUser(String userId, String roleId) {
-    final var role = keycloak.realm(keycloakRealm).roles().get(roleId).toRepresentation();
-    keycloak.realm(keycloakRealm).users().get(userId).roles().realmLevel().remove(List.of(role));
+  @Status(HttpStatus.NO_CONTENT)
+  public void removeRoleFromUser(
+      @Valid @RequestBean RemoveRoleFromUserRequest removeRoleFromUserRequest) {
+    final var role = keycloak.realm(keycloakRealm).roles().get(removeRoleFromUserRequest.roleId())
+        .toRepresentation();
+    keycloak.realm(keycloakRealm).users().get(removeRoleFromUserRequest.userId()).roles()
+        .realmLevel().remove(List.of(role));
   }
 }

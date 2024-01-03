@@ -1,7 +1,8 @@
-package broccoli.common.validator;
+package broccoli.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import broccoli.common.validator.StrongPasswordValidator;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

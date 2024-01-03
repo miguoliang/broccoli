@@ -1,4 +1,4 @@
-package broccoli.controller;
+package broccoli.controller.graph;
 
 import static io.micronaut.http.HttpRequest.DELETE;
 import static io.micronaut.http.HttpRequest.GET;

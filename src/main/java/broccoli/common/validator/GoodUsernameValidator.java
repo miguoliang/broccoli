@@ -19,7 +19,7 @@ import io.micronaut.validation.validator.constraints.ConstraintValidatorContext;
  */
 public class GoodUsernameValidator implements ConstraintValidator<GoodUsername, String> {
 
-  private static final String USERNAME_PATTERN = "^\\w{5,10}$";
+  private static final String USERNAME_PATTERN = "^\\w{5,100}$";
 
   @Override
   public boolean isValid(@Nullable String value,
