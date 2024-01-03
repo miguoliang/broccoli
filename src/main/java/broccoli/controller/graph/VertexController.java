@@ -4,6 +4,9 @@ import static broccoli.common.HttpStatusExceptions.conflict;
 
 import broccoli.common.HttpStatusExceptions;
 import broccoli.model.graph.http.request.CreateVertexRequest;
+import broccoli.model.graph.http.request.DeleteVertexRequest;
+import broccoli.model.graph.http.request.GetVertexRequest;
+import broccoli.model.graph.http.request.QueryVertexRequest;
 import broccoli.model.graph.http.response.CreateVertexResponse;
 import broccoli.model.graph.http.response.GetVertexResponse;
 import broccoli.model.graph.http.response.QueryVertexResponse;
@@ -16,14 +19,13 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.RequestBean;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,12 +45,12 @@ public class VertexController {
   /**
    * Get a vertex by id.
    *
-   * @param id Vertex id
-   * @return Vertex just found
+   * @param getVertexRequest {@link GetVertexRequest}
+   * @return {@link GetVertexResponse}
    */
-  @Get("{id}")
-  public GetVertexResponse findById(@PathVariable @NotBlank String id) {
-    return GetVertexResponse.of(vertexRepository.findById(id)
+  @Get("/{id}")
+  public GetVertexResponse findById(@Valid @RequestBean GetVertexRequest getVertexRequest) {
+    return GetVertexResponse.of(vertexRepository.findById(getVertexRequest.id())
         .orElseThrow(HttpStatusExceptions::notFound));
   }
 
@@ -60,7 +62,7 @@ public class VertexController {
    */
   @Post
   @Status(HttpStatus.CREATED)
-  public CreateVertexResponse create(@Body @Valid CreateVertexRequest createVertexRequest) {
+  public CreateVertexResponse create(@Valid @Body CreateVertexRequest createVertexRequest) {
     final var vertex = createVertexRequest.toEntity();
     if (vertexRepository.existsById(vertex.getId())) {
       throw conflict();
@@ -71,29 +73,34 @@ public class VertexController {
   /**
    * Delete a vertex by id.
    *
-   * @param id Vertex id
+   * @param deleteVertexRequest {@link DeleteVertexRequest}
    */
-  @Delete("{id}")
+  @Delete("/{id}")
   @Status(HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable @NotBlank String id) {
-    vertexRepository.deleteById(id);
+  public void delete(@Valid @RequestBean DeleteVertexRequest deleteVertexRequest) {
+    vertexRepository.deleteById(deleteVertexRequest.id());
   }
+
 
   /**
    * Query vertices.
    *
-   * @param q        query string
-   * @param pageable page info
-   * @return vertices
+   * @param queryVertexRequest {@link QueryVertexRequest}
+   * @return {@link Page} of {@link QueryVertexResponse}
    */
-  @Get
-  public Page<QueryVertexResponse> query(@QueryValue String q, Pageable pageable) {
+  @Get("/{?q}")
+  @Transactional
+  public Page<QueryVertexResponse> query(
+      @Valid @RequestBean QueryVertexRequest queryVertexRequest) {
 
-    if (StringUtils.isBlank(q)) {
+    if (StringUtils.isBlank(queryVertexRequest.q())) {
+      final var pageable = queryVertexRequest.pageable() == null ? Pageable.from(0) :
+          queryVertexRequest.pageable();
       return vertexRepository.findAll(pageable).map(QueryVertexResponse::of);
     }
 
-    final var specs = VertexSpecifications.nameLike(q);
-    return vertexRepository.findAll(specs, pageable).map(QueryVertexResponse::of);
+    final var specs = VertexSpecifications.nameLike(queryVertexRequest.q());
+    return vertexRepository.findAll(specs, queryVertexRequest.pageable())
+        .map(QueryVertexResponse::of);
   }
 }

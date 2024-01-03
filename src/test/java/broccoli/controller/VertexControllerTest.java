@@ -14,7 +14,10 @@ import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.http.request.CreateVertexRequest;
 import broccoli.model.graph.http.response.CreateVertexResponse;
 import broccoli.model.graph.http.response.GetVertexResponse;
+import broccoli.model.graph.http.response.QueryVertexResponse;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.type.Argument;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -163,5 +166,59 @@ class VertexControllerTest {
     assertNotNull(response);
     assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
     assertFalse(helper.vertexExists(name, type));
+  }
+
+  @Test
+  void testQueryVertices_ShouldReturnFoundWithQ(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+    helper.createVertex(name, type);
+
+    // Execute
+    final var response = client.toBlocking().exchange(GET("graph/vertex?q=" + name),
+        Argument.of(Page.class, QueryVertexResponse.class));
+
+    // Verify
+    assertNotNull(response);
+    assertEquals(HttpStatus.OK, response.getStatus());
+
+    final var queryVertexResponse = response.body();
+    assertNotNull(queryVertexResponse);
+    assertEquals(1, queryVertexResponse.getTotalSize());
+    assertEquals(1, queryVertexResponse.getContent().size());
+
+    final var foundVertex = (QueryVertexResponse) queryVertexResponse.getContent().getFirst();
+    assertEquals(Vertex.getId(name, type), foundVertex.id());
+    assertEquals(name, foundVertex.name());
+    assertEquals(type, foundVertex.type());
+  }
+
+  @Test
+  void testQueryVertices_ShouldReturnFoundWithoutQ(TestInfo testInfo) {
+
+    // Setup
+    final var name = testInfo.getDisplayName();
+    final var type = "foo";
+    helper.createVertex(name, type);
+
+    // Execute
+    final var response = client.toBlocking().exchange(GET("graph/vertex"),
+        Argument.of(Page.class, QueryVertexResponse.class));
+
+    // Verify
+    assertNotNull(response);
+    assertEquals(HttpStatus.OK, response.getStatus());
+
+    final var queryVertexResponse = response.body();
+    assertNotNull(queryVertexResponse);
+    assertEquals(1, queryVertexResponse.getTotalSize());
+    assertEquals(1, queryVertexResponse.getContent().size());
+
+    final var foundVertex = (QueryVertexResponse) queryVertexResponse.getContent().getFirst();
+    assertEquals(Vertex.getId(name, type), foundVertex.id());
+    assertEquals(name, foundVertex.name());
+    assertEquals(type, foundVertex.type());
   }
 }
