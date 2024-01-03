@@ -1,11 +1,13 @@
-package broccoli.model.identity.http.response;
+package broccoli.model.graph.http.response;
 
 import broccoli.model.graph.entity.Edge;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * The {@link QueryEdgeResponse} class.
  */
+@Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record QueryEdgeResponse(String inVertexId, String inVertexName, String inVertexType,
                                 String outVertexId, String outVertexName, String outVertexType,

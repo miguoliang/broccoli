@@ -1,5 +1,6 @@
 package broccoli.model.graph.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -25,12 +26,12 @@ import lombok.Setter;
 public class Edge {
 
   @Id
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, cascade = CascadeType.DETACH)
   @JoinColumn(name = "in_vertex_id")
   private Vertex inVertex;
 
   @Id
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, cascade = CascadeType.DETACH)
   @JoinColumn(name = "out_vertex_id")
   private Vertex outVertex;
 

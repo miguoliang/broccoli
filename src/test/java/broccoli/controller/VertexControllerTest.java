@@ -1,24 +1,29 @@
 package broccoli.controller;
 
+import static io.micronaut.http.HttpRequest.DELETE;
+import static io.micronaut.http.HttpRequest.GET;
+import static io.micronaut.http.HttpRequest.POST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.GraphResourceClient;
 import broccoli.common.GraphTestHelper;
 import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.http.request.CreateVertexRequest;
+import broccoli.model.graph.http.response.CreateVertexResponse;
+import broccoli.model.graph.http.response.GetVertexResponse;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.core.publisher.Mono;
 
 /**
  * The {@link VertexControllerTest} class.
@@ -26,11 +31,11 @@ import reactor.core.publisher.Mono;
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
 @Property(name = "micronaut.security.enabled", value = "false")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VertexControllerTest {
 
   @Inject
-  GraphResourceClient client;
+  @Client("/")
+  HttpClient client;
 
   @Inject
   GraphTestHelper helper;
@@ -44,13 +49,22 @@ class VertexControllerTest {
     final var request = new CreateVertexRequest(name, type);
 
     // Execute
-    final var response = Mono.from(client.createVertex(request)).block();
+    final var response =
+        client.toBlocking().exchange(POST("graph/vertex", request), CreateVertexResponse.class);
 
-    // Verify
+    // Verify the response
     assertNotNull(response);
-    assertEquals(request.name(), response.name());
-    assertEquals(request.type(), response.type());
-    assertEquals(Vertex.getId(name, type), response.id());
+    assertEquals(HttpStatus.CREATED, response.getStatus());
+
+    final var createdResponse = response.body();
+    assertNotNull(createdResponse);
+    assertEquals(request.name(), createdResponse.name());
+    assertEquals(request.type(), createdResponse.type());
+    assertEquals(Vertex.getId(name, type), createdResponse.id());
+
+    // Verify the created vertex
+    final var createdVertex = helper.vertexExists(name, type);
+    assertTrue(createdVertex);
   }
 
   @Test
@@ -63,13 +77,19 @@ class VertexControllerTest {
 
     // Execute
     final var id = Vertex.getId(name, type);
-    final var found = Mono.from(client.getVertex(id)).block();
+    final var found = client.toBlocking().exchange(GET("graph/vertex/" + id),
+        GetVertexResponse.class);
 
-    // Verify
+    // Verify response status
     assertNotNull(found);
-    assertEquals(id, found.id());
-    assertEquals(name, found.name());
-    assertEquals(type, found.type());
+    assertEquals(HttpStatus.OK, found.getStatus());
+
+    // Verify response body
+    final var foundBody = found.body();
+    assertNotNull(foundBody);
+    assertEquals(id, foundBody.id());
+    assertEquals(name, foundBody.name());
+    assertEquals(type, foundBody.type());
   }
 
   @Test
@@ -83,7 +103,7 @@ class VertexControllerTest {
     final var id = Vertex.getId(name, type);
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> Mono.from(client.getVertex(id)).block(),
+        () -> client.toBlocking().exchange(GET("graph/vertex/" + id), GetVertexResponse.class),
         "Vertex not found");
 
     // Verify
@@ -102,7 +122,8 @@ class VertexControllerTest {
     // Execute
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> Mono.from(client.createVertex(request)).block(),
+        () -> client.toBlocking().exchange(POST("graph/vertex", request),
+            CreateVertexResponse.class),
         "Vertex already exists");
 
     // Verify
@@ -115,10 +136,10 @@ class VertexControllerTest {
     // Setup
     final var name = testInfo.getDisplayName();
     final var type = "foo";
+    final var id = Vertex.getId(name, type);
 
     // Execute
-    final var id = Vertex.getId(name, type);
-    final var response = Mono.from(client.deleteVertex(id)).block();
+    final var response = client.toBlocking().exchange(DELETE("graph/vertex/" + id));
 
     // Verify
     assertNotNull(response);
@@ -136,7 +157,7 @@ class VertexControllerTest {
 
     // Execute
     final var id = Vertex.getId(name, type);
-    final var response = Mono.from(client.deleteVertex(id)).block();
+    final var response = client.toBlocking().exchange(DELETE("graph/vertex/" + id));
 
     // Verify
     assertNotNull(response);

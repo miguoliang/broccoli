@@ -1,4 +1,4 @@
-package broccoli.model.identity.http.response;
+package broccoli.model.graph.http.response;
 
 import broccoli.model.graph.entity.Edge;
 import io.micronaut.serde.annotation.Serdeable;

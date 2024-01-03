@@ -1,24 +1,28 @@
 package broccoli.controller;
 
+import static io.micronaut.http.HttpRequest.GET;
+import static io.micronaut.http.HttpRequest.POST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.GraphResourceClient;
 import broccoli.common.GraphTestHelper;
+import broccoli.model.graph.http.response.CreateEdgeResponse;
+import broccoli.model.graph.http.response.QueryEdgeResponse;
 import broccoli.model.identity.http.request.CreateEdgeRequest;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.type.Argument;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
-import java.util.Collections;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.core.publisher.Mono;
 
 /**
  * The {@link EdgeControllerTest} class.
@@ -26,11 +30,11 @@ import reactor.core.publisher.Mono;
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
 @Property(name = "micronaut.security.enabled", value = "false")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EdgeControllerTest {
 
   @Inject
-  GraphResourceClient client;
+  @Client("/")
+  HttpClient client;
 
   @Inject
   GraphTestHelper helper;
@@ -41,9 +45,41 @@ class EdgeControllerTest {
     // Execute & Verify
     final var exception = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> Mono.from(client.queryEdges(Collections.emptySet(), Set.of(), Set.of(), null)).block(),
+        () -> client.toBlocking().exchange("graph/edge"),
         "Bad request should be thrown");
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+  }
+
+  @Test
+  void testQueryEdges_ShouldReturnOk(TestInfo testInfo) {
+
+    // Setup
+    final var inVertex = helper.createVertex(testInfo.getDisplayName() + "_in", "foo");
+    final var outVertex = helper.createVertex(testInfo.getDisplayName() + "_out", "foo");
+    final var name = "foo";
+    final var scope = "bar";
+    helper.createEdge(inVertex.getId(), outVertex.getId(), name, scope);
+
+    // Execute
+    final var response = client.toBlocking().exchange(
+        GET("graph/edge?vid=" + inVertex.getId() + "&vid=" + outVertex.getId()
+            + "&name=" + name + "&scope=" + scope),
+        Argument.of(Page.class, QueryEdgeResponse.class));
+
+    // Verify the response
+    assertNotNull(response);
+    assertEquals(HttpStatus.OK, response.getStatus());
+
+    final var queryEdgeResponse = response.body();
+    assertNotNull(queryEdgeResponse);
+    assertEquals(1, queryEdgeResponse.getTotalSize());
+    assertEquals(1, queryEdgeResponse.getContent().size());
+
+    final var foundEdge = (QueryEdgeResponse) queryEdgeResponse.getContent().getFirst();
+    assertEquals(inVertex.getId(), foundEdge.inVertexId());
+    assertEquals(outVertex.getId(), foundEdge.outVertexId());
+    assertEquals(name, foundEdge.name());
+    assertEquals(scope, foundEdge.scope());
   }
 
   @Test
@@ -54,22 +90,45 @@ class EdgeControllerTest {
     final var outVertex = helper.createVertex(testInfo.getDisplayName() + "_out", "foo");
     final var name = "foo";
     final var scope = "bar";
-    final var request = new CreateEdgeRequest(inVertex.getId(), outVertex.getId(), name, scope);
+    final var requestBody = new CreateEdgeRequest(inVertex.getId(), outVertex.getId(), name, scope);
 
     // Execute
-    final var response = Mono.from(client.createEdge(request)).block();
+    final var response =
+        client.toBlocking().exchange(POST("graph/edge", requestBody), CreateEdgeResponse.class);
 
     // Verify the response
     assertNotNull(response);
     assertEquals(HttpStatus.CREATED, response.getStatus());
 
-    final var createdEdge = response.getBody().orElseThrow();
+    final var createdEdge = response.body();
+    assertNotNull(createdEdge);
     assertEquals(inVertex.getId(), createdEdge.inVertexId());
     assertEquals(outVertex.getId(), createdEdge.outVertexId());
     assertEquals(name, createdEdge.name());
     assertEquals(scope, createdEdge.scope());
 
     // Verify the edge is created
-    helper.edgeExists(inVertex.getId(), outVertex.getId(), name, scope);
+    final var exists = helper.edgeExists(inVertex.getId(), outVertex.getId(), name, scope);
+    assertTrue(exists);
+  }
+
+  @Test
+  void testCreateEdge_ShouldReturnConflict() {
+
+    // Setup
+    final var inVertex = helper.createVertex("foo_in", "foo");
+    final var outVertex = helper.createVertex("foo_out", "foo");
+    final var name = "foo";
+    final var scope = "bar";
+    final var requestBody = new CreateEdgeRequest(inVertex.getId(), outVertex.getId(), name, scope);
+    helper.createEdge(inVertex.getId(), outVertex.getId(), name, scope);
+
+    // Execute & Verify
+    final var exception = assertThrowsExactly(
+        HttpClientResponseException.class,
+        () -> client.toBlocking()
+            .exchange(POST("graph/edge", requestBody), CreateEdgeResponse.class),
+        "Conflict should be thrown");
+    assertEquals(HttpStatus.CONFLICT, exception.getStatus());
   }
 }

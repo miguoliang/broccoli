@@ -1,11 +1,13 @@
 package broccoli.common;
 
+import broccoli.model.graph.entity.Edge;
 import broccoli.model.graph.entity.EdgeId;
 import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.repository.EdgeRepository;
 import broccoli.model.graph.repository.VertexRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 
 /**
  * The {@link GraphTestHelper} class.
@@ -40,6 +42,14 @@ public class GraphTestHelper {
     return vertexRepository.existsById(Vertex.getId(name, type));
   }
 
+  /**
+   * If an edge exists.
+   *
+   * @param inVertexId  in-coming vertex id
+   * @param outVertexId out-coming vertex id
+   * @param name        edge name
+   * @param scope       edge scope
+   */
   public boolean edgeExists(String inVertexId, String outVertexId, String name, String scope) {
     final var inVertex = vertexRepository.findById(inVertexId).orElseThrow();
     final var outVertex = vertexRepository.findById(outVertexId).orElseThrow();
@@ -49,5 +59,25 @@ public class GraphTestHelper {
     edgeId.setName(name);
     edgeId.setScope(scope);
     return edgeRepository.existsById(edgeId);
+  }
+
+  /**
+   * Create an edge.
+   *
+   * @param inVertexId  in-coming vertex id
+   * @param outVertexId out-coming vertex id
+   * @param name        edge name
+   * @param scope       edge scope
+   */
+  @Transactional
+  public void createEdge(String inVertexId, String outVertexId, String name, String scope) {
+    final var inVertex = vertexRepository.findById(inVertexId).orElseThrow();
+    final var outVertex = vertexRepository.findById(outVertexId).orElseThrow();
+    final var edge = new Edge();
+    edge.setInVertex(inVertex);
+    edge.setOutVertex(outVertex);
+    edge.setName(name);
+    edge.setScope(scope);
+    edgeRepository.saveAndFlush(edge);
   }
 }

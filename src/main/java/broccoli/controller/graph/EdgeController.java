@@ -5,12 +5,12 @@ import static broccoli.common.HttpStatusExceptions.conflict;
 import broccoli.common.HttpStatusExceptions;
 import broccoli.model.graph.entity.Edge;
 import broccoli.model.graph.entity.EdgeId;
+import broccoli.model.graph.http.response.CreateEdgeResponse;
+import broccoli.model.graph.http.response.QueryEdgeResponse;
 import broccoli.model.graph.repository.EdgeRepository;
 import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.spec.EdgeSpecifications;
 import broccoli.model.identity.http.request.CreateEdgeRequest;
-import broccoli.model.identity.http.response.CreateEdgeResponse;
-import broccoli.model.identity.http.response.QueryEdgeResponse;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
@@ -89,6 +89,7 @@ public class EdgeController {
    * @return edges
    */
   @Get
+  @Transactional
   public Page<QueryEdgeResponse> query(@QueryValue @NotEmpty Set<String> vid,
                                        @QueryValue @NotEmpty Set<String> name,
                                        @QueryValue @NotEmpty Set<String> scope,
