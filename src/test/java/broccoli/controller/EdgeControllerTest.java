@@ -22,13 +22,11 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link EdgeControllerTest} class.
  */
 @MicronautTest(transactional = false)
-@Testcontainers(disabledWithoutDocker = true)
 @Property(name = "micronaut.security.enabled", value = "false")
 class EdgeControllerTest {
 

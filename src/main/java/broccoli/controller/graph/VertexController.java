@@ -13,7 +13,6 @@ import broccoli.model.graph.http.response.QueryVertexResponse;
 import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.spec.VertexSpecifications;
 import io.micronaut.data.model.Page;
-import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -81,7 +80,6 @@ public class VertexController {
     vertexRepository.deleteById(deleteVertexRequest.id());
   }
 
-
   /**
    * Query vertices.
    *
@@ -94,9 +92,7 @@ public class VertexController {
       @Valid @RequestBean QueryVertexRequest queryVertexRequest) {
 
     if (StringUtils.isBlank(queryVertexRequest.q())) {
-      final var pageable = queryVertexRequest.pageable() == null ? Pageable.from(0) :
-          queryVertexRequest.pageable();
-      return vertexRepository.findAll(pageable).map(QueryVertexResponse::of);
+      return vertexRepository.findAll(queryVertexRequest.pageable()).map(QueryVertexResponse::of);
     }
 
     final var specs = VertexSpecifications.nameLike(queryVertexRequest.q());

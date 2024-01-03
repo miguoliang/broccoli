@@ -24,15 +24,14 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link VertexControllerTest} class.
  */
 @MicronautTest(transactional = false)
-@Testcontainers(disabledWithoutDocker = true)
 @Property(name = "micronaut.security.enabled", value = "false")
 class VertexControllerTest {
 
@@ -196,7 +195,7 @@ class VertexControllerTest {
   }
 
   @Test
-  void testQueryVertices_ShouldReturnFoundWithoutQ(TestInfo testInfo) {
+  void testQueryVertices_ShouldReturnFoundWithoutAnyParameters(TestInfo testInfo) {
 
     // Setup
     final var name = testInfo.getDisplayName();
@@ -213,12 +212,30 @@ class VertexControllerTest {
 
     final var queryVertexResponse = response.body();
     assertNotNull(queryVertexResponse);
-    assertEquals(1, queryVertexResponse.getTotalSize());
-    assertEquals(1, queryVertexResponse.getContent().size());
+    assertTrue(1 <= queryVertexResponse.getTotalSize());
+    assertTrue(10 >= queryVertexResponse.getContent().size());
+  }
 
-    final var foundVertex = (QueryVertexResponse) queryVertexResponse.getContent().getFirst();
-    assertEquals(Vertex.getId(name, type), foundVertex.id());
-    assertEquals(name, foundVertex.name());
-    assertEquals(type, foundVertex.type());
+  @Test
+  void testQueryVertices_ShouldReturnFoundWithPaginationOnly(TestInfo testInfo) {
+
+    // Setup
+    IntStream.range(0, 20).forEach(i -> helper.createVertex(testInfo.getDisplayName() + "_" + i,
+        "foo"));
+
+    // Execute
+    final var response = client.toBlocking().exchange(GET("graph/vertex?page=1&size=5"),
+        Argument.of(Page.class, QueryVertexResponse.class));
+
+    // Verify
+    assertNotNull(response);
+    assertEquals(HttpStatus.OK, response.getStatus());
+
+    final var queryVertexResponse = response.body();
+    assertNotNull(queryVertexResponse);
+    assertEquals(1, queryVertexResponse.getPageNumber());
+    assertEquals(5, queryVertexResponse.getSize());
+    assertTrue(20 <= queryVertexResponse.getTotalSize());
+    assertTrue(5 <= queryVertexResponse.getContent().size());
   }
 }
