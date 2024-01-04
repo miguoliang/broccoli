@@ -1,4 +1,4 @@
-package broccoli.validator;
+package broccoli.suite.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

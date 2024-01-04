@@ -1,4 +1,4 @@
-package broccoli.security.keycloak;
+package broccoli.suite.security.keycloak;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -7,8 +7,8 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 
+import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.KeycloakClientFacade;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpRequest;
@@ -32,20 +32,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.keycloak.test.FluentTestsHelper;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
-class PolicyEnforcerRuleTest implements TestPropertyProvider {
-
-  @Container
-  static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:23.0.0")
-      .withRealmImportFile("realm-quickstart.json")
-      .withContextPath("/auth")
-      .withReuse(true);
+class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
 
   @Inject
   @Client("/")
@@ -56,7 +49,8 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   KeycloakClientFacade keycloakClientFacade;
 
   static String getJwksUri() {
-    return String.format("http://%s", keycloak.getHost() + ":" + keycloak.getFirstMappedPort()
+    return String.format("http://%s",
+        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
         + "/auth/realms/quickstart/protocol/openid-connect/certs");
   }
 
@@ -68,7 +62,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   @BeforeAll
   public void setup() {
     fluentTestsHelper = new FluentTestsHelper(
-        keycloak.getAuthServerUrl(),
+        KEYCLOAK_CONTAINER.getAuthServerUrl(),
         DEFAULT_ADMIN_USERNAME,
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
@@ -78,7 +72,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
     fluentTestsHelper.init();
 
     keycloakClientFacade = new KeycloakClientFacade(
-        keycloak.getAuthServerUrl(),
+        KEYCLOAK_CONTAINER.getAuthServerUrl(),
         "quickstart",
         "authz-servlet",
         "secret"
@@ -87,9 +81,6 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
 
   @Override
   public @NonNull Map<String, String> getProperties() {
-    if (!keycloak.isRunning()) {
-      keycloak.start();
-    }
     return Map.of(
         "logger.levels.org.keycloak", "INFO",
         "logger.levels.io.micronaut.security", "INFO",
@@ -176,7 +167,7 @@ class PolicyEnforcerRuleTest implements TestPropertyProvider {
   PolicyEnforcerConfig policyEnforcerConfig() {
 
     final var enforcerConfig = new PolicyEnforcerConfig();
-    enforcerConfig.setAuthServerUrl(keycloak.getAuthServerUrl());
+    enforcerConfig.setAuthServerUrl(KEYCLOAK_CONTAINER.getAuthServerUrl());
     enforcerConfig.setRealm("quickstart");
     enforcerConfig.setResource("authz-servlet");
     enforcerConfig.setHttpMethodAsScope(true);

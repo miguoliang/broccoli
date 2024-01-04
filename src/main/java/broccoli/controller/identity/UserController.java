@@ -103,6 +103,7 @@ public class UserController {
    * @param deleteUserRequest Parameters
    */
   @Delete("/{id}")
+  @Status(HttpStatus.NO_CONTENT)
   public void delete(@Valid @RequestBean DeleteUserRequest deleteUserRequest) {
     keycloak.realm(keycloakRealm).users().delete(deleteUserRequest.id());
   }

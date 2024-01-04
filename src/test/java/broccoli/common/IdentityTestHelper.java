@@ -22,4 +22,8 @@ public class IdentityTestHelper {
   public boolean userExists(String username) {
     return !keycloak.realm("master").users().search(username).isEmpty();
   }
+
+  public String userId(String username) {
+    return keycloak.realm("master").users().search(username).getFirst().getId();
+  }
 }

@@ -1,4 +1,4 @@
-package broccoli.security.keycloak;
+package broccoli.suite.security.keycloak;
 
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;

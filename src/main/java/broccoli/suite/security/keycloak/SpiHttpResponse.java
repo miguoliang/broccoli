@@ -1,4 +1,4 @@
-package broccoli.security.keycloak;
+package broccoli.suite.security.keycloak;
 
 import org.keycloak.adapters.authorization.spi.HttpResponse;
 
