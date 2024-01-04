@@ -26,4 +26,16 @@ public class IdentityTestHelper {
   public String userId(String username) {
     return keycloak.realm("master").users().search(username).getFirst().getId();
   }
+
+  /**
+   * Update user email.
+   *
+   * @param userId User id
+   * @param mail   New email
+   */
+  public void userEmail(String userId, String mail) {
+    final var userRepresentation = keycloak.realm("master").users().get(userId).toRepresentation();
+    userRepresentation.setEmail(mail);
+    keycloak.realm("master").users().get(userId).update(userRepresentation);
+  }
 }

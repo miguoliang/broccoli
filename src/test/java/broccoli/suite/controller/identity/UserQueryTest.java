@@ -4,11 +4,6 @@ import static io.micronaut.http.HttpRequest.GET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_TEST_REALM;
 
 import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.IdentityTestHelper;
@@ -25,11 +20,9 @@ import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
@@ -49,21 +42,6 @@ class UserQueryTest extends AbstractKeycloakBasedTest implements TestPropertyPro
 
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
-
-  FluentTestsHelper fluentTestsHelper;
-
-  @BeforeAll
-  void setup() {
-    fluentTestsHelper = new FluentTestsHelper(
-        KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        DEFAULT_ADMIN_USERNAME,
-        DEFAULT_ADMIN_PASSWORD,
-        DEFAULT_ADMIN_REALM,
-        DEFAULT_ADMIN_CLIENT,
-        DEFAULT_TEST_REALM
-    );
-    fluentTestsHelper.init();
-  }
 
   @Test
   void query_ShouldReturnFound_WithQ(TestInfo testInfo) {

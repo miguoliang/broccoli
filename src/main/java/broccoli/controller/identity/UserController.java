@@ -131,11 +131,12 @@ public class UserController {
   }
 
   /**
-   * Reset password.
+   * Reset password. An email contains a link the user can click to perform a set of required
+   * actions (UPDATE_PASSWORD).
    *
    * @param resetPasswordRequest Parameters
    */
-  @Post("/{id}/password")
+  @Post("/{id}/reset-password")
   @Status(HttpStatus.NO_CONTENT)
   public void resetPassword(@Valid @RequestBean ResetPasswordRequest resetPasswordRequest) {
     keycloak.realm(keycloakRealm).users().get(resetPasswordRequest.id())

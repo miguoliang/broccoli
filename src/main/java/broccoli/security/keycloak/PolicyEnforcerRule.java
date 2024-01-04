@@ -1,4 +1,4 @@
-package broccoli.suite.security.keycloak;
+package broccoli.security.keycloak;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;

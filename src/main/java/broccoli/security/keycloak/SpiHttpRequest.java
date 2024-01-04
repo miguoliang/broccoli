@@ -1,4 +1,4 @@
-package broccoli.suite.security.keycloak;
+package broccoli.security.keycloak;
 
 import io.micronaut.http.MediaType;
 import java.io.BufferedInputStream;

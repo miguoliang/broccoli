@@ -1,11 +1,7 @@
-package broccoli.suite.security.keycloak;
+package broccoli.security.keycloak;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 
 import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.KeycloakClientFacade;
@@ -31,7 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
-import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @MicronautTest
@@ -44,15 +39,7 @@ class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPr
   @Client("/")
   HttpClient client;
 
-  FluentTestsHelper fluentTestsHelper;
-
   KeycloakClientFacade keycloakClientFacade;
-
-  static String getJwksUri() {
-    return String.format("http://%s",
-        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
-        + "/auth/realms/quickstart/protocol/openid-connect/certs");
-  }
 
   @BeforeEach
   void setup(TestInfo testInfo) {
@@ -61,22 +48,17 @@ class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPr
 
   @BeforeAll
   public void setup() {
-    fluentTestsHelper = new FluentTestsHelper(
-        KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        DEFAULT_ADMIN_USERNAME,
-        DEFAULT_ADMIN_PASSWORD,
-        DEFAULT_ADMIN_REALM,
-        DEFAULT_ADMIN_CLIENT,
-        "quickstart"
-    );
-    fluentTestsHelper.init();
-
     keycloakClientFacade = new KeycloakClientFacade(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "quickstart",
+        testRealm(),
         "authz-servlet",
         "secret"
     );
+  }
+
+  @Override
+  protected String testRealm() {
+    return "quickstart";
   }
 
   @Override
