@@ -1,5 +1,6 @@
 package broccoli.model.identity.http.request;
 
+import broccoli.common.validator.GoodUsername;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micronaut.core.annotation.Introspected;
 import jakarta.validation.constraints.Email;
@@ -14,7 +15,8 @@ import org.keycloak.representations.idm.UserRepresentation;
  */
 @Introspected
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record UpdateUserRequest(@Email String email, String firstName, String lastName) {
+public record UpdateUserRequest(@GoodUsername String username, @Email String email,
+                                String firstName, String lastName) {
 
   /**
    * Convert to {@link UserRepresentation}.
@@ -26,6 +28,7 @@ public record UpdateUserRequest(@Email String email, String firstName, String la
 
     final var user = new UserRepresentation();
     user.setId(id);
+    user.setUsername(username);
     user.setEmail(email);
     user.setFirstName(firstName);
     user.setLastName(lastName);

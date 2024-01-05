@@ -11,6 +11,7 @@ import broccoli.model.identity.http.request.ResetPasswordRequest;
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.CreateUserResponse;
 import broccoli.model.identity.http.response.QueryUserResponse;
+import broccoli.model.identity.http.response.UpdateUserResponse;
 import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
@@ -25,6 +26,7 @@ import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -110,24 +112,39 @@ public class UserController {
   }
 
   /**
-   * Update user by id.
+   * Update user by id. If you want to update username, you enable "Edit username" in the Realm
+   * settings, otherwise, username is not allowed to be updated.
    *
    * @param id                User id
    * @param updateUserRequest User info
    * @return User just updated
    */
   @Put("/{id}")
-  public CreateUserResponse update(@PathVariable String id,
+  public UpdateUserResponse update(@PathVariable String id,
                                    @Body @Valid UpdateUserRequest updateUserRequest) {
-    keycloak.realm(keycloakRealm).users().get(id)
-        .update(updateUserRequest.toRepresentation(id));
+
+    final var realmRepresentation = keycloak.realm(keycloakRealm).toRepresentation();
     final var user = keycloak.realm(keycloakRealm).users().get(id).toRepresentation();
-    return new CreateUserResponse(
-        user.getId(),
-        user.getUsername(),
-        user.getFirstName(),
-        user.getLastName(),
-        user.getEmail()
+    if (Boolean.FALSE.equals(realmRepresentation.isEditUsernameAllowed())
+        && !user.getUsername().equals(updateUserRequest.username())) {
+      throw HttpStatusExceptions.raw(HttpStatus.NOT_ACCEPTABLE,
+          "Username is not allowed to be updated");
+    }
+
+    try {
+      keycloak.realm(keycloakRealm).users().get(id)
+          .update(updateUserRequest.toRepresentation(id));
+    } catch (ClientErrorException e) {
+      throw HttpStatusExceptions.raw(e.getResponse().getStatus(), e.getMessage());
+    }
+
+    final var updatedUser = keycloak.realm(keycloakRealm).users().get(id).toRepresentation();
+    return new UpdateUserResponse(
+        updatedUser.getId(),
+        updatedUser.getUsername(),
+        updatedUser.getFirstName(),
+        updatedUser.getLastName(),
+        updatedUser.getEmail()
     );
   }
 
@@ -177,9 +194,13 @@ public class UserController {
   @Status(HttpStatus.NO_CONTENT)
   public void removeRoleFromUser(
       @Valid @RequestBean RemoveRoleFromUserRequest removeRoleFromUserRequest) {
-    final var role = keycloak.realm(keycloakRealm).roles().get(removeRoleFromUserRequest.roleId())
-        .toRepresentation();
-    keycloak.realm(keycloakRealm).users().get(removeRoleFromUserRequest.userId()).roles()
-        .realmLevel().remove(List.of(role));
+    try {
+      final var role =
+          keycloak.realm(keycloakRealm).rolesById().getRole(removeRoleFromUserRequest.roleId());
+      keycloak.realm(keycloakRealm).users().get(removeRoleFromUserRequest.userId()).roles()
+          .realmLevel().remove(List.of(role));
+    } catch (NotFoundException e) {
+      throw HttpStatusExceptions.notFound();
+    }
   }
 }

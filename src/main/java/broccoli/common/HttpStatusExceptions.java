@@ -22,4 +22,8 @@ public class HttpStatusExceptions {
   public static HttpStatusException raw(int code, String message) {
     return new HttpStatusException(HttpStatus.valueOf(code), message);
   }
+
+  public static HttpStatusException raw(HttpStatus status, String message) {
+    return new HttpStatusException(status, message);
+  }
 }
