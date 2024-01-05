@@ -51,7 +51,7 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
     final var username = helper.username(testInfo);
     final var password = "Aa123456789.";
     final var createUserRequest =
-        new CreateUserRequest(username, password, "first", "last", "foo@example.com");
+        new CreateUserRequest(username, password, "first", "last", null);
 
     // Execute
     final var response = client.toBlocking()
@@ -68,7 +68,6 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
     assertEquals(username, user.username(), "Username matches");
     assertEquals("first", user.firstName(), "First name matches");
     assertEquals("last", user.lastName(), "Last name matches");
-    assertEquals("foo@example.com", user.email(), "Email matches");
 
     // Verify user just created
     assertTrue(helper.userExists(username), "User exists");
@@ -82,7 +81,7 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
     final var password = "Aa123456789.";
     fluentTestsHelper.createTestUser(username, password);
     final var createUserRequest =
-        new CreateUserRequest(username, password, "first", "last", "foo@example.com");
+        new CreateUserRequest(username, password, "first", "last", null);
 
     // Execute
     final var thrown = assertThrowsExactly(

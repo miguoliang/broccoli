@@ -33,7 +33,6 @@ public abstract class AbstractKeycloakBasedTest {
         .waitingFor(Wait.forHttp("/"));
 
     KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
-        .withRealmImportFile("realm-master.json")
         .withRealmImportFile("realm-quickstart.json")
         .withContextPath("/auth")
         .withNetwork(network)

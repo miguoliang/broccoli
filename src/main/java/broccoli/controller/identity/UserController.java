@@ -25,6 +25,7 @@ import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -139,8 +140,12 @@ public class UserController {
   @Post("/{id}/reset-password")
   @Status(HttpStatus.NO_CONTENT)
   public void resetPassword(@Valid @RequestBean ResetPasswordRequest resetPasswordRequest) {
-    keycloak.realm(keycloakRealm).users().get(resetPasswordRequest.id())
-        .executeActionsEmail(List.of("UPDATE_PASSWORD"));
+    try {
+      keycloak.realm(keycloakRealm).users().get(resetPasswordRequest.id())
+          .executeActionsEmail(List.of("UPDATE_PASSWORD"));
+    } catch (NotFoundException e) {
+      throw HttpStatusExceptions.notFound();
+    }
   }
 
   /**
@@ -152,14 +157,19 @@ public class UserController {
   @Status(HttpStatus.NO_CONTENT)
   public void assignRoleToUser(
       @Valid @RequestBean AssignRoleToUserRequest assignRoleToUserRequest) {
-    final var role = keycloak.realm(keycloakRealm).roles().get(assignRoleToUserRequest.roleId())
-        .toRepresentation();
-    keycloak.realm(keycloakRealm).users().get(assignRoleToUserRequest.userId()).roles().realmLevel()
-        .add(List.of(role));
+    try {
+      final var role =
+          keycloak.realm(keycloakRealm).rolesById().getRole(assignRoleToUserRequest.roleId());
+      keycloak.realm(keycloakRealm).users().get(assignRoleToUserRequest.userId()).roles()
+          .realmLevel()
+          .add(List.of(role));
+    } catch (NotFoundException e) {
+      throw HttpStatusExceptions.notFound();
+    }
   }
 
   /**
-   * remove role from user.
+   * Remove role from user.
    *
    * @param removeRoleFromUserRequest Parameters
    */
