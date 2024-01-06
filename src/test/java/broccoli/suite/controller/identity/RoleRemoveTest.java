@@ -57,8 +57,8 @@ class RoleRemoveTest extends AbstractKeycloakBasedTest implements TestPropertyPr
     fluentTestsHelper.assignRoleWithUser(username, "user");
 
     // Execute
-    final var response =
-        client.toBlocking().exchange(DELETE("/identity/user/" + userId + "/role/" + roleId, null));
+    final var response = client.toBlocking()
+        .exchange(DELETE("api/identity/user/" + userId + "/role/" + roleId, null));
 
     // Verify http response
     assertNotNull(response, "Response should not be null");
@@ -85,7 +85,7 @@ class RoleRemoveTest extends AbstractKeycloakBasedTest implements TestPropertyPr
     final var response = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(DELETE("/identity/user/" + userId + "/roleId/" + roleId, null)),
+            .exchange(DELETE("api/identity/user/" + userId + "/roleId/" + roleId, null)),
         "Role does not exist");
 
     // Verify http response
@@ -110,7 +110,7 @@ class RoleRemoveTest extends AbstractKeycloakBasedTest implements TestPropertyPr
     final var response = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(DELETE("/identity/user/" + userId + "/role/" + roleId, null)),
+            .exchange(DELETE("api/identity/user/" + userId + "/role/" + roleId, null)),
         "User does not exist");
 
     // Verify http response

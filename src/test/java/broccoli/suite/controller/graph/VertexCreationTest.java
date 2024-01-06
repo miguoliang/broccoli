@@ -44,7 +44,7 @@ class VertexCreationTest {
 
     // Execute
     final var response =
-        client.toBlocking().exchange(POST("graph/vertex", request), CreateVertexResponse.class);
+        client.toBlocking().exchange(POST("api/graph/vertex", request), CreateVertexResponse.class);
 
     // Verify the response
     assertNotNull(response);
@@ -73,7 +73,7 @@ class VertexCreationTest {
     // Execute
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(POST("graph/vertex", request),
+        () -> client.toBlocking().exchange(POST("api/graph/vertex", request),
             CreateVertexResponse.class),
         "Vertex already exists");
 

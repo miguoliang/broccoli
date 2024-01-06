@@ -45,7 +45,7 @@ class UserDeletionTest extends AbstractKeycloakBasedTest implements TestProperty
     final var userId = helper.userId(username);
 
     // Execute
-    final var response = client.toBlocking().exchange(DELETE("/identity/user/" + userId));
+    final var response = client.toBlocking().exchange(DELETE("api/identity/user/" + userId));
 
     // Verify http response
     assertNotNull(response, "Response should not be null");
@@ -62,7 +62,7 @@ class UserDeletionTest extends AbstractKeycloakBasedTest implements TestProperty
     final var userId = "foo";
 
     // Execute
-    final var response = client.toBlocking().exchange(DELETE("/identity/user/" + userId));
+    final var response = client.toBlocking().exchange(DELETE("api/identity/user/" + userId));
 
 
     // Verify

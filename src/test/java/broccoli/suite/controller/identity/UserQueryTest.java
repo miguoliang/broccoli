@@ -52,8 +52,8 @@ class UserQueryTest extends AbstractKeycloakBasedTest implements TestPropertyPro
     fluentTestsHelper.createTestUser(username, password);
 
     // Execute
-    final var found = client.toBlocking().exchange(GET("identity/user?q=" + username), Argument.of(
-        Page.class, QueryUserResponse.class));
+    final var found = client.toBlocking().exchange(GET("api/identity/user?q=" + username),
+        Argument.of(Page.class, QueryUserResponse.class));
 
     // Verify response status
     assertNotNull(found, "Response should not be null");
@@ -82,7 +82,7 @@ class UserQueryTest extends AbstractKeycloakBasedTest implements TestPropertyPro
 
     // Execute
     final var found = client.toBlocking()
-        .exchange(GET("identity/user"), Argument.of(Page.class, QueryUserResponse.class));
+        .exchange(GET("api/identity/user"), Argument.of(Page.class, QueryUserResponse.class));
 
     // Verify response status
     assertNotNull(found, "Response should not be null");

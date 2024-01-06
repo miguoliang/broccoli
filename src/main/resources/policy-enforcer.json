@@ -1,9 +1,9 @@
 {
-  "realm": "master",
-  "auth-server-url": "http://localhost:8888",
-  "resource": "test-cli",
+  "realm": "broccoli",
+  "auth-server-url": "http://localhost:8080/auth",
+  "resource": "uma-resource-server",
   "http-method-as-scope": true,
   "credentials": {
-    "secret": "WGTCleOPj0iyRu0b3jZU5bD861I3uKeP"
+    "secret": "F3ME3awMHL3ZmTciA3DvYySe6BgOHngo"
   }
 }

@@ -39,7 +39,7 @@ class VertexDeletionTest {
     final var id = Vertex.getId(name, type);
 
     // Execute
-    final var response = client.toBlocking().exchange(DELETE("graph/vertex/" + id));
+    final var response = client.toBlocking().exchange(DELETE("api/graph/vertex/" + id));
 
     // Verify
     assertNotNull(response);
@@ -57,7 +57,7 @@ class VertexDeletionTest {
 
     // Execute
     final var id = Vertex.getId(name, type);
-    final var response = client.toBlocking().exchange(DELETE("graph/vertex/" + id));
+    final var response = client.toBlocking().exchange(DELETE("api/graph/vertex/" + id));
 
     // Verify
     assertNotNull(response);

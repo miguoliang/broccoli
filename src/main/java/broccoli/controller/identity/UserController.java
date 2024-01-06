@@ -35,7 +35,7 @@ import org.keycloak.admin.client.Keycloak;
 /**
  * The {@link UserController} class.
  */
-@Controller("/identity/user")
+@Controller("/api/identity/user")
 @Validated
 public class UserController {
 

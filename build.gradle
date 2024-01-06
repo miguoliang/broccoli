@@ -38,6 +38,8 @@ dependencies {
     implementation("io.micrometer:context-propagation")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
     implementation("io.micronaut.liquibase:micronaut-liquibase")
+    implementation("io.micronaut.micrometer:micronaut-micrometer-core")
+    implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
@@ -45,6 +47,7 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.validation:micronaut-validation")
+    implementation("io.micronaut:micronaut-management")
     implementation("org.keycloak:keycloak-admin-client:${keycloakVersion}")
     implementation("org.keycloak:keycloak-policy-enforcer:${keycloakVersion}")
     compileOnly("io.micronaut:micronaut-http-client")
@@ -134,5 +137,3 @@ tasks.named('sonar') {
     properties.put("sonar.tests",
             layout.getProjectDirectory().dir("src/test").getAsFile().getAbsolutePath())
 }
-
-

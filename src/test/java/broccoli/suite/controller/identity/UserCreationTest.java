@@ -55,7 +55,7 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
 
     // Execute
     final var response = client.toBlocking()
-        .exchange(POST("/identity/user", createUserRequest), CreateUserResponse.class);
+        .exchange(POST("api/identity/user", createUserRequest), CreateUserResponse.class);
 
     // Verify http response
     assertNotNull(response);
@@ -87,7 +87,7 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(POST("/identity/user", createUserRequest), CreateUserResponse.class),
+            .exchange(POST("api/identity/user", createUserRequest), CreateUserResponse.class),
         "User already exists");
 
     // Verify

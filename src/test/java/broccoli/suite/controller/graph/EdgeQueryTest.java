@@ -39,7 +39,7 @@ class EdgeQueryTest {
     // Execute & Verify
     final var exception = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> client.toBlocking().exchange("graph/edge"),
+        () -> client.toBlocking().exchange("api/graph/edge"),
         "Bad request should be thrown");
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
   }
@@ -56,7 +56,7 @@ class EdgeQueryTest {
 
     // Execute
     final var response = client.toBlocking().exchange(
-        GET("graph/edge?vid=" + inVertex.getId() + "&vid=" + outVertex.getId()
+        GET("api/graph/edge?vid=" + inVertex.getId() + "&vid=" + outVertex.getId()
             + "&name=" + name + "&scope=" + scope),
         Argument.of(Page.class, QueryEdgeResponse.class));
 

@@ -45,7 +45,7 @@ class EdgeCreationTest {
 
     // Execute
     final var response =
-        client.toBlocking().exchange(POST("graph/edge", requestBody), CreateEdgeResponse.class);
+        client.toBlocking().exchange(POST("api/graph/edge", requestBody), CreateEdgeResponse.class);
 
     // Verify the response
     assertNotNull(response);
@@ -78,7 +78,7 @@ class EdgeCreationTest {
     final var exception = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(POST("graph/edge", requestBody), CreateEdgeResponse.class),
+            .exchange(POST("api/graph/edge", requestBody), CreateEdgeResponse.class),
         "Conflict should be thrown");
     assertEquals(HttpStatus.CONFLICT, exception.getStatus());
   }

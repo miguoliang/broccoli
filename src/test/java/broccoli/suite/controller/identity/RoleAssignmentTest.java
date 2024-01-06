@@ -58,7 +58,7 @@ class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestProper
 
     // Execute
     final var response =
-        client.toBlocking().exchange(POST("/identity/user/" + userId + "/role/" + roleId, null));
+        client.toBlocking().exchange(POST("api/identity/user/" + userId + "/role/" + roleId, null));
 
     // Verify http response
     assertNotNull(response, "Response should not be null");
@@ -84,7 +84,7 @@ class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestProper
     final var response = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(POST("/identity/user/" + userId + "/roleId/" + roleId, null)),
+            .exchange(POST("api/identity/user/" + userId + "/roleId/" + roleId, null)),
         "Role does not exist");
 
     // Verify http response
@@ -109,7 +109,7 @@ class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestProper
     final var response = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(POST("/identity/user/" + userId + "/role/" + roleId, null)),
+            .exchange(POST("api/identity/user/" + userId + "/role/" + roleId, null)),
         "User does not exist");
 
     // Verify http response

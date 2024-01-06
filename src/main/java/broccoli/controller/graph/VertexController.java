@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * The {@link VertexController} class.
  */
-@Controller("/graph/vertex")
+@Controller("/api/graph/vertex")
 @Validated
 public class VertexController {
 

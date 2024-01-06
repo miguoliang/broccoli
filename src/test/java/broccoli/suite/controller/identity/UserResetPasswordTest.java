@@ -80,7 +80,7 @@ class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPro
 
     // Execute
     final var response =
-        client.toBlocking().exchange(POST("/identity/user/" + userId + "/reset-password", null));
+        client.toBlocking().exchange(POST("api/identity/user/" + userId + "/reset-password", null));
 
     // Verify http response
     assertNotNull(response, "Response should not be null");
@@ -96,7 +96,7 @@ class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPro
     // Execute
     final var thrown = assertThrowsExactly(HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(POST("/identity/user/" + userId + "/reset-password", null)),
+            .exchange(POST("api/identity/user/" + userId + "/reset-password", null)),
         "User does not exist");
 
     // Verify

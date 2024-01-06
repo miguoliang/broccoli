@@ -34,6 +34,7 @@ public class PolicyEnforcerRule implements SecurityRule<HttpRequest<?>> {
     if (authentication == null) {
       return Mono.just(SecurityRuleResult.REJECTED);
     }
+
     final var authzContext = policyEnforcer.enforce(
         new SpiHttpRequest(request),
         new SpiHttpResponse());

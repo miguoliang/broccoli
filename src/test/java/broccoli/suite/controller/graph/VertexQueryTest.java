@@ -51,7 +51,7 @@ class VertexQueryTest {
 
     // Execute
     final var id = Vertex.getId(name, type);
-    final var found = client.toBlocking().exchange(GET("graph/vertex/" + id),
+    final var found = client.toBlocking().exchange(GET("api/graph/vertex/" + id),
         GetVertexResponse.class);
 
     // Verify response status
@@ -77,7 +77,7 @@ class VertexQueryTest {
     final var id = Vertex.getId(name, type);
     final var thrown = assertThrowsExactly(
         HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(GET("graph/vertex/" + id), GetVertexResponse.class),
+        () -> client.toBlocking().exchange(GET("api/graph/vertex/" + id), GetVertexResponse.class),
         "Vertex not found");
 
     // Verify
@@ -93,7 +93,7 @@ class VertexQueryTest {
     helper.createVertex(name, type);
 
     // Execute
-    final var response = client.toBlocking().exchange(GET("graph/vertex?q=" + name),
+    final var response = client.toBlocking().exchange(GET("api/graph/vertex?q=" + name),
         Argument.of(Page.class, QueryVertexResponse.class));
 
     // Verify
@@ -120,7 +120,7 @@ class VertexQueryTest {
     helper.createVertex(name, type);
 
     // Execute
-    final var response = client.toBlocking().exchange(GET("graph/vertex"),
+    final var response = client.toBlocking().exchange(GET("api/graph/vertex"),
         Argument.of(Page.class, QueryVertexResponse.class));
 
     // Verify
@@ -143,7 +143,7 @@ class VertexQueryTest {
         "foo"));
 
     // Execute
-    final var response = client.toBlocking().exchange(GET("graph/vertex?page=1&size=5"),
+    final var response = client.toBlocking().exchange(GET("api/graph/vertex?page=1&size=5"),
         Argument.of(Page.class, QueryVertexResponse.class));
 
     // Verify

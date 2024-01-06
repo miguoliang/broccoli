@@ -68,7 +68,7 @@ class UserUpdateTest extends AbstractKeycloakBasedTest implements TestPropertyPr
 
     // Execute
     final var response = client.toBlocking()
-        .exchange(PUT("/identity/user/" + userId, updateRequest), UpdateUserResponse.class);
+        .exchange(PUT("api/identity/user/" + userId, updateRequest), UpdateUserResponse.class);
 
     // Verify
     final var updatedUser = response.body();
@@ -93,7 +93,7 @@ class UserUpdateTest extends AbstractKeycloakBasedTest implements TestPropertyPr
     final var response = assertThrowsExactly(
         HttpClientResponseException.class,
         () -> client.toBlocking()
-            .exchange(PUT("/identity/user/" + userId, updateRequest), UpdateUserResponse.class),
+            .exchange(PUT("api/identity/user/" + userId, updateRequest), UpdateUserResponse.class),
         "Should return conflict");
 
     // Verify

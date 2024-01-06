@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * The {@link EdgeController} class.
  */
-@Controller("/graph/edge")
+@Controller("/api/graph/edge")
 @Validated
 public class EdgeController {
 
