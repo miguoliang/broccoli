@@ -1,4 +1,4 @@
-<configuration>
+<configuration debug="true">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
@@ -8,7 +8,38 @@
         </encoder>
     </appender>
 
+    <!-- GELF UDP -->
+
+    <appender name="GELF UDP" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>127.0.0.1</graylogHost>
+        <graylogPort>12201</graylogPort>
+    </appender>
+
+    <!-- GELF TCP -->
+
+    <appender name="GELF TCP" class="de.siegmar.logbackgelf.GelfTcpAppender">
+        <graylogHost>127.0.0.1</graylogHost>
+        <graylogPort>12201</graylogPort>
+    </appender>
+
+    <appender name="ASYNC GELF TCP" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="GELF TCP"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- GELF TCP TLS -->
+
+    <appender name="GELF TCP TLS" class="de.siegmar.logbackgelf.GelfTcpTlsAppender">
+        <graylogHost>127.0.0.1</graylogHost>
+        <graylogPort>12201</graylogPort>
+    </appender>
+
+    <appender name="ASYNC GELF TCP TLS" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="GELF TCP TLS"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="GELF TCP" />
     </root>
 </configuration>

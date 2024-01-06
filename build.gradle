@@ -19,6 +19,7 @@ repositories {
 ext {
     keycloakVersion = '23.0.3'
     hibernateVersion = '6.2.13.Final'
+    logbackGelfVersion = '5.0.1'
 }
 
 checkstyle {
@@ -35,6 +36,7 @@ dependencies {
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:${hibernateVersion}")
 
     implementation("com.ongres.scram:client")
+    implementation("de.siegmar:logback-gelf:${logbackGelfVersion}")
     implementation("io.micrometer:context-propagation")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
     implementation("io.micronaut.liquibase:micronaut-liquibase")

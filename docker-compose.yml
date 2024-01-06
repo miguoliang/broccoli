@@ -1,4 +1,7 @@
-version: '3.7'
+version: '3.8'
+
+include:
+  - docker-compose.graylog.yml
 
 services:
   db:
@@ -11,12 +14,14 @@ services:
       - 5432:5432
   iam:
     image: quay.io/keycloak/keycloak:23.0.3
-    command: [ 'start-dev', '--http-relative-path', '/auth' ]
+    command: [ 'start-dev', '--http-relative-path', '/auth', '--import-realm' ]
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
       - 8080:8080
+    volumes:
+      - ./broccoli-realm.json:/opt/keycloak/data/import/broccoli-realm.json
   mail:
     image: mailhog/mailhog
     ports:
