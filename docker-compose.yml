@@ -2,6 +2,7 @@ version: '3.8'
 
 include:
   - docker-compose.graylog.yml
+  - docker-compose.onlyoffice.yml
 
 services:
   db:
