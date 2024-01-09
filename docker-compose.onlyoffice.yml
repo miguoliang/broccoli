@@ -46,10 +46,36 @@ services:
       - onlyoffice
     volumes:
       - ./onlyoffice/nginx.conf:/etc/nginx/nginx.conf
+  webdav:
+    image: rclone/rclone
+    command: [ 'serve', 'webdav', 'minio:my-bucket' ]
+    ports:
+      - 8080:8080
+    volumes:
+      - ./onlyoffice/rclone:/config/rclone/
+      - rclone_data:/data
+    networks:
+      - onlyoffice
+    depends_on:
+      - s3
+  s3:
+    image: minio/minio
+    command: [ 'server', '/data', '--console-address', ':9001' ]
+    environment:
+      - MINIO_ROOT_USER=YOUR_ACCESS_KEY
+      - MINIO_ROOT_PASSWORD=YOUR_SECRET_KEY
+      - MINIO_DEFAULT_BUCKETS=my-bucket
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - rclone_data:/data
+    networks:
+      - onlyoffice
 networks:
   onlyoffice:
     driver: 'bridge'
 volumes:
   document_data:
   document_log:
-  mysql_data:
+  rclone_data:
