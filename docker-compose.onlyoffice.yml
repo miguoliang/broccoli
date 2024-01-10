@@ -48,9 +48,19 @@ services:
       - ./onlyoffice/nginx.conf:/etc/nginx/nginx.conf
   webdav:
     image: rclone/rclone
-    command: [ 'serve', 'webdav', 'minio:my-bucket' ]
+    command:
+      - serve
+      - webdav
+      - minio:my-bucket
+      - --rc
+      - --rc-addr
+      - :5572
+      - --rc-web-gui
+      - --rc-web-gui-no-open-browser
+      - --rc-no-auth
     ports:
       - 8080:8080
+      - 5572:5572
     volumes:
       - ./onlyoffice/rclone:/config/rclone/
       - rclone_data:/data
