@@ -1,10 +1,14 @@
 package broccoli.controller.onlyoffice;
 
 import broccoli.common.HttpStatusExceptions;
+import broccoli.common.onlyoffice.OnlyOfficeHelper;
 import broccoli.common.s3.MinioDefaultBucketConfiguration;
 import broccoli.model.onlyoffice.http.OnlyOfficeCallbackRequest;
+import com.nimbusds.jose.JOSEException;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -28,17 +32,22 @@ public class OnlyOfficeController {
 
   private final MinioDefaultBucketConfiguration minioDefaultBucketConfiguration;
 
+  private final OnlyOfficeHelper onlyOfficeHelper;
+
   /**
    * The {@link OnlyOfficeController} constructor.
    *
    * @param minioClient                     The {@link MinioClient} instance.
    * @param minioDefaultBucketConfiguration The {@link MinioDefaultBucketConfiguration} instance.
+   * @param onlyOfficeHelper                The {@link OnlyOfficeHelper} instance.
    */
   @Inject
   public OnlyOfficeController(MinioClient minioClient,
-                              MinioDefaultBucketConfiguration minioDefaultBucketConfiguration) {
+                              MinioDefaultBucketConfiguration minioDefaultBucketConfiguration,
+                              OnlyOfficeHelper onlyOfficeHelper) {
     this.minioClient = minioClient;
     this.minioDefaultBucketConfiguration = minioDefaultBucketConfiguration;
+    this.onlyOfficeHelper = onlyOfficeHelper;
   }
 
   /**
@@ -64,6 +73,23 @@ public class OnlyOfficeController {
       case 6, 7 -> handleStatus2Or3(request);
       default -> throw new IllegalStateException("Unexpected value: " + request.status());
     };
+  }
+
+  /**
+   * Signatures.
+   *
+   * @param request The {@link HttpRequest} request.
+   * @return The {@link String} response.
+   */
+  @Get("/signatures")
+  public String signatures(HttpRequest<?> request) {
+    final var payload = request.getParameters().asMap(String.class, Object.class);
+    try {
+      return onlyOfficeHelper.signature(payload);
+    } catch (JOSEException e) {
+      log.error("Error while signing payload", e);
+      throw HttpStatusExceptions.raw(500, "Error while signing payload");
+    }
   }
 
   private String handleStatus2Or3(OnlyOfficeCallbackRequest request) {

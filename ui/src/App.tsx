@@ -1,47 +1,29 @@
-import {DocumentEditor} from "@onlyoffice/document-editor-react";
+import { ChakraBaseProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Layout from "components/layout";
+import { chakraTheme } from "configs";
+import { BrowserRouter } from "react-router-dom";
 
-const onDocumentReady = function () {
-    console.log("Document is loaded");
-};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-const onLoadComponentError = function (errorCode: any, errorDescription: any) {
-    switch (errorCode) {
-        case -1: // Unknown error loading component
-            console.log(errorDescription);
-            break;
-
-        case -2: // Error load DocsAPI from http://documentserver/
-            console.log(errorDescription);
-            break;
-
-        case -3: // DocsAPI is not defined
-            console.log(errorDescription);
-            break;
-    }
-};
-
-export default function App() {
-
-    return (
-        <pre style={{height: '500px'}}>
-        <DocumentEditor
-            id="docxEditor"
-            documentServerUrl="http://localhost:8000/"
-            config={{
-                "document": {
-                    "fileType": "docx",
-                    "key": "bbbb.docx",
-                    "title": "Example Document Title.docx",
-                    "url": "http://s3:9000/my-bucket/Aaaaaaaaaaa.docx",
-                },
-                "documentType": "word",
-                "editorConfig": {
-                    "callbackUrl": "http://host.docker.internal:8888/onlyoffice/callback"
-                }
-            }}
-            events_onDocumentReady={onDocumentReady}
-            onLoadComponentError={onLoadComponentError}
-        />
-    </pre>
-    );
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ChakraBaseProvider theme={chakraTheme}>
+        <BrowserRouter>
+          <Layout />
+        </BrowserRouter>
+      </ChakraBaseProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
+
+export default App;

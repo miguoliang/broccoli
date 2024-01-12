@@ -1,30 +1,13 @@
-# React + TypeScript + Vite
+# Elstar React Admin Template (Starter)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is starter version of Elstar React Admin Template, it included minimum core components and functionality setup of a template.
 
-Currently, two official plugins are available:
+We <strong>strongly recommend</strong> to use this version to build the app on top.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Documentation
 
-## Expanding the ESLint configuration
+Visit [here](https://elstar.themenate.net/docs/documentation/introduction) for the documentation.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Support
+Please feel free to contact us via [our profile page](https://themeforest.net/user/theme_nate) if you encounter any issues, we will provide our best assist.
