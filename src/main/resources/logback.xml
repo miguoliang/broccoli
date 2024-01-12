@@ -11,14 +11,14 @@
     <!-- GELF UDP -->
 
     <appender name="GELF UDP" class="de.siegmar.logbackgelf.GelfUdpAppender">
-        <graylogHost>127.0.0.1</graylogHost>
+        <graylogHost>localhost</graylogHost>
         <graylogPort>12201</graylogPort>
     </appender>
 
     <!-- GELF TCP -->
 
     <appender name="GELF TCP" class="de.siegmar.logbackgelf.GelfTcpAppender">
-        <graylogHost>127.0.0.1</graylogHost>
+        <graylogHost>localhost</graylogHost>
         <graylogPort>12201</graylogPort>
     </appender>
 
@@ -40,6 +40,6 @@
     </appender>
 
     <root level="info">
-        <appender-ref ref="GELF TCP" />
+        <appender-ref ref="STDOUT" />
     </root>
 </configuration>
