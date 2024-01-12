@@ -8,6 +8,8 @@ services:
       - JWT_ENABLED=false
     ports:
       - 8000:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   s3:
     image: minio/minio
     command: [ 'server', '/data', '--console-address', ':9001' ]
