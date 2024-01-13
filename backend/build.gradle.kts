@@ -10,11 +10,6 @@ plugins {
 version = "0.1"
 group = "broccoli"
 
-repositories {
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 val keycloakVersion by extra("23.0.3")
 val hibernateVersion by extra("6.2.13.Final")
 val logbackGelfVersion by extra("5.0.1")
@@ -126,14 +121,4 @@ jacoco {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
-}
-
-sonar {
-    properties {
-        property("sonar.projectBaseDir", layout.projectDirectory.asFile.absolutePath)
-        property("sonar.java.binaries", layout.buildDirectory.dir("classes").get().asFile.absolutePath)
-        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath)
-        property("sonar.sources", layout.projectDirectory.dir("src/main").asFile.absolutePath)
-        property("sonar.tests", layout.projectDirectory.dir("src/test").asFile.absolutePath)
-    }
 }
