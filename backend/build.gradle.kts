@@ -5,7 +5,6 @@ plugins {
     id("io.micronaut.aot") version "4.2.1"
     id("checkstyle")
     id("jacoco")
-    id("org.sonarqube") version "4.4.1.3373"
 }
 
 version = "0.1"
@@ -130,13 +129,7 @@ tasks.test {
 }
 
 sonar {
-
     properties {
-
-        property("sonar.projectName", "broccoli")
-        property("sonar.projectKey", "miguoliang_broccoli")
-        property("sonar.organization", "miguoliang")
-        property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.projectBaseDir", layout.projectDirectory.asFile.absolutePath)
         property("sonar.java.binaries", layout.buildDirectory.dir("classes").get().asFile.absolutePath)
         property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath)
