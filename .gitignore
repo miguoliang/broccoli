@@ -4,7 +4,7 @@ Thumbs.db
 build/
 target/
 out/
-/.micronaut/
+/backend/.micronaut/
 .idea
 *.iml
 *.ipr
