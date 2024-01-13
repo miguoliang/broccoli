@@ -115,11 +115,9 @@ tasks.jacocoTestReport {
     // tests are required to run before generating the report
     dependsOn(tasks.test)
 
-    classDirectories.setFrom(
-            sourceSets.main.get().output.asFileTree.matching {
-                exclude("broccoli/model/**/*_.*")
-            }
-    )
+    classDirectories.setFrom(sourceSets.main.get().output.asFileTree.matching {
+        exclude("broccoli/model/**/*_.*")
+    })
 }
 
 jacoco {
@@ -134,14 +132,15 @@ tasks.test {
 sonar {
 
     properties {
-        "sonar.projectName" to "broccoli"
-        "sonar.projectKey" to "miguoliang_broccoli"
-        "sonar.organization" to "miguoliang"
-        "sonar.host.url" to "https://sonarcloud.io"
-        "sonar.projectBaseDir" to layout.projectDirectory.asFile.absolutePath
-        "sonar.java.binaries" to layout.buildDirectory.dir("classes").get().asFile.absolutePath
-        "sonar.coverage.jacoco.xmlReportPaths" to layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath
-        "sonar.sources" to layout.projectDirectory.dir("src/main").asFile.absolutePath
-        "sonar.tests" to layout.projectDirectory.dir("src/test").asFile.absolutePath
+
+        property("sonar.projectName", "broccoli")
+        property("sonar.projectKey", "miguoliang_broccoli")
+        property("sonar.organization", "miguoliang")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.projectBaseDir", layout.projectDirectory.asFile.absolutePath)
+        property("sonar.java.binaries", layout.buildDirectory.dir("classes").get().asFile.absolutePath)
+        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath)
+        property("sonar.sources", layout.projectDirectory.dir("src/main").asFile.absolutePath)
+        property("sonar.tests", layout.projectDirectory.dir("src/test").asFile.absolutePath)
     }
 }
