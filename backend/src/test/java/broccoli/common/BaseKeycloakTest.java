@@ -36,21 +36,16 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   static {
 
-    final var network = Network.newNetwork();
-
     MAILHOG_CONTAINER = new GenericContainer<>("mailhog/mailhog")
-        .withNetwork(network)
         .withNetworkAliases("mailhog");
 
     KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
         .withRealmImportFile("realm-quickstart.json")
         .withContextPath("/auth")
-        .withNetwork(network)
         .withNetworkAliases("keycloak")
         .dependsOn(MAILHOG_CONTAINER);
 
     KEYCLOAK_CONTAINER.start();
-//    MAILHOG_CONTAINER.start();
 
     KEYCLOAK_ADMIN_CLIENT = Keycloak.getInstance(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
