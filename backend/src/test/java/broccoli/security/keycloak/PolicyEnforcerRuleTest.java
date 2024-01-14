@@ -15,6 +15,7 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -23,9 +24,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
+import org.slf4j.Logger;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyProvider {
+
+  private static final Logger LOGGER =
+      org.slf4j.LoggerFactory.getLogger(PolicyEnforcerRuleTest.class);
 
   private static final String TEST_REALM = "quickstart";
 
@@ -47,6 +52,14 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
   @BeforeEach
   void setup(TestInfo testInfo) {
     fluentTestsHelper.createTestUser(testInfo.getDisplayName(), "password");
+  }
+
+  @AfterAll
+  void afterAll() {
+    LOGGER.error("Stopping Keycloak and Mailhog containers");
+    KEYCLOAK_CONTAINER.stop();
+    MAILHOG_CONTAINER.stop();
+    LOGGER.error("Keycloak and Mailhog containers stopped");
   }
 
   private String getJwksUri() {

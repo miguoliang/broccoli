@@ -15,8 +15,8 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import java.util.Map;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
+import org.slf4j.Logger;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
 
 /**
  * The {@link BaseKeycloakTest} class.
@@ -25,6 +25,8 @@ import org.testcontainers.containers.Network;
  */
 @MicronautTest(transactional = false)
 public abstract class BaseKeycloakTest extends BaseDatabaseTest {
+
+  private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BaseKeycloakTest.class);
 
   static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
 
@@ -75,6 +77,7 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
         "ssl", "false"
     ));
     KEYCLOAK_ADMIN_CLIENT.realm("master").update(representation);
+    LOGGER.error("Keycloak started at {}", KEYCLOAK_CONTAINER.getAuthServerUrl());
   }
 
   protected FluentTestsHelper fluentTestsHelper;
