@@ -22,6 +22,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.platform.commons.util.StringUtils;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -31,6 +33,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class UserCreationTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
 
   @Inject

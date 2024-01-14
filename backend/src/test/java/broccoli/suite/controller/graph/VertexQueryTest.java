@@ -23,12 +23,15 @@ import jakarta.inject.Inject;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 /**
  * The {@link VertexQueryTest} class.
  */
 @MicronautTest(transactional = false)
 @Property(name = "micronaut.security.enabled", value = "false")
+@Execution(ExecutionMode.CONCURRENT)
 class VertexQueryTest {
 
   @Inject
