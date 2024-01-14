@@ -14,7 +14,6 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
@@ -32,14 +31,6 @@ class UserUpdateTest extends BaseKeycloakTest {
 
   UserUpdateTest() {
     super();
-  }
-
-  @BeforeAll
-  static void beforeAll() {
-
-    final var realmRepresentation = KEYCLOAK_ADMIN_CLIENT.realm("master").toRepresentation();
-    realmRepresentation.setEditUsernameAllowed(true);
-    KEYCLOAK_ADMIN_CLIENT.realm("master").update(realmRepresentation);
   }
 
   @Test

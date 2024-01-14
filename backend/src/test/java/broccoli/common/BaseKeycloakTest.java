@@ -13,6 +13,7 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeAll;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
 import org.slf4j.Logger;
@@ -30,13 +31,27 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
 
-  public static final KeycloakContainer KEYCLOAK_CONTAINER;
+  public static KeycloakContainer KEYCLOAK_CONTAINER;
 
-  public static final GenericContainer<?> MAILHOG_CONTAINER;
+  public static GenericContainer<?> MAILHOG_CONTAINER;
 
-  public static final Keycloak KEYCLOAK_ADMIN_CLIENT;
+  public static Keycloak KEYCLOAK_ADMIN_CLIENT;
 
-  static {
+  /**
+   * Before all.
+   */
+  @BeforeAll
+  public static void beforeAll() {
+
+    LOGGER.error("Starting Keycloak and Mailhog containers");
+
+    if (KEYCLOAK_CONTAINER != null && KEYCLOAK_CONTAINER.isRunning()
+        || MAILHOG_CONTAINER != null && MAILHOG_CONTAINER.isRunning()) {
+      LOGGER.error("Keycloak and Mailhog containers are already running");
+      return;
+    }
+
+    LOGGER.error("Starting Keycloak and Mailhog containers");
 
     MAILHOG_CONTAINER = new GenericContainer<>("mailhog/mailhog")
         .withNetworkAliases("mailhog");
@@ -64,6 +79,7 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
         .update(adminRepresentation);
 
     final var representation = KEYCLOAK_ADMIN_CLIENT.realm(DEFAULT_ADMIN_REALM).toRepresentation();
+    representation.setEditUsernameAllowed(true);
     representation.setSmtpServer(Map.of(
         "replyToDisplayName", "",
         "starttls", "false",
