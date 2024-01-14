@@ -1,6 +1,5 @@
 package broccoli.common;
 
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import liquibase.Contexts;

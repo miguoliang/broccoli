@@ -112,15 +112,4 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
     fluentTestsHelper.init();
   }
 
-  @MockBean(KeycloakAdminClientConfiguration.class)
-  protected KeycloakAdminClientConfiguration keycloakAdminClientConfiguration() {
-    final var configurationMock = mock(KeycloakAdminClientConfiguration.class);
-    when(configurationMock.getServerUrl()).thenReturn(KEYCLOAK_CONTAINER.getAuthServerUrl());
-    when(configurationMock.getRealm()).thenReturn(testRealm());
-    when(configurationMock.getClientId()).thenReturn(DEFAULT_ADMIN_CLIENT);
-    when(configurationMock.getClientSecret()).thenReturn(DEFAULT_ADMIN_PASSWORD);
-    when(configurationMock.getUsername()).thenReturn(DEFAULT_ADMIN_USERNAME);
-    when(configurationMock.getPassword()).thenReturn(DEFAULT_ADMIN_PASSWORD);
-    return configurationMock;
-  }
 }

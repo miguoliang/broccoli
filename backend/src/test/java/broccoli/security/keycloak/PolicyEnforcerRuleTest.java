@@ -2,9 +2,15 @@ package broccoli.security.keycloak;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 
-import broccoli.common.BaseKeycloakTest;
+import broccoli.common.BaseDatabaseTest;
+import broccoli.common.IdentityTestHelper;
 import broccoli.common.KeycloakClientFacade;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpRequest;
@@ -12,41 +18,77 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MockBean;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import java.util.Map;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
-import org.slf4j.Logger;
+import org.keycloak.test.FluentTestsHelper;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyProvider {
+@MicronautTest(transactional = false)
+@Testcontainers(disabledWithoutDocker = true)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestPropertyProvider {
 
-  private static final Logger LOGGER =
-      org.slf4j.LoggerFactory.getLogger(PolicyEnforcerRuleTest.class);
+  static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
 
-  private static final String TEST_REALM = "quickstart";
+  static final String TEST_REALM = "quickstart";
+
+  @Container
+  static KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
+      .withRealmImportFile("realm-quickstart.json")
+      .withContextPath("/auth")
+      .withReuse(true);
+
+  static {
+    KEYCLOAK_CONTAINER.start();
+  }
 
   @Inject
   @Client("/")
   HttpClient client;
 
-  private static final KeycloakClientFacade KEYCLOAK_CLIENT_FACADE = new KeycloakClientFacade(
-      KEYCLOAK_CONTAINER.getAuthServerUrl(),
-      TEST_REALM,
-      "authz-servlet",
-      "secret"
-  );
+  @Inject
+  IdentityTestHelper identityTestHelper;
 
-  @Override
-  protected String testRealm() {
-    return "quickstart";
+  @Inject
+  Keycloak keycloak;
+
+  KeycloakClientFacade keycloakClientFacade;
+
+  FluentTestsHelper fluentTestsHelper;
+
+  @BeforeAll
+  void beforeAll() {
+
+    identityTestHelper.roleId("user");
+    identityTestHelper.roleId("user_premium");
+
+    fluentTestsHelper = new FluentTestsHelper(
+        KEYCLOAK_CONTAINER.getAuthServerUrl(),
+        DEFAULT_ADMIN_USERNAME,
+        DEFAULT_ADMIN_PASSWORD,
+        DEFAULT_ADMIN_REALM,
+        DEFAULT_ADMIN_CLIENT,
+        TEST_REALM
+    );
+    fluentTestsHelper.init();
+
+    keycloakClientFacade = new KeycloakClientFacade(
+        KEYCLOAK_CONTAINER.getAuthServerUrl(),
+        TEST_REALM,
+        "authz-servlet",
+        "secret");
   }
 
   @BeforeEach
@@ -54,27 +96,18 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
     fluentTestsHelper.createTestUser(testInfo.getDisplayName(), "password");
   }
 
-  @AfterAll
-  void afterAll() {
-    LOGGER.error("Stopping Keycloak and Mailhog containers");
-    KEYCLOAK_CONTAINER.stop();
-    MAILHOG_CONTAINER.stop();
-    LOGGER.error("Keycloak and Mailhog containers stopped");
-  }
-
-  private String getJwksUri() {
-    return String.format("http://%s",
-        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
-            + "/auth/realms/" + TEST_REALM + "/protocol/openid-connect/certs");
-  }
-
   @Override
   public @NonNull Map<String, String> getProperties() {
+
+    final var jwksUri = String.format("http://%s",
+        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
+            + "/auth/realms/" + TEST_REALM + "/protocol/openid-connect/certs");
+
     return Map.of(
         "micronaut.security.enabled", "true",
-        "logger.levels.org.keycloak", "INFO",
-        "logger.levels.io.micronaut.security", "INFO",
-        "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()
+        "micronaut.security.token.jwt.signatures.jwks.default.url", jwksUri,
+        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
+        "keycloak.admin-client.client-secret", DEFAULT_ADMIN_PASSWORD
     );
   }
 
@@ -132,7 +165,7 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
 
     fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), role);
     final var accessToken =
-        KEYCLOAK_CLIENT_FACADE.getAccessTokenString(testInfo.getDisplayName(), "password");
+        keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
     final var httpMethod = HttpMethod.valueOf(method.toUpperCase());
     final var httpRequest =
         HttpRequest.create(httpMethod, path).accept("text/plain").bearerAuth(accessToken);
@@ -148,14 +181,8 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
     }
   }
 
-  @AfterEach
-  void cleanup(TestInfo testInfo) {
-    fluentTestsHelper.deleteTestUser(testInfo.getDisplayName());
-  }
-
   @MockBean(PolicyEnforcerConfig.class)
   PolicyEnforcerConfig policyEnforcerConfig() {
-
     final var enforcerConfig = new PolicyEnforcerConfig();
     enforcerConfig.setAuthServerUrl(KEYCLOAK_CONTAINER.getAuthServerUrl());
     enforcerConfig.setRealm("quickstart");
