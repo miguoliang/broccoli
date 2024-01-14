@@ -37,19 +37,7 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   public static Keycloak KEYCLOAK_ADMIN_CLIENT;
 
-  /**
-   * Before all.
-   */
-  @BeforeAll
-  public static void beforeAll() {
-
-    LOGGER.error("Starting Keycloak and Mailhog containers");
-
-    if (KEYCLOAK_CONTAINER != null && KEYCLOAK_CONTAINER.isRunning()
-        || MAILHOG_CONTAINER != null && MAILHOG_CONTAINER.isRunning()) {
-      LOGGER.error("Keycloak and Mailhog containers are already running");
-      return;
-    }
+  static {
 
     LOGGER.error("Starting Keycloak and Mailhog containers");
 

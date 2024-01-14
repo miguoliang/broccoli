@@ -23,6 +23,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link VertexDeletionTest} class.
  */
 @MicronautTest(transactional = false)
+@Execution(ExecutionMode.CONCURRENT)
 class VertexDeletionTest extends BaseDatabaseTest {
 
   @Inject

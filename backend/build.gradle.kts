@@ -129,6 +129,5 @@ tasks.test {
 
     // Set system properties for JUnit Platform
     systemProperty("junit.jupiter.execution.parallel.enabled", true)
-    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
     finalizedBy(tasks.jacocoTestReport)
 }
