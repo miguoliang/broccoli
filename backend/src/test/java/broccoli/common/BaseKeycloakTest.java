@@ -18,11 +18,11 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 /**
- * The {@link AbstractKeycloakBasedTest} class.
+ * The {@link BaseKeycloakTest} class.
  * <p>See also:
  * <a href="https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/#singleton-containers:~:text=stop()%20afterwards%0A%7D-,Singleton%20containers,-Sometimes%20it%20might">Singleton containers</a></p>
  */
-public abstract class AbstractKeycloakBasedTest {
+public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
   public static final KeycloakContainer KEYCLOAK_CONTAINER;
@@ -61,14 +61,14 @@ public abstract class AbstractKeycloakBasedTest {
 
   protected String testRealm;
 
-  protected AbstractKeycloakBasedTest() {
+  protected BaseKeycloakTest() {
     this(DEFAULT_TEST_REALM);
   }
 
   /**
-   * Instantiates a new {@link AbstractKeycloakBasedTest}.
+   * Instantiates a new {@link BaseKeycloakTest}.
    */
-  protected AbstractKeycloakBasedTest(String testRealm) {
+  protected BaseKeycloakTest(String testRealm) {
     fluentTestsHelper = new FluentTestsHelper(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
         DEFAULT_ADMIN_USERNAME,

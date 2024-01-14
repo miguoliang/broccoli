@@ -3,7 +3,7 @@ package broccoli.security.keycloak;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import broccoli.common.AbstractKeycloakBasedTest;
+import broccoli.common.BaseKeycloakTest;
 import broccoli.common.KeycloakClientFacade;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpMethod;
@@ -33,7 +33,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
-class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyProvider {
 
   private static final String TEST_REALM = "quickstart";
 

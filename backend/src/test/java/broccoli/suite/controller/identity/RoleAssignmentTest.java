@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.common.AbstractKeycloakBasedTest;
+import broccoli.common.BaseKeycloakTest;
 import broccoli.common.IdentityTestHelper;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
@@ -26,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-class RoleAssignmentTest extends AbstractKeycloakBasedTest {
+class RoleAssignmentTest extends BaseKeycloakTest {
 
   @Inject
   @Client("/")

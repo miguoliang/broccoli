@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
+import broccoli.common.BaseDatabaseTest;
 import broccoli.common.GraphTestHelper;
 import broccoli.model.graph.http.response.QueryEdgeResponse;
 import io.micronaut.context.annotation.Property;
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link EdgeQueryTest} class.
  */
 @MicronautTest(transactional = false)
-class EdgeQueryTest {
+class EdgeQueryTest extends BaseDatabaseTest {
 
   @Inject
   @Client("/")

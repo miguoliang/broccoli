@@ -5,33 +5,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import broccoli.common.AbstractKeycloakBasedTest;
+import broccoli.common.BaseKeycloakTest;
 import broccoli.common.IdentityTestHelper;
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.UpdateUserResponse;
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.annotation.Property;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.keycloak.admin.client.Keycloak;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link UserUpdateTest} class.
  */
-@MicronautTest
+@MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-class UserUpdateTest extends AbstractKeycloakBasedTest {
+class UserUpdateTest extends BaseKeycloakTest {
 
   @Inject
   @Client("/")

@@ -54,17 +54,19 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:${testcontainersKeycloakVersion}")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.junit.platform:junit-platform-suite-api")
+    testImplementation("org.junit.platform:junit-platform-suite-engine")
+    testImplementation("org.keycloak:keycloak-test-helper:${keycloakVersion}")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:testcontainers")
-    testImplementation("com.github.dasniko:testcontainers-keycloak:${testcontainersKeycloakVersion}")
-    testImplementation("io.micronaut:micronaut-http-client")
-    testImplementation("org.keycloak:keycloak-test-helper:${keycloakVersion}")
     testRuntimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
@@ -120,5 +122,11 @@ jacoco {
 
 tasks.test {
     useJUnitPlatform()
+
+    // Set system properties for JUnit Platform
+    systemProperty("junit.jupiter.execution.parallel.enabled", true)
+    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+//    systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
+//    systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", 4)
     finalizedBy(tasks.jacocoTestReport)
 }

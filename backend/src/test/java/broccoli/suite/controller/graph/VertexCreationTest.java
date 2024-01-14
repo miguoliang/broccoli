@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import broccoli.common.BaseDatabaseTest;
 import broccoli.common.GraphTestHelper;
 import broccoli.model.graph.entity.Vertex;
 import broccoli.model.graph.http.request.CreateVertexRequest;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link VertexCreationTest} class.
  */
 @MicronautTest(transactional = false)
-class VertexCreationTest {
+class VertexCreationTest extends BaseDatabaseTest {
 
   @Inject
   @Client("/")

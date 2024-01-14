@@ -5,29 +5,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import broccoli.common.AbstractKeycloakBasedTest;
+import broccoli.common.BaseKeycloakTest;
 import broccoli.common.IdentityTestHelper;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link UserDeletionTest} class.
  */
-@MicronautTest
+@MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-class UserDeletionTest extends AbstractKeycloakBasedTest {
+class UserDeletionTest extends BaseKeycloakTest {
 
   @Inject
   @Client("/")

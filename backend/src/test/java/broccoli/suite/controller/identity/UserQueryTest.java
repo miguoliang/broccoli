@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.common.AbstractKeycloakBasedTest;
+import broccoli.common.BaseKeycloakTest;
 import broccoli.common.IdentityTestHelper;
 import broccoli.model.identity.http.response.QueryUserResponse;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.runtime.config.DataConfiguration;
@@ -16,23 +15,18 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
-import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link UserQueryTest} class.
  */
-@MicronautTest
+@MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-class UserQueryTest extends AbstractKeycloakBasedTest {
+class UserQueryTest extends BaseKeycloakTest {
 
   @Inject
   @Client("/")

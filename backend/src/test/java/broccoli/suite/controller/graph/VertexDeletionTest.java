@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import broccoli.common.BaseDatabaseTest;
 import broccoli.common.GraphTestHelper;
 import broccoli.model.graph.entity.Vertex;
 import io.micronaut.context.annotation.Property;
@@ -22,7 +23,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link VertexDeletionTest} class.
  */
 @MicronautTest(transactional = false)
-class VertexDeletionTest {
+class VertexDeletionTest extends BaseDatabaseTest {
 
   @Inject
   @Client("/")
