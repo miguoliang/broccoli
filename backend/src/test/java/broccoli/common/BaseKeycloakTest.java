@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import broccoli.common.identity.KeycloakAdminClientConfiguration;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.test.annotation.MockBean;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import java.util.Map;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
@@ -22,9 +23,11 @@ import org.testcontainers.containers.Network;
  * <p>See also:
  * <a href="https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/#singleton-containers:~:text=stop()%20afterwards%0A%7D-,Singleton%20containers,-Sometimes%20it%20might">Singleton containers</a></p>
  */
+@MicronautTest(transactional = false)
 public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
+
   public static final KeycloakContainer KEYCLOAK_CONTAINER;
 
   public static final GenericContainer<?> MAILHOG_CONTAINER;
@@ -43,7 +46,8 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
         .withRealmImportFile("realm-quickstart.json")
         .withContextPath("/auth")
         .withNetwork(network)
-        .withNetworkAliases("keycloak");
+        .withNetworkAliases("keycloak")
+        .dependsOn(MAILHOG_CONTAINER);
 
     KEYCLOAK_CONTAINER.start();
 //    MAILHOG_CONTAINER.start();

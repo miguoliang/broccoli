@@ -14,18 +14,14 @@ import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * The {@link UserQueryTest} class.
  */
-@MicronautTest(transactional = false)
-@Testcontainers(disabledWithoutDocker = true)
 class UserQueryTest extends BaseKeycloakTest {
 
   @Inject

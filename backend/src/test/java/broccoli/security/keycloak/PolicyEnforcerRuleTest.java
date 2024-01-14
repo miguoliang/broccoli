@@ -12,27 +12,19 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MockBean;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@MicronautTest
-@Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyProvider {
 
   private static final String TEST_REALM = "quickstart";
@@ -41,7 +33,12 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
   @Client("/")
   HttpClient client;
 
-  KeycloakClientFacade keycloakClientFacade;
+  private static final KeycloakClientFacade KEYCLOAK_CLIENT_FACADE = new KeycloakClientFacade(
+      KEYCLOAK_CONTAINER.getAuthServerUrl(),
+      TEST_REALM,
+      "authz-servlet",
+      "secret"
+  );
 
   PolicyEnforcerRuleTest() {
     super(TEST_REALM);
@@ -50,16 +47,6 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
   @BeforeEach
   void setup(TestInfo testInfo) {
     fluentTestsHelper.createTestUser(testInfo.getDisplayName(), "password");
-  }
-
-  @BeforeAll
-  public void setup() {
-    keycloakClientFacade = new KeycloakClientFacade(
-        KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        TEST_REALM,
-        "authz-servlet",
-        "secret"
-    );
   }
 
   private String getJwksUri() {
@@ -132,7 +119,7 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
 
     fluentTestsHelper.assignRoleWithUser(testInfo.getDisplayName(), role);
     final var accessToken =
-        keycloakClientFacade.getAccessTokenString(testInfo.getDisplayName(), "password");
+        KEYCLOAK_CLIENT_FACADE.getAccessTokenString(testInfo.getDisplayName(), "password");
     final var httpMethod = HttpMethod.valueOf(method.toUpperCase());
     final var httpRequest =
         HttpRequest.create(httpMethod, path).accept("text/plain").bearerAuth(accessToken);
