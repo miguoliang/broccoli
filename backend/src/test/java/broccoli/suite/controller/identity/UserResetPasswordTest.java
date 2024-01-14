@@ -38,31 +38,6 @@ class UserResetPasswordTest extends BaseKeycloakTest {
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
 
-  @BeforeAll
-  public static void setup() {
-
-    final var adminRepresentation =
-        KEYCLOAK_ADMIN_CLIENT.realm("master").users().search("admin").getFirst();
-    final var adminId = adminRepresentation.getId();
-    adminRepresentation.setEmail("admin@example.com");
-    KEYCLOAK_ADMIN_CLIENT.realm("master").users().get(adminId).update(adminRepresentation);
-
-    final var representation = KEYCLOAK_ADMIN_CLIENT.realm("master").toRepresentation();
-    representation.setSmtpServer(Map.of(
-        "replyToDisplayName", "",
-        "starttls", "false",
-        "auth", "",
-        "port", "1025",
-        "replyTo", "",
-        "host", "mailhog",
-        "from", "from@example.com",
-        "fromDisplayName", "",
-        "envelopeFrom", "",
-        "ssl", "false"
-    ));
-    KEYCLOAK_ADMIN_CLIENT.realm("master").update(representation);
-  }
-
   @Test
   void shouldReturnNoContent_WhenUserExists(TestInfo testInfo) {
 

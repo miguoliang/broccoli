@@ -11,11 +11,11 @@ import static org.mockito.Mockito.when;
 import broccoli.common.identity.KeycloakAdminClientConfiguration;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.test.annotation.MockBean;
+import java.util.Map;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 /**
  * The {@link BaseKeycloakTest} class.
@@ -37,8 +37,7 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
     MAILHOG_CONTAINER = new GenericContainer<>("mailhog/mailhog")
         .withNetwork(network)
-        .withNetworkAliases("mailhog")
-        .waitingFor(Wait.forHttp("/"));
+        .withNetworkAliases("mailhog");
 
     KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
         .withRealmImportFile("realm-quickstart.json")
@@ -55,6 +54,28 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
         DEFAULT_ADMIN_USERNAME,
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_CLIENT);
+
+    final var adminRepresentation =
+        KEYCLOAK_ADMIN_CLIENT.realm(DEFAULT_ADMIN_REALM).users().search("admin").getFirst();
+    final var adminId = adminRepresentation.getId();
+    adminRepresentation.setEmail("admin@example.com");
+    KEYCLOAK_ADMIN_CLIENT.realm(DEFAULT_ADMIN_REALM).users().get(adminId)
+        .update(adminRepresentation);
+
+    final var representation = KEYCLOAK_ADMIN_CLIENT.realm(DEFAULT_ADMIN_REALM).toRepresentation();
+    representation.setSmtpServer(Map.of(
+        "replyToDisplayName", "",
+        "starttls", "false",
+        "auth", "",
+        "port", "1025",
+        "replyTo", "",
+        "host", "mailhog",
+        "from", "from@example.com",
+        "fromDisplayName", "",
+        "envelopeFrom", "",
+        "ssl", "false"
+    ));
+    KEYCLOAK_ADMIN_CLIENT.realm("master").update(representation);
   }
 
   protected FluentTestsHelper fluentTestsHelper;

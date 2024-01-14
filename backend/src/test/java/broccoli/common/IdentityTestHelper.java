@@ -2,6 +2,7 @@ package broccoli.common;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.TestInfo;
@@ -57,7 +58,13 @@ public class IdentityTestHelper {
     } catch (NotFoundException e) {
       final var roleRepresentation = new RoleRepresentation();
       roleRepresentation.setName(role);
-      keycloak.realm("master").roles().create(roleRepresentation);
+      try {
+        keycloak.realm("master").roles().create(roleRepresentation);
+      } catch (ClientErrorException ex) {
+        if (ex.getResponse().getStatus() != 409) {
+          throw ex;
+        }
+      }
       return keycloak.realm("master").roles().get(role).toRepresentation().getId();
     }
   }
