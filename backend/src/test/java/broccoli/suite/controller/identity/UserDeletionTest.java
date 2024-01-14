@@ -27,9 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class UserDeletionTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class UserDeletionTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -71,15 +69,5 @@ class UserDeletionTest extends AbstractKeycloakBasedTest implements TestProperty
     // Verify
     assertNotNull(response);
     assertEquals(HttpStatus.NO_CONTENT, response.getStatus(), "Status should be NO_CONTENT");
-  }
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

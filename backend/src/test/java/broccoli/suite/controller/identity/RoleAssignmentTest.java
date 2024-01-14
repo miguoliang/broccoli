@@ -8,21 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.IdentityTestHelper;
-import io.micronaut.core.annotation.NonNull;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.keycloak.admin.client.Keycloak;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -31,9 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class RoleAssignmentTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -48,8 +41,12 @@ class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestProper
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
 
+  RoleAssignmentTest() {
+    super();
+  }
+
   @Test
-  void shouldReturnNoContent_WhenBothUserAndRoleExists(TestInfo testInfo) {
+  void shouldReturnNoContent_WhenUserAlreadyHasSpecificRole(TestInfo testInfo) {
 
     // Setup
     final var username = helper.username(testInfo);
@@ -118,15 +115,5 @@ class RoleAssignmentTest extends AbstractKeycloakBasedTest implements TestProper
     // Verify http response
     assertNotNull(response, "Response should not be null");
     assertEquals(HttpStatus.NOT_FOUND, response.getStatus(), "Status should be NOT_FOUND");
-  }
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

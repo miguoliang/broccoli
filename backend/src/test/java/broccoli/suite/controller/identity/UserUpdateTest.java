@@ -9,6 +9,8 @@ import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.IdentityTestHelper;
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.UpdateUserResponse;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
@@ -21,9 +23,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.keycloak.admin.client.Keycloak;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -32,9 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class UserUpdateTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class UserUpdateTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -43,19 +40,16 @@ class UserUpdateTest extends AbstractKeycloakBasedTest implements TestPropertyPr
   @Inject
   IdentityTestHelper helper;
 
-  @Inject
-  Keycloak keycloak;
-
   UserUpdateTest() {
     super();
   }
 
   @BeforeAll
-  void beforeAll() {
+  static void beforeAll() {
 
-    final var realmRepresentation = keycloak.realm(testRealm()).toRepresentation();
+    final var realmRepresentation = KEYCLOAK_ADMIN_CLIENT.realm("master").toRepresentation();
     realmRepresentation.setEditUsernameAllowed(true);
-    keycloak.realm(testRealm()).update(realmRepresentation);
+    KEYCLOAK_ADMIN_CLIENT.realm("master").update(realmRepresentation);
   }
 
   @Test
@@ -101,16 +95,5 @@ class UserUpdateTest extends AbstractKeycloakBasedTest implements TestPropertyPr
 
     // Verify
     assertEquals(HttpStatus.CONFLICT, response.getStatus());
-  }
-
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

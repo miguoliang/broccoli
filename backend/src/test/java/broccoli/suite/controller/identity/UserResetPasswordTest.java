@@ -7,24 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import broccoli.common.AbstractKeycloakBasedTest;
 import broccoli.common.IdentityTestHelper;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.keycloak.admin.client.Keycloak;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
@@ -32,9 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class UserResetPasswordTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -44,18 +36,18 @@ class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPro
   IdentityTestHelper helper;
 
   @Inject
-  Keycloak keycloak;
-
-  @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
 
   @BeforeAll
-  void setup() {
+  public static void setup() {
 
-    final var adminId = helper.userId("admin");
-    helper.userEmail(adminId, "admin@exmaple.com");
+    final var adminRepresentation =
+        KEYCLOAK_ADMIN_CLIENT.realm("master").users().search("admin").getFirst();
+    final var adminId = adminRepresentation.getId();
+    adminRepresentation.setEmail("admin@example.com");
+    KEYCLOAK_ADMIN_CLIENT.realm("master").users().get(adminId).update(adminRepresentation);
 
-    final var representation = keycloak.realm("master").toRepresentation();
+    final var representation = KEYCLOAK_ADMIN_CLIENT.realm("master").toRepresentation();
     representation.setSmtpServer(Map.of(
         "replyToDisplayName", "",
         "starttls", "false",
@@ -68,7 +60,7 @@ class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPro
         "envelopeFrom", "",
         "ssl", "false"
     ));
-    keycloak.realm("master").update(representation);
+    KEYCLOAK_ADMIN_CLIENT.realm("master").update(representation);
   }
 
   @Test
@@ -104,15 +96,5 @@ class UserResetPasswordTest extends AbstractKeycloakBasedTest implements TestPro
 
     // Verify
     assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus(), "Status should be NOT_FOUND");
-  }
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

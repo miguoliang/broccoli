@@ -25,8 +25,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link EdgeCreationTest} class.
  */
 @MicronautTest(transactional = false)
-@Property(name = "micronaut.security.enabled", value = "false")
-@Execution(ExecutionMode.CONCURRENT)
 class EdgeCreationTest {
 
   @Inject

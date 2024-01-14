@@ -32,9 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class UserQueryTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class UserQueryTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -98,15 +96,5 @@ class UserQueryTest extends AbstractKeycloakBasedTest implements TestPropertyPro
     assertTrue(
         pageableConfiguration.getDefaultPageSize() >= foundBody.getContent().size(),
         "Content size should be less or equal than default page size");
-  }
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

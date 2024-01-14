@@ -32,9 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class UserCreationTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
+class UserCreationTest extends AbstractKeycloakBasedTest {
 
   @Inject
   @Client("/")
@@ -95,15 +93,5 @@ class UserCreationTest extends AbstractKeycloakBasedTest implements TestProperty
 
     // Verify
     assertEquals(HttpStatus.CONFLICT, thrown.getStatus(), "Status should be CONFLICT");
-  }
-
-  @Override
-  public @NonNull Map<String, String> getProperties() {
-
-    return Map.of(
-        "micronaut.security.enabled", "false",
-        "keycloak.admin-client.server-url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        "keycloak.default.realm", "master"
-    );
   }
 }

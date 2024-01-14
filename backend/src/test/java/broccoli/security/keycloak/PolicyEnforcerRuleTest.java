@@ -35,11 +35,17 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Execution(ExecutionMode.CONCURRENT)
 class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPropertyProvider {
 
+  private static final String TEST_REALM = "quickstart";
+
   @Inject
   @Client("/")
   HttpClient client;
 
   KeycloakClientFacade keycloakClientFacade;
+
+  PolicyEnforcerRuleTest() {
+    super(TEST_REALM);
+  }
 
   @BeforeEach
   void setup(TestInfo testInfo) {
@@ -50,20 +56,22 @@ class PolicyEnforcerRuleTest extends AbstractKeycloakBasedTest implements TestPr
   public void setup() {
     keycloakClientFacade = new KeycloakClientFacade(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
-        testRealm(),
+        TEST_REALM,
         "authz-servlet",
         "secret"
     );
   }
 
-  @Override
-  protected String testRealm() {
-    return "quickstart";
+  private String getJwksUri() {
+    return String.format("http://%s",
+        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
+            + "/auth/realms/" + TEST_REALM + "/protocol/openid-connect/certs");
   }
 
   @Override
   public @NonNull Map<String, String> getProperties() {
     return Map.of(
+        "micronaut.security.enabled", "true",
         "logger.levels.org.keycloak", "INFO",
         "logger.levels.io.micronaut.security", "INFO",
         "micronaut.security.token.jwt.signatures.jwks.default.url", getJwksUri()

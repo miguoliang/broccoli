@@ -26,8 +26,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link VertexCreationTest} class.
  */
 @MicronautTest(transactional = false)
-@Property(name = "micronaut.security.enabled", value = "false")
-@Execution(ExecutionMode.CONCURRENT)
 class VertexCreationTest {
 
   @Inject

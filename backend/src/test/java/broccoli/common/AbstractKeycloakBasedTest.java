@@ -4,8 +4,14 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_TEST_REALM;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import broccoli.common.identity.KeycloakAdminClientConfiguration;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import io.micronaut.test.annotation.MockBean;
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -22,6 +28,8 @@ public abstract class AbstractKeycloakBasedTest {
   public static final KeycloakContainer KEYCLOAK_CONTAINER;
 
   public static final GenericContainer<?> MAILHOG_CONTAINER;
+
+  public static final Keycloak KEYCLOAK_ADMIN_CLIENT;
 
   static {
 
@@ -40,32 +48,48 @@ public abstract class AbstractKeycloakBasedTest {
 
     KEYCLOAK_CONTAINER.start();
     MAILHOG_CONTAINER.start();
+
+    KEYCLOAK_ADMIN_CLIENT = Keycloak.getInstance(
+        KEYCLOAK_CONTAINER.getAuthServerUrl(),
+        DEFAULT_ADMIN_REALM,
+        DEFAULT_ADMIN_USERNAME,
+        DEFAULT_ADMIN_PASSWORD,
+        DEFAULT_ADMIN_CLIENT);
   }
 
   protected FluentTestsHelper fluentTestsHelper;
 
+  protected String testRealm;
+
+  protected AbstractKeycloakBasedTest() {
+    this(DEFAULT_TEST_REALM);
+  }
+
   /**
    * Instantiates a new {@link AbstractKeycloakBasedTest}.
    */
-  protected AbstractKeycloakBasedTest() {
+  protected AbstractKeycloakBasedTest(String testRealm) {
     fluentTestsHelper = new FluentTestsHelper(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
         DEFAULT_ADMIN_USERNAME,
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
         DEFAULT_ADMIN_CLIENT,
-        testRealm()
+        testRealm
     );
     fluentTestsHelper.init();
+    this.testRealm = testRealm;
   }
 
-  protected final String getJwksUri() {
-    return String.format("http://%s",
-        KEYCLOAK_CONTAINER.getHost() + ":" + KEYCLOAK_CONTAINER.getFirstMappedPort()
-            + "/auth/realms/" + testRealm() + "/protocol/openid-connect/certs");
-  }
-
-  protected String testRealm() {
-    return "master";
+  @MockBean(KeycloakAdminClientConfiguration.class)
+  protected KeycloakAdminClientConfiguration keycloakAdminClientConfiguration() {
+    final var configurationMock = mock(KeycloakAdminClientConfiguration.class);
+    when(configurationMock.getServerUrl()).thenReturn(KEYCLOAK_CONTAINER.getAuthServerUrl());
+    when(configurationMock.getRealm()).thenReturn(testRealm);
+    when(configurationMock.getClientId()).thenReturn(DEFAULT_ADMIN_CLIENT);
+    when(configurationMock.getClientSecret()).thenReturn(DEFAULT_ADMIN_PASSWORD);
+    when(configurationMock.getUsername()).thenReturn(DEFAULT_ADMIN_USERNAME);
+    when(configurationMock.getPassword()).thenReturn(DEFAULT_ADMIN_PASSWORD);
+    return configurationMock;
   }
 }
