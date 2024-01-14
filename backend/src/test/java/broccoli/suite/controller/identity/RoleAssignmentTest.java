@@ -36,10 +36,6 @@ class RoleAssignmentTest extends BaseKeycloakTest {
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
 
-  RoleAssignmentTest() {
-    super();
-  }
-
   @Test
   void shouldReturnNoContent_WhenUserAlreadyHasSpecificRole(TestInfo testInfo) {
 

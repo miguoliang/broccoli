@@ -26,7 +26,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.slf4j.Logger;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyProvider {
 
   private static final Logger LOGGER =
@@ -45,8 +44,9 @@ class PolicyEnforcerRuleTest extends BaseKeycloakTest implements TestPropertyPro
       "secret"
   );
 
-  PolicyEnforcerRuleTest() {
-    super(TEST_REALM);
+  @Override
+  protected String testRealm() {
+    return "quickstart";
   }
 
   @BeforeEach

@@ -125,9 +125,9 @@ tasks.test {
 
     // exclude integration tests from unit tests
 //    exclude("broccoli/security/keycloak/*Test.*")
-    exclude("broccoli/suite/controller/identity/*Test.*")
+//    exclude("broccoli/suite/controller/identity/*Test.*")
 
     // Set system properties for JUnit Platform
-    systemProperty("junit.jupiter.execution.parallel.enabled", true)
+//    systemProperty("junit.jupiter.execution.parallel.enabled", true)
     finalizedBy(tasks.jacocoTestReport)
 }

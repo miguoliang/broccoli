@@ -13,11 +13,12 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.test.FluentTestsHelper;
 import org.slf4j.Logger;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 
 /**
  * The {@link BaseKeycloakTest} class.
@@ -25,6 +26,7 @@ import org.testcontainers.containers.GenericContainer;
  * <a href="https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/#singleton-containers:~:text=stop()%20afterwards%0A%7D-,Singleton%20containers,-Sometimes%20it%20might">Singleton containers</a></p>
  */
 @MicronautTest(transactional = false)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BaseKeycloakTest.class);
@@ -41,15 +43,19 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
     LOGGER.error("Starting Keycloak and Mailhog containers");
 
+    final var network = Network.newNetwork();
+
     MAILHOG_CONTAINER = new GenericContainer<>("mailhog/mailhog")
+        .withNetwork(network)
         .withNetworkAliases("mailhog");
 
     KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
         .withRealmImportFile("realm-quickstart.json")
         .withContextPath("/auth")
-        .withNetworkAliases("keycloak")
-        .dependsOn(MAILHOG_CONTAINER);
+        .withNetwork(network)
+        .withNetworkAliases("keycloak");
 
+    MAILHOG_CONTAINER.start();
     KEYCLOAK_CONTAINER.start();
 
     KEYCLOAK_ADMIN_CLIENT = Keycloak.getInstance(
@@ -86,33 +92,31 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
 
   protected FluentTestsHelper fluentTestsHelper;
 
-  protected String testRealm;
+  protected String testRealm() {
 
-  protected BaseKeycloakTest() {
-    this(DEFAULT_TEST_REALM);
+    return DEFAULT_TEST_REALM;
   }
 
   /**
    * Instantiates a new {@link BaseKeycloakTest}.
    */
-  protected BaseKeycloakTest(String testRealm) {
+  protected BaseKeycloakTest() {
     fluentTestsHelper = new FluentTestsHelper(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
         DEFAULT_ADMIN_USERNAME,
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
         DEFAULT_ADMIN_CLIENT,
-        testRealm
+        testRealm()
     );
     fluentTestsHelper.init();
-    this.testRealm = testRealm;
   }
 
   @MockBean(KeycloakAdminClientConfiguration.class)
   protected KeycloakAdminClientConfiguration keycloakAdminClientConfiguration() {
     final var configurationMock = mock(KeycloakAdminClientConfiguration.class);
     when(configurationMock.getServerUrl()).thenReturn(KEYCLOAK_CONTAINER.getAuthServerUrl());
-    when(configurationMock.getRealm()).thenReturn(testRealm);
+    when(configurationMock.getRealm()).thenReturn(testRealm());
     when(configurationMock.getClientId()).thenReturn(DEFAULT_ADMIN_CLIENT);
     when(configurationMock.getClientSecret()).thenReturn(DEFAULT_ADMIN_PASSWORD);
     when(configurationMock.getUsername()).thenReturn(DEFAULT_ADMIN_USERNAME);

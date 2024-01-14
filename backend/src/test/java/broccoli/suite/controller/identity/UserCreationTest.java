@@ -31,10 +31,6 @@ class UserCreationTest extends BaseKeycloakTest {
   @Inject
   IdentityTestHelper helper;
 
-  UserCreationTest() {
-    super();
-  }
-
   @Test
   void shouldReturnUserCreated_WhenUserDoesNotExist(TestInfo testInfo) {
 

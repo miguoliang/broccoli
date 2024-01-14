@@ -25,7 +25,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link EdgeCreationTest} class.
  */
 @MicronautTest(transactional = false)
-@Execution(ExecutionMode.CONCURRENT)
 class EdgeCreationTest extends BaseDatabaseTest {
 
   @Inject

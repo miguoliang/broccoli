@@ -27,7 +27,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
  * The {@link VertexCreationTest} class.
  */
 @MicronautTest(transactional = false)
-@Execution(ExecutionMode.CONCURRENT)
 class VertexCreationTest extends BaseDatabaseTest {
 
   @Inject

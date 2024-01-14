@@ -29,10 +29,6 @@ class UserUpdateTest extends BaseKeycloakTest {
   @Inject
   IdentityTestHelper helper;
 
-  UserUpdateTest() {
-    super();
-  }
-
   @Test
   void shouldReturnUserUpdated_WhenUpdateUsername_And_NewUsernameDoesNotExist(TestInfo testInfo) {
 
