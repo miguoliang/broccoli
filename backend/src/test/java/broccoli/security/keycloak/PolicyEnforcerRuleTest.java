@@ -6,7 +6,6 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
-import static org.keycloak.test.FluentTestsHelper.DEFAULT_TEST_REALM;
 
 import broccoli.common.BaseDatabaseTest;
 import broccoli.common.IdentityTestHelper;
