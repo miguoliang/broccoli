@@ -5,38 +5,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import broccoli.common.BaseKeycloakTest;
-import broccoli.common.IdentityTestHelper;
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.UpdateUserResponse;
+import broccoli.security.keycloak.PolicyEnforcerRuleTest;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserUpdateTest} class.
  */
-class UserUpdateTest extends BaseKeycloakTest {
+class UserUpdateTest extends GeneralTestSetup {
 
-  @Inject
-  @Client("/")
-  HttpClient client;
+  @Container
+  static KeycloakContainer KEYCLOAK_CONTAINER =
+      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
+          .withContextPath("/auth")
+          .withReuse(true);
 
-  @Inject
-  IdentityTestHelper helper;
+  static {
+    KEYCLOAK_CONTAINER.start();
+  }
 
   @Test
   void shouldReturnUserUpdated_WhenUpdateUsername_And_NewUsernameDoesNotExist(TestInfo testInfo) {
 
     // Setup
-    final var username = helper.username(testInfo);
+    final var username = identityTestHelper.username(testInfo);
     final var password = "Aa123456789.";
     fluentTestsHelper.createTestUser(username, password);
-    final var userId = helper.userId(username);
+    final var userId = identityTestHelper.userId(username);
     final var newUsername = username + "_1";
     final var updateRequest = new UpdateUserRequest(newUsername, null, null, null);
 
@@ -55,10 +56,10 @@ class UserUpdateTest extends BaseKeycloakTest {
   void shouldReturnConflict_WhenUpdateUsername_And_NewUsernameAlreadyExists(TestInfo testInfo) {
 
     // Setup
-    final var username = helper.username(testInfo);
+    final var username = identityTestHelper.username(testInfo);
     final var password = "Aa123456789.";
     fluentTestsHelper.createTestUser(username, password);
-    final var userId = helper.userId(username);
+    final var userId = identityTestHelper.userId(username);
     final var newUsername = username + "_1";
     fluentTestsHelper.createTestUser(newUsername, password);
     final var updateRequest = new UpdateUserRequest(newUsername, null, null, null);
@@ -72,5 +73,10 @@ class UserUpdateTest extends BaseKeycloakTest {
 
     // Verify
     assertEquals(HttpStatus.CONFLICT, response.getStatus());
+  }
+
+  @Override
+  protected String getAuthServerUrl() {
+    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

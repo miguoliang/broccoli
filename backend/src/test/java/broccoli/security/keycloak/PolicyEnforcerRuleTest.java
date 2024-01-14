@@ -21,6 +21,7 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
+import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,18 +36,20 @@ import org.keycloak.test.FluentTestsHelper;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+/**
+ * The {@link PolicyEnforcerRuleTest} class.
+ */
 @MicronautTest(transactional = false)
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestPropertyProvider {
+public class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestPropertyProvider {
 
-  static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
+  public static final String IMAGE_NAME = "quay.io/keycloak/keycloak:23.0.0";
 
   static final String TEST_REALM = "quickstart";
 
   @Container
   static KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
-      .withRealmImportFile("realm-quickstart.json")
       .withContextPath("/auth")
       .withReuse(true);
 
@@ -69,7 +72,7 @@ class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestPropertyPro
   FluentTestsHelper fluentTestsHelper;
 
   @BeforeAll
-  void beforeAll() {
+  void beforeAll() throws IOException {
 
     identityTestHelper.roleId("user");
     identityTestHelper.roleId("user_premium");
@@ -83,6 +86,7 @@ class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestPropertyPro
         TEST_REALM
     );
     fluentTestsHelper.init();
+    fluentTestsHelper.importTestRealm("realm-quickstart.json");
 
     keycloakClientFacade = new KeycloakClientFacade(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),

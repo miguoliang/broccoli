@@ -5,31 +5,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.common.BaseKeycloakTest;
-import broccoli.common.IdentityTestHelper;
 import broccoli.model.identity.http.response.QueryUserResponse;
+import broccoli.security.keycloak.PolicyEnforcerRuleTest;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Inject;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserQueryTest} class.
  */
-class UserQueryTest extends BaseKeycloakTest {
+class UserQueryTest extends GeneralTestSetup {
 
-  @Inject
-  @Client("/")
-  HttpClient client;
+  @Container
+  static KeycloakContainer KEYCLOAK_CONTAINER =
+      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
+          .withContextPath("/auth")
+          .withReuse(true);
 
-  @Inject
-  IdentityTestHelper helper;
+  static {
+    KEYCLOAK_CONTAINER.start();
+  }
 
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
@@ -38,7 +40,7 @@ class UserQueryTest extends BaseKeycloakTest {
   void query_ShouldReturnFound_WithQ(TestInfo testInfo) {
 
     // Setup
-    final var username = helper.username(testInfo);
+    final var username = identityTestHelper.username(testInfo);
     final var password = "Aa123456789.";
     fluentTestsHelper.createTestUser(username, password);
 
@@ -67,7 +69,7 @@ class UserQueryTest extends BaseKeycloakTest {
     // Setup
     final var password = "Aa123456789.";
     IntStream.range(0, 20).forEach(i -> {
-      final var username = helper.username(testInfo) + "_" + i;
+      final var username = identityTestHelper.username(testInfo) + "_" + i;
       fluentTestsHelper.createTestUser(username, password);
     });
 
@@ -86,5 +88,10 @@ class UserQueryTest extends BaseKeycloakTest {
     assertTrue(
         pageableConfiguration.getDefaultPageSize() >= foundBody.getContent().size(),
         "Content size should be less or equal than default page size");
+  }
+
+  @Override
+  protected String getAuthServerUrl() {
+    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }
