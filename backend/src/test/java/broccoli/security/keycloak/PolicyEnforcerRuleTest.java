@@ -51,6 +51,7 @@ public class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestProp
 
   @Container
   static KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer(IMAGE_NAME)
+      .withRealmImportFile("realm-quickstart.json")
       .withContextPath("/auth")
       .withReuse(true);
 
@@ -84,11 +85,10 @@ public class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestProp
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
         DEFAULT_ADMIN_CLIENT,
-        DEFAULT_TEST_REALM
+        TEST_REALM
     );
     fluentTestsHelper.init();
 
-    fluentTestsHelper.importTestRealm("realm-quickstart.json");
 
     keycloakClientFacade = new KeycloakClientFacade(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
