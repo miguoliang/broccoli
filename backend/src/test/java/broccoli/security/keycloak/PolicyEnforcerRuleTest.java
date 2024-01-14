@@ -6,6 +6,7 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_TEST_REALM;
 
 import broccoli.common.BaseDatabaseTest;
 import broccoli.common.IdentityTestHelper;
@@ -83,9 +84,10 @@ public class PolicyEnforcerRuleTest extends BaseDatabaseTest implements TestProp
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
         DEFAULT_ADMIN_CLIENT,
-        TEST_REALM
+        DEFAULT_TEST_REALM
     );
     fluentTestsHelper.init();
+
     fluentTestsHelper.importTestRealm("realm-quickstart.json");
 
     keycloakClientFacade = new KeycloakClientFacade(
