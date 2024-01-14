@@ -46,7 +46,7 @@ public abstract class BaseKeycloakTest extends BaseDatabaseTest {
         .withNetworkAliases("keycloak");
 
     KEYCLOAK_CONTAINER.start();
-    MAILHOG_CONTAINER.start();
+//    MAILHOG_CONTAINER.start();
 
     KEYCLOAK_ADMIN_CLIENT = Keycloak.getInstance(
         KEYCLOAK_CONTAINER.getAuthServerUrl(),
