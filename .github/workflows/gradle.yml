@@ -21,22 +21,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      iam:
-        image: quay.io/keycloak/keycloak:23.0.3
-        ports:
-          - 8080:8080
-        env:
-          KEYCLOAK_ADMIN: admin
-          KEYCLOAK_ADMIN_PASSWORD: admin
-        options: --entrypoint=/entrypoint.sh
-        volumes:
-          - ./backend/src/test/resources/keycloak-entrypoint.sh:/entrypoint.sh
-      mail:
-        image: mailhog/mailhog
-        ports:
-          - 1025:1025
-          - 8025:8025
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
@@ -76,6 +60,16 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
+    - name: Cache Docker images
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.docker
+          /var/lib/docker
+        key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.keycloak.yml') }}
+        restore-keys: ${{ runner.os }}-docker
+    - name: Start Containers
+      run: docker-compose -f docker-compose.keycloak.yml up -d
     - name: Build and analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
