@@ -27,11 +27,8 @@ jobs:
         ports:
           - 8080:8080
         env:
-          KEYCLOAK_USER: admin
-          KEYCLOAK_PASSWORD: admin
-          KEYCLOAK_IMPORT: /tmp/realm-export.json
-        volumes:
-          - ./backend/src/test/resources/realm-quickstart.json:/tmp/realm-export.json
+          KEYCLOAK_ADMIN: admin
+          KEYCLOAK_ADMIN_PASSWORD: admin
       mail:
         image: mailhog/mailhog
         ports:

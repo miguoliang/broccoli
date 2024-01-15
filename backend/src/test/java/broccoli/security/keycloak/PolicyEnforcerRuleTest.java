@@ -8,6 +8,7 @@ import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_PASSWORD;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_USERNAME;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_KEYCLOAK_URL;
+import static org.keycloak.test.FluentTestsHelper.DEFAULT_TEST_REALM;
 
 import broccoli.common.BaseDatabaseTest;
 import broccoli.common.IdentityTestHelper;
@@ -21,6 +22,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,7 +65,7 @@ class PolicyEnforcerRuleTest extends BaseDatabaseTest {
   FluentTestsHelper fluentTestsHelper;
 
   @BeforeAll
-  void beforeAll() {
+  void beforeAll() throws IOException {
 
     identityTestHelper.roleId("user");
     identityTestHelper.roleId("user_premium");
@@ -74,9 +76,10 @@ class PolicyEnforcerRuleTest extends BaseDatabaseTest {
         DEFAULT_ADMIN_PASSWORD,
         DEFAULT_ADMIN_REALM,
         DEFAULT_ADMIN_CLIENT,
-        TEST_REALM
+        DEFAULT_TEST_REALM
     );
     fluentTestsHelper.init();
+    fluentTestsHelper.importTestRealm(getClass().getResourceAsStream("/realm-quickstart.json"));
 
     keycloakClientFacade = new KeycloakClientFacade(
         DEFAULT_KEYCLOAK_URL,

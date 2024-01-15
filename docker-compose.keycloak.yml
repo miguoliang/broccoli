@@ -9,8 +9,6 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
       - 8080:8080
-    volumes:
-      - ./backend/src/test/resources/realm-quickstart.json:/opt/keycloak/data/import/realm-export.json
   mail:
     image: mailhog/mailhog
     ports:
