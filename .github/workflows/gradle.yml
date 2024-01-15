@@ -29,7 +29,9 @@ jobs:
         env:
           KEYCLOAK_ADMIN: admin
           KEYCLOAK_ADMIN_PASSWORD: admin
-        options: start-dev --http-relative-path=/auth
+        options: --entrypoint=/entrypoint.sh
+        volumes:
+          - ./backend/src/test/resources/keycloak-entrypoint.sh:/entrypoint.sh
       mail:
         image: mailhog/mailhog
         ports:
