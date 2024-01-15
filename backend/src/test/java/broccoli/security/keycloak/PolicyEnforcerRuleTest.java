@@ -1,6 +1,5 @@
 package broccoli.security.keycloak;
 
-import static broccoli.security.keycloak.PolicyEnforcerRuleTest.JWKS_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_CLIENT;
@@ -42,13 +41,10 @@ import org.keycloak.test.FluentTestsHelper;
 @MicronautTest(transactional = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Property(name = "micronaut.security.enabled", value = "true")
-@Property(name = "micronaut.security.token.jwt.signatures.jwks.default.url", value = JWKS_URL)
+@Property(name = "keycloak.default.realm", value = PolicyEnforcerRuleTest.TEST_REALM)
 class PolicyEnforcerRuleTest extends BaseDatabaseTest {
 
   static final String TEST_REALM = "quickstart";
-
-  static final String JWKS_URL =
-      DEFAULT_KEYCLOAK_URL + "/realms/" + TEST_REALM + "/protocol/openid-connect/certs";
 
   @Inject
   @Client("/")

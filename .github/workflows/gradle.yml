@@ -29,6 +29,7 @@ jobs:
         env:
           KEYCLOAK_ADMIN: admin
           KEYCLOAK_ADMIN_PASSWORD: admin
+        options: start-dev --http-relative-path=/auth
       mail:
         image: mailhog/mailhog
         ports:
