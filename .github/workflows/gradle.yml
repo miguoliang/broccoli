@@ -60,12 +60,9 @@ jobs:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
-    - name: Cache Docker images
-      uses: actions/cache@v3
+    - name: Cache Docker images.
+      uses: ScribeMD/docker-cache@0.3.7
       with:
-        path: |
-          ~/.docker
-          /var/lib/docker
         key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.keycloak.yml') }}
         restore-keys: ${{ runner.os }}-docker
     - name: Start Containers
