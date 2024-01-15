@@ -30,7 +30,6 @@ jobs:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
           KEYCLOAK_IMPORT: /tmp/realm-export.json
-        options: --health-cmd="curl -f http://localhost:8080/auth/realms/master" --health-interval=10s --health-timeout=5s --health-retries=5
         volumes:
           - ./backend/src/test/resources/realm-quickstart.json:/tmp/realm-export.json
       mail:
@@ -38,7 +37,6 @@ jobs:
         ports:
           - 1025:1025
           - 8025:8025
-        options: --health-cmd="curl -f http://localhost:8025" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
