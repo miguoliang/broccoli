@@ -23,6 +23,7 @@ configure<CheckstyleExtension> {
 dependencies {
     annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
     annotationProcessor("io.micronaut:micronaut-http-validation")
@@ -46,6 +47,7 @@ dependencies {
     implementation("io.minio:minio:${minioVersion}")
     implementation("org.keycloak:keycloak-admin-client:${keycloakVersion}")
     implementation("org.keycloak:keycloak-policy-enforcer:${keycloakVersion}")
+    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
     compileOnly("io.micronaut:micronaut-http-client")
     compileOnly("org.projectlombok:lombok")
 
@@ -75,6 +77,10 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
     targetCompatibility = JavaVersion.toVersion("21")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-parameters")
 }
 
 graalvmNative.toolchainDetection.set(false)

@@ -1,8 +1,7 @@
 {
-  "name": "elstar",
-  "version": "1.1.6",
+  "name": "broccoli",
+  "version": "1.0.0",
   "private": true,
-  "proxy": "http://localhost:8081",
   "type": "module",
   "dependencies": {
     "@chakra-ui/anatomy": "^2.2.0",
@@ -14,13 +13,9 @@
     "@emotion/styled": "^11.11.0",
     "@floating-ui/react": "^0.24.8",
     "@tanstack/match-sorter-utils": "^8.7.6",
-    "@tanstack/react-query": "^4.29.25",
+    "@tanstack/react-query": "^5.17.10",
     "@tanstack/react-table": "^8.7.9",
-    "axios": "^1.6.5",
-    "d3": "^7.8.5",
-    "d3-force": "^3.0.0",
     "dayjs": "^1.11.5",
-    "echarts": "^5.4.3",
     "file-saver": "^2.0.5",
     "formik": "^2.4.2",
     "framer-motion": "^10.13.1",
@@ -31,7 +26,6 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-cookie-consent": "^8.0.1",
-    "react-date-picker": "^10.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-query-kit": "^1.4.5",
@@ -45,18 +39,20 @@
   "scripts": {
     "start": "run-p watch:css start:vite",
     "start:vite": "vite --mode cognito",
-    "build": "npm run build:css && npm run build:vite",
+    "build": "npm run compile && npm run build:css && npm run build:vite",
     "build:vite": "vite build",
     "serve": "vite preview",
     "analyze": "source-map-explorer 'build/assets/*.js'",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,mjs,cjs}\"",
     "lint": "eslint ./src --ext js,jsx,mjs,cjs,ts,tsx --fix",
     "test": "",
+    "compile": "tsc --noEmit",
     "coverage": "vitest --coverage",
     "e2e": "cypress open",
     "build:css": "cross-env TAILWIND_MODE=build NODE_ENV=production postcss src/assets/styles/app.css -o src/index.css",
     "watch:css": "cross-env TAILWIND_MODE=watch NODE_ENV=development postcss src/assets/styles/app.css -o src/index.css --watch",
-    "bundle-report": "cross-env npx vite-bundle-visualizer"
+    "bundle-report": "cross-env npx vite-bundle-visualizer",
+    "codegen": "openapi-rq -i ../backend/build/classes/java/main/META-INF/swagger/broccoli-1.0.yml -o ./src/gens/openapi"
   },
   "babelMacros": {
     "twin": {
@@ -76,9 +72,10 @@
     ]
   },
   "devDependencies": {
+    "@7nohe/openapi-react-query-codegen": "^0.5.2",
     "@faker-js/faker": "^8.0.2",
-    "@tanstack/eslint-plugin-query": "^4.29.25",
-    "@tanstack/react-query-devtools": "^4.29.25",
+    "@tanstack/eslint-plugin-query": "^5.17.7",
+    "@tanstack/react-query-devtools": "^5.17.10",
     "@types/d3": "^7.4.3",
     "@types/d3-force": "^3.0.9",
     "@types/file-saver": "^2.0.5",
