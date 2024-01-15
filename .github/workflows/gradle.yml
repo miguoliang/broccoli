@@ -64,7 +64,6 @@ jobs:
       uses: ScribeMD/docker-cache@0.3.7
       with:
         key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.keycloak.yml') }}
-        restore-keys: ${{ runner.os }}-docker
     - name: Start Containers
       run: docker-compose -f docker-compose.keycloak.yml up -d
     - name: Build and analyze
