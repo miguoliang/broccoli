@@ -7,28 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import broccoli.model.identity.http.request.UpdateUserRequest;
 import broccoli.model.identity.http.response.UpdateUserResponse;
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserUpdateTest} class.
  */
 class UserUpdateTest extends GeneralTestSetup {
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withReuse(true);
-
-  static {
-    KEYCLOAK_CONTAINER.start();
-  }
 
   @Test
   void shouldReturnUserUpdated_WhenUpdateUsername_And_NewUsernameDoesNotExist(TestInfo testInfo) {
@@ -73,10 +60,5 @@ class UserUpdateTest extends GeneralTestSetup {
 
     // Verify
     assertEquals(HttpStatus.CONFLICT, response.getStatus());
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

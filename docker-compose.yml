@@ -3,6 +3,7 @@ version: '3.8'
 include:
   - docker-compose.graylog.yml
   - docker-compose.onlyoffice.yml
+  - docker-compose.keycloak.yml
 
 services:
   db:
@@ -13,21 +14,6 @@ services:
       POSTGRES_DB: postgres
     ports:
       - 5432:5432
-  iam:
-    image: quay.io/keycloak/keycloak:23.0.3
-    command: [ 'start-dev', '--http-relative-path', '/auth', '--import-realm' ]
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - 8080:8080
-    volumes:
-      - ./broccoli-realm.json:/opt/keycloak/data/import/broccoli-realm.json
-  mail:
-    image: mailhog/mailhog
-    ports:
-      - 1025:1025
-      - 8025:8025
   monitor:
     image: prom/prometheus
     extra_hosts:

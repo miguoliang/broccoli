@@ -5,27 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserDeletionTest} class.
  */
 class UserDeletionTest extends GeneralTestSetup {
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withReuse(true);
-
-  static {
-    KEYCLOAK_CONTAINER.start();
-  }
 
   @Test
   void shouldReturnNoContent_WhenUserExists(TestInfo testInfo) {
@@ -60,10 +47,5 @@ class UserDeletionTest extends GeneralTestSetup {
     // Verify
     assertNotNull(response);
     assertEquals(HttpStatus.NO_CONTENT, response.getStatus(), "Status should be NO_CONTENT");
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

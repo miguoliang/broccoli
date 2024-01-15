@@ -6,32 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link RoleAssignmentTest} class.
  */
 class RoleAssignmentTest extends GeneralTestSetup {
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withReuse(true);
-
-  static {
-    KEYCLOAK_CONTAINER.start();
-  }
 
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
@@ -106,11 +91,5 @@ class RoleAssignmentTest extends GeneralTestSetup {
     // Verify http response
     assertNotNull(response, "Response should not be null");
     assertEquals(HttpStatus.NOT_FOUND, response.getStatus(), "Status should be NOT_FOUND");
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

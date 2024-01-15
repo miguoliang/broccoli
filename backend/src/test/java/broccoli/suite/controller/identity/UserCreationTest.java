@@ -8,29 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import broccoli.model.identity.http.request.CreateUserRequest;
 import broccoli.model.identity.http.response.CreateUserResponse;
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.platform.commons.util.StringUtils;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserCreationTest} class.
  */
 class UserCreationTest extends GeneralTestSetup {
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withReuse(true);
-
-  static {
-    KEYCLOAK_CONTAINER.start();
-  }
 
   @Test
   void shouldReturnUserCreated_WhenUserDoesNotExist(TestInfo testInfo) {
@@ -83,10 +70,5 @@ class UserCreationTest extends GeneralTestSetup {
 
     // Verify
     assertEquals(HttpStatus.CONFLICT, thrown.getStatus(), "Status should be CONFLICT");
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

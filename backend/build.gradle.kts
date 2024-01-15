@@ -65,8 +65,6 @@ dependencies {
     testImplementation("org.keycloak:keycloak-test-helper:${keycloakVersion}")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.testcontainers:testcontainers")
     testRuntimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
@@ -123,11 +121,6 @@ jacoco {
 tasks.test {
     useJUnitPlatform()
 
-    // exclude integration tests from unit tests
-//    exclude("broccoli/security/keycloak/*Test.*")
-//    exclude("broccoli/suite/controller/identity/*Test.*")
-
     // Set system properties for JUnit Platform
-//    systemProperty("junit.jupiter.execution.parallel.enabled", true)
     finalizedBy(tasks.jacocoTestReport)
 }

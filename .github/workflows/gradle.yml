@@ -21,6 +21,24 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      iam:
+        image: quay.io/keycloak/keycloak:23.0.3
+        ports:
+          - 8080:8080
+        env:
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
+          KEYCLOAK_IMPORT: /tmp/realm-export.json
+        options: --health-cmd="curl -f http://localhost:8080/auth/realms/master" --health-interval=10s --health-timeout=5s --health-retries=5
+        volumes:
+          - ./backend/src/test/resources/realm-quickstart.json:/tmp/realm-export.json
+      mail:
+        image: mailhog/mailhog
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: --health-cmd="curl -f http://localhost:8025" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
@@ -28,6 +46,26 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      with:
+        version: 8
+        run_install: false
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+    - uses: actions/cache@v3
+      name: Setup pnpm cache
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
     - name: Cache SonarCloud packages
       uses: actions/cache@v3
       with:
@@ -40,10 +78,6 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
-    - name: Enable Testcontainers Reuse
-      run: |
-        mkdir -p ~/.testcontainers
-        echo "testcontainers.reuse.enable=true" >> ~/.testcontainers.properties
     - name: Build and analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

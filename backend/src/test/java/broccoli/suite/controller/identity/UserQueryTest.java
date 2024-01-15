@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import broccoli.model.identity.http.response.QueryUserResponse;
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.runtime.config.DataConfiguration;
@@ -16,22 +14,11 @@ import jakarta.inject.Inject;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserQueryTest} class.
  */
 class UserQueryTest extends GeneralTestSetup {
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withReuse(true);
-
-  static {
-    KEYCLOAK_CONTAINER.start();
-  }
 
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
@@ -88,10 +75,5 @@ class UserQueryTest extends GeneralTestSetup {
     assertTrue(
         pageableConfiguration.getDefaultPageSize() >= foundBody.getContent().size(),
         "Content size should be less or equal than default page size");
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }

@@ -6,50 +6,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.keycloak.test.FluentTestsHelper.DEFAULT_ADMIN_REALM;
 
-import broccoli.security.keycloak.PolicyEnforcerRuleTest;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.micronaut.data.runtime.config.DataConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import java.io.IOException;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * The {@link UserResetPasswordTest} class.
  */
 class UserResetPasswordTest extends GeneralTestSetup {
 
-  static final Network network = Network.newNetwork();
-
-  @Container
-  static KeycloakContainer KEYCLOAK_CONTAINER =
-      new KeycloakContainer(PolicyEnforcerRuleTest.IMAGE_NAME)
-          .withContextPath("/auth")
-          .withNetwork(network)
-          .withReuse(true);
-
-  @Container
-  static GenericContainer<?> MAILHOG_CONTAINER = new GenericContainer<>("mailhog/mailhog")
-      .withNetwork(network)
-      .withNetworkAliases("mailhog");
-
-  static {
-
-    MAILHOG_CONTAINER.start();
-    KEYCLOAK_CONTAINER.start();
-  }
-
   @Inject
   DataConfiguration.PageableConfiguration pageableConfiguration;
 
   @Override
-  void beforeAll() {
+  void beforeAll() throws IOException {
+
     super.beforeAll();
 
     final var adminRepresentation =
@@ -67,7 +44,7 @@ class UserResetPasswordTest extends GeneralTestSetup {
         "auth", "",
         "port", "1025",
         "replyTo", "",
-        "host", "mailhog",
+        "host", "mail",
         "from", "from@example.com",
         "fromDisplayName", "",
         "envelopeFrom", "",
@@ -109,10 +86,5 @@ class UserResetPasswordTest extends GeneralTestSetup {
 
     // Verify
     assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus(), "Status should be NOT_FOUND");
-  }
-
-  @Override
-  protected String getAuthServerUrl() {
-    return KEYCLOAK_CONTAINER.getAuthServerUrl();
   }
 }
