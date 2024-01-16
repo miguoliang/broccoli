@@ -82,6 +82,7 @@ java {
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
+    options.isDeprecation = true
 }
 
 graalvmNative.toolchainDetection.set(false)
