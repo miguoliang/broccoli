@@ -53,7 +53,7 @@
     "e2e": "cypress open",
     "build:css": "cross-env TAILWIND_MODE=build NODE_ENV=production postcss src/assets/styles/app.css -o src/index.css",
     "watch:css": "cross-env TAILWIND_MODE=watch NODE_ENV=development postcss src/assets/styles/app.css -o src/index.css --watch",
-    "bundle-report": "cross-env npx vite-bundle-visualizer",
+    "bundle-report": "cross-env npx vite-bundle-visualizer"
   },
   "babelMacros": {
     "twin": {
