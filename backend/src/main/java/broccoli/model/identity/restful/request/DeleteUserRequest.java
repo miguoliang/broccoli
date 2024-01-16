@@ -1,9 +1,9 @@
-package broccoli.model.identity.rest.request;
+package broccoli.model.identity.restful.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -12,7 +12,8 @@ import jakarta.validation.constraints.NotBlank;
  * @param request HTTP request
  * @param id      User id
  */
-@Introspected
+
+@Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DeleteUserRequest(HttpRequest<?> request, @PathVariable @NotBlank String id) {
 }

@@ -11,6 +11,7 @@ import io.micronaut.serde.annotation.Serdeable;
  * @param name Vertex name
  * @param type Vertex type
  */
+
 @Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record GetVertexResponse(String id, String name, String type) {

@@ -1,9 +1,9 @@
-package broccoli.model.identity.rest.request;
+package broccoli.model.identity.restful.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -13,7 +13,8 @@ import jakarta.validation.constraints.NotBlank;
  * @param userId  User id
  * @param roleId  Role id
  */
-@Introspected
+
+@Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record RemoveRoleFromUserRequest(HttpRequest<?> request,
                                         @PathVariable @NotBlank String userId,

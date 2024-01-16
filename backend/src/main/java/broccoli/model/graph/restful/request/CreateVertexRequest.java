@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
  * @param name Vertex name
  * @param type Vertex type
  */
+
 @Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateVertexRequest(@NotBlank String name, @NotBlank String type) {

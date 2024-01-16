@@ -1,4 +1,4 @@
-package broccoli.model.graph.restful.request;
+package broccoli.model.identity.restful.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micronaut.core.annotation.Nullable;
@@ -8,11 +8,11 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.serde.annotation.Serdeable;
 
 /**
- * The {@link DeleteVertexRequest} class.
+ * The {@link SearchUsersRequest} class.
  */
 
 @Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record QueryVertexRequest(HttpRequest<?> request, @QueryValue @Nullable String q,
+public record SearchUsersRequest(HttpRequest<?> request, @QueryValue @Nullable String q,
                                  Pageable pageable) {
 }

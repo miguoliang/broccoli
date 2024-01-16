@@ -2,16 +2,16 @@ package broccoli.endpoint.restful.identity;
 
 import broccoli.common.HttpStatusExceptions;
 import broccoli.common.identity.KeycloakDefaultRealmConfiguration;
-import broccoli.model.identity.rest.request.AssignRoleToUserRequest;
-import broccoli.model.identity.rest.request.CreateUserRequest;
-import broccoli.model.identity.rest.request.DeleteUserRequest;
-import broccoli.model.identity.rest.request.QueryUserRequest;
-import broccoli.model.identity.rest.request.RemoveRoleFromUserRequest;
-import broccoli.model.identity.rest.request.ResetPasswordRequest;
-import broccoli.model.identity.rest.request.UpdateUserRequest;
-import broccoli.model.identity.rest.response.CreateUserResponse;
-import broccoli.model.identity.rest.response.QueryUserResponse;
-import broccoli.model.identity.rest.response.UpdateUserResponse;
+import broccoli.model.identity.restful.request.AssignRoleToUserRequest;
+import broccoli.model.identity.restful.request.CreateUserRequest;
+import broccoli.model.identity.restful.request.DeleteUserRequest;
+import broccoli.model.identity.restful.request.RemoveRoleFromUserRequest;
+import broccoli.model.identity.restful.request.ResetPasswordRequest;
+import broccoli.model.identity.restful.request.SearchUsersRequest;
+import broccoli.model.identity.restful.request.UpdateUserRequest;
+import broccoli.model.identity.restful.response.CreateUserResponse;
+import broccoli.model.identity.restful.response.SearchUsersResponse;
+import broccoli.model.identity.restful.response.UpdateUserResponse;
 import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
@@ -58,7 +58,7 @@ public class UserController {
    */
   @Post
   @Status(HttpStatus.CREATED)
-  public CreateUserResponse create(@Body @Valid CreateUserRequest createUserRequest) {
+  public CreateUserResponse createUser(@Body @Valid CreateUserRequest createUserRequest) {
     final var response =
         keycloak.realm(keycloakRealm).users().create(createUserRequest.toRepresentation());
     final var code = response.getStatus();
@@ -78,18 +78,19 @@ public class UserController {
   /**
    * Search users.
    *
-   * @param queryUserRequest Query conditions
+   * @param searchUsersRequest Query conditions
    * @return Users
    */
   @Get("/{?q}")
-  public Page<QueryUserResponse> search(@Valid @RequestBean QueryUserRequest queryUserRequest) {
+  public Page<SearchUsersResponse> searchUsers(
+      @Valid @RequestBean SearchUsersRequest searchUsersRequest) {
 
     final var users = keycloak.realm(keycloakRealm).users().search(
-        queryUserRequest.q(),
-        Math.toIntExact(queryUserRequest.pageable().getOffset()),
-        queryUserRequest.pageable().getSize());
+        searchUsersRequest.q(),
+        Math.toIntExact(searchUsersRequest.pageable().getOffset()),
+        searchUsersRequest.pageable().getSize());
     final var total = keycloak.realm(keycloakRealm).users().count();
-    return Page.of(users.stream().map(userRepresentation -> new QueryUserResponse(
+    return Page.of(users.stream().map(userRepresentation -> new SearchUsersResponse(
         userRepresentation.getId(),
         userRepresentation.getUsername(),
         userRepresentation.getEmail(),
@@ -97,7 +98,7 @@ public class UserController {
         userRepresentation.getFirstName(),
         userRepresentation.getLastName(),
         userRepresentation.isEnabled()
-    )).toList(), queryUserRequest.pageable(), total);
+    )).toList(), searchUsersRequest.pageable(), total);
   }
 
   /**
@@ -107,7 +108,7 @@ public class UserController {
    */
   @Delete("/{id}")
   @Status(HttpStatus.NO_CONTENT)
-  public void delete(@Valid @RequestBean DeleteUserRequest deleteUserRequest) {
+  public void deleteUser(@Valid @RequestBean DeleteUserRequest deleteUserRequest) {
     keycloak.realm(keycloakRealm).users().delete(deleteUserRequest.id());
   }
 
@@ -120,8 +121,8 @@ public class UserController {
    * @return User just updated
    */
   @Put("/{id}")
-  public UpdateUserResponse update(@PathVariable String id,
-                                   @Body @Valid UpdateUserRequest updateUserRequest) {
+  public UpdateUserResponse updateUser(@PathVariable String id,
+                                       @Body @Valid UpdateUserRequest updateUserRequest) {
 
     final var realmRepresentation = keycloak.realm(keycloakRealm).toRepresentation();
     final var user = keycloak.realm(keycloakRealm).users().get(id).toRepresentation();

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.model.identity.rest.response.QueryUserResponse;
+import broccoli.model.identity.restful.response.SearchUsersResponse;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.runtime.config.DataConfiguration;
@@ -33,7 +33,7 @@ class UserQueryTest extends GeneralTestSetup {
 
     // Execute
     final var found = client.toBlocking().exchange(GET("api/identity/user?q=" + username),
-        Argument.of(Page.class, QueryUserResponse.class));
+        Argument.of(Page.class, SearchUsersResponse.class));
 
     // Verify response status
     assertNotNull(found, "Response should not be null");
@@ -44,7 +44,7 @@ class UserQueryTest extends GeneralTestSetup {
     assertNotNull(foundBody, "Response body should not be null");
     assertEquals(1, foundBody.getContent().size(), "Content size should be 1");
 
-    final var queryUserResponse = (QueryUserResponse) foundBody.getContent().getFirst();
+    final var queryUserResponse = (SearchUsersResponse) foundBody.getContent().getFirst();
     // Keycloak username is not case-sensitive.
     assertEquals(username.toLowerCase(), queryUserResponse.username(),
         "Username should be " + username);
@@ -62,7 +62,7 @@ class UserQueryTest extends GeneralTestSetup {
 
     // Execute
     final var found = client.toBlocking()
-        .exchange(GET("api/identity/user"), Argument.of(Page.class, QueryUserResponse.class));
+        .exchange(GET("api/identity/user"), Argument.of(Page.class, SearchUsersResponse.class));
 
     // Verify response status
     assertNotNull(found, "Response should not be null");

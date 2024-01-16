@@ -1,12 +1,15 @@
 package broccoli.model.graph.restful.response;
 
 import broccoli.model.graph.entity.Edge;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * The {@link CreateEdgeResponse} class.
  */
+
 @Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateEdgeResponse(String inVertexId, String inVertexName, String inVertexType,
                                  String outVertexId, String outVertexName, String outVertexType,
                                  String name, String scope) {

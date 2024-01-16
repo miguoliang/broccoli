@@ -48,7 +48,7 @@ public class VertexController {
    * @return {@link GetVertexResponse}
    */
   @Get("/{id}")
-  public GetVertexResponse findById(@Valid @RequestBean GetVertexRequest getVertexRequest) {
+  public GetVertexResponse findVertexById(@Valid @RequestBean GetVertexRequest getVertexRequest) {
     return GetVertexResponse.of(vertexRepository.findById(getVertexRequest.id())
         .orElseThrow(HttpStatusExceptions::notFound));
   }
@@ -61,7 +61,7 @@ public class VertexController {
    */
   @Post
   @Status(HttpStatus.CREATED)
-  public CreateVertexResponse create(@Valid @Body CreateVertexRequest createVertexRequest) {
+  public CreateVertexResponse createVertex(@Valid @Body CreateVertexRequest createVertexRequest) {
     final var vertex = createVertexRequest.toEntity();
     if (vertexRepository.existsById(vertex.getId())) {
       throw conflict();
@@ -76,7 +76,7 @@ public class VertexController {
    */
   @Delete("/{id}")
   @Status(HttpStatus.NO_CONTENT)
-  public void delete(@Valid @RequestBean DeleteVertexRequest deleteVertexRequest) {
+  public void deleteVertex(@Valid @RequestBean DeleteVertexRequest deleteVertexRequest) {
     vertexRepository.deleteById(deleteVertexRequest.id());
   }
 
@@ -88,7 +88,7 @@ public class VertexController {
    */
   @Get("/{?q}")
   @Transactional
-  public Page<QueryVertexResponse> search(
+  public Page<QueryVertexResponse> searchVertices(
       @Valid @RequestBean QueryVertexRequest queryVertexRequest) {
 
     if (StringUtils.isBlank(queryVertexRequest.q())) {

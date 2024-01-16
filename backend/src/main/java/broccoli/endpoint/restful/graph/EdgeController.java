@@ -53,7 +53,7 @@ public class EdgeController {
   @Post
   @Transactional
   @Status(HttpStatus.CREATED)
-  public CreateEdgeResponse create(@Body @Valid CreateEdgeRequest createEdgeRequest) {
+  public CreateEdgeResponse createEdge(@Body @Valid CreateEdgeRequest createEdgeRequest) {
 
     final var inVertex = vertexRepository.findById(createEdgeRequest.inVertexId())
         .orElseThrow(HttpStatusExceptions::notFound);
@@ -90,10 +90,10 @@ public class EdgeController {
    */
   @Get
   @Transactional
-  public Page<QueryEdgeResponse> search(@QueryValue @NotEmpty Set<String> vid,
-                                        @QueryValue @NotEmpty Set<String> name,
-                                        @QueryValue @NotEmpty Set<String> scope,
-                                        @Nullable Pageable pageable) {
+  public Page<QueryEdgeResponse> searchEdges(@QueryValue @NotEmpty Set<String> vid,
+                                             @QueryValue @NotEmpty Set<String> name,
+                                             @QueryValue @NotEmpty Set<String> scope,
+                                             @Nullable Pageable pageable) {
 
     final var specs =
         EdgeSpecifications.associatedWithVertices(vid).and(EdgeSpecifications.nameIn(name))

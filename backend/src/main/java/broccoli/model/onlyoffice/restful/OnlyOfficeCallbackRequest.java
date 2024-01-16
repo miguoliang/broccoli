@@ -1,4 +1,4 @@
-package broccoli.model.onlyoffice.rest;
+package broccoli.model.onlyoffice.restful;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

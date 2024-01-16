@@ -1,7 +1,7 @@
 package broccoli.model.graph.restful.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -12,7 +12,8 @@ import jakarta.validation.constraints.NotBlank;
  * @param name        Edge name
  * @param scope       Edge scope
  */
-@Introspected
+
+@Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateEdgeRequest(@NotBlank String inVertexId, @NotBlank String outVertexId,
                                 @NotBlank String name, @NotBlank String scope) {

@@ -3,7 +3,7 @@ package broccoli.endpoint.restful.onlyoffice;
 import broccoli.common.HttpStatusExceptions;
 import broccoli.common.onlyoffice.OnlyOfficeHelper;
 import broccoli.common.s3.MinioDefaultBucketConfiguration;
-import broccoli.model.onlyoffice.rest.OnlyOfficeCallbackRequest;
+import broccoli.model.onlyoffice.restful.OnlyOfficeCallbackRequest;
 import com.nimbusds.jose.JOSEException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.annotation.Body;

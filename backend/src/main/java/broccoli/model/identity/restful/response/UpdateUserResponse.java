@@ -1,5 +1,6 @@
-package broccoli.model.identity.rest.response;
+package broccoli.model.identity.restful.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micronaut.serde.annotation.Serdeable;
 
 /**
@@ -11,7 +12,9 @@ import io.micronaut.serde.annotation.Serdeable;
  * @param lastName  User last name
  * @param email     User email
  */
+
 @Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record UpdateUserResponse(String id, String username, String firstName, String lastName,
                                  String email) {
 }

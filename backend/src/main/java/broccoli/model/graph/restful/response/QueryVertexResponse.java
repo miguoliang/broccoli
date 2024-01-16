@@ -7,6 +7,7 @@ import io.micronaut.serde.annotation.Serdeable;
 /**
  * The {@link QueryVertexResponse} class.
  */
+
 @Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record QueryVertexResponse(String id, String name, String type) {
