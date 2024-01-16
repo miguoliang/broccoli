@@ -38,6 +38,10 @@ export default defineConfig({
         replacement: resolve(__dirname, "src/configs/") + "$1",
       },
       {
+        find: /^gens(\/(.+)|$)/,
+        replacement: resolve(__dirname, "src/gens/") + "$1",
+      },
+      {
         find: /^mock(\/(.+)|$)/,
         replacement: resolve(__dirname, "src/mock/") + "$1",
       },

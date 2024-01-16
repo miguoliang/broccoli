@@ -3,6 +3,7 @@ package broccoli.endpoint.restful.graph;
 import static broccoli.common.HttpStatusExceptions.conflict;
 
 import broccoli.common.HttpStatusExceptions;
+import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.restful.request.CreateVertexRequest;
 import broccoli.model.graph.restful.request.DeleteVertexRequest;
 import broccoli.model.graph.restful.request.GetVertexRequest;
@@ -10,7 +11,6 @@ import broccoli.model.graph.restful.request.QueryVertexRequest;
 import broccoli.model.graph.restful.response.CreateVertexResponse;
 import broccoli.model.graph.restful.response.GetVertexResponse;
 import broccoli.model.graph.restful.response.QueryVertexResponse;
-import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.spec.VertexSpecifications;
 import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpStatus;
