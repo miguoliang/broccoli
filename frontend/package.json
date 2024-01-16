@@ -41,7 +41,7 @@
   "scripts": {
     "start": "run-p watch:css start:vite",
     "start:vite": "vite --mode cognito",
-    "build": "npm run codegen && npm run compile && npm run build:css && npm run build:vite",
+    "build": "orval && npm run compile && npm run build:css && npm run build:vite",
     "build:vite": "vite build",
     "serve": "vite preview",
     "analyze": "source-map-explorer 'build/assets/*.js'",
@@ -54,7 +54,6 @@
     "build:css": "cross-env TAILWIND_MODE=build NODE_ENV=production postcss src/assets/styles/app.css -o src/index.css",
     "watch:css": "cross-env TAILWIND_MODE=watch NODE_ENV=development postcss src/assets/styles/app.css -o src/index.css --watch",
     "bundle-report": "cross-env npx vite-bundle-visualizer",
-    "codegen": "openapi-rq -i ../backend/build/classes/java/main/META-INF/swagger/broccoli-1.0.yml -o ./src/gens/openapi"
   },
   "babelMacros": {
     "twin": {
