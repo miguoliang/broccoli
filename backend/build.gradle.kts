@@ -15,7 +15,7 @@ val logbackGelfVersion by extra("5.0.1")
 val minioVersion by extra("8.5.7")
 val testcontainersKeycloakVersion by extra("3.2.0")
 
-configure<CheckstyleExtension> {
+extensions.getByType(CheckstyleExtension::class.java).apply {
     toolVersion = "10.12.5"
     enableExternalDtdLoad = true
 }
@@ -76,8 +76,8 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion("21")
-    targetCompatibility = JavaVersion.toVersion("21")
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.withType<JavaCompile>().configureEach {
