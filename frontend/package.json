@@ -41,7 +41,7 @@
   "scripts": {
     "start": "run-p watch:css start:vite",
     "start:vite": "vite --mode cognito",
-    "build": "npm run compile && npm run build:css && npm run build:vite",
+    "build": "npm run codegen && npm run compile && npm run build:css && npm run build:vite",
     "build:vite": "vite build",
     "serve": "vite preview",
     "analyze": "source-map-explorer 'build/assets/*.js'",
