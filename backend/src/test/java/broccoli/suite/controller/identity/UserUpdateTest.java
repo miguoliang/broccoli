@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-import broccoli.model.identity.http.request.UpdateUserRequest;
-import broccoli.model.identity.http.response.UpdateUserResponse;
+import broccoli.model.identity.rest.request.UpdateUserRequest;
+import broccoli.model.identity.rest.response.UpdateUserResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;

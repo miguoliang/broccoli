@@ -7,6 +7,7 @@ module.exports = {
     "tailwind.config.ts",
     "postcss.config.cjs",
     ".eslintrc.cjs",
+    "orval.config.ts",
     "src/gens/**/*",
   ],
   parser: "@typescript-eslint/parser",

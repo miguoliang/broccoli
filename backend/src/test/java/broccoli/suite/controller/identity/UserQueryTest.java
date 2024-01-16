@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import broccoli.model.identity.http.response.QueryUserResponse;
+import broccoli.model.identity.rest.response.QueryUserResponse;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.runtime.config.DataConfiguration;

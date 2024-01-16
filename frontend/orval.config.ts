@@ -7,11 +7,23 @@ export default {
       client: "react-query",
       mock: true,
       baseUrl: "/api/v1",
+      prettier: true,
+      tslint: true,
+      override: {
+        urlEncodeParameters: true,
+        useNativeEnums: true,
+        useTypeOverInterfaces: true,
+        useDeprecatedOperations: false,
+        paramsSerializerOptions: {
+          qs: {
+            arrayFormat: "repeat",
+          },
+        },
+      },
     },
     input: {
-      target: "./test.yml",
-      // "../backend/build/classes/java/main/META-INF/swagger/broccoli-1.0.yml",
+      target:
+        "../backend/build/classes/java/main/META-INF/swagger/broccoli-1.0.yml",
     },
-    afterAllFilesWrite: "prettier --write",
   },
 };

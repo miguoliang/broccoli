@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import broccoli.common.BaseDatabaseTest;
 import broccoli.common.GraphTestHelper;
-import broccoli.model.graph.http.request.CreateEdgeRequest;
-import broccoli.model.graph.http.response.CreateEdgeResponse;
+import broccoli.model.graph.restful.request.CreateEdgeRequest;
+import broccoli.model.graph.restful.response.CreateEdgeResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -18,8 +18,6 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 /**
  * The {@link EdgeCreationTest} class.
