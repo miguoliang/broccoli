@@ -28,6 +28,8 @@ function addMissingBaseField(
 }
 
 export default extendTheme({
+  initialColorMode: 'system',
+  useSystemColorMode: true,
   blur: addMissingBaseField(tailwindTheme.blur),
   breakpoints: addMissingBaseField(tailwindTheme.screens, "0px"),
   colors: tailwindTheme.colors,

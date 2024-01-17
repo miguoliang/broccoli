@@ -1,52 +1,62 @@
 import { UserMenu } from "components/ui";
 import View from "views";
-import { SignInAndSignUp } from "./ModernLayout";
 import { useAuth } from "hooks";
 import {
-  Box,
-  Flex,
+  Button,
+  Heading,
   HStack,
-  HTMLChakraProps,
-  Image,
+  IconButton,
   Spacer,
+  useColorMode,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
-const HeaderActionsStart = () => {
-  return <Image src="/img/logo/logo-light-full.png" />;
-};
-
-const HeaderActionsEnd = () => {
-  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+const SignInAndSignUp = () => {
+  const { userManager, signOut } = useAuth();
+  const { t } = useTranslation();
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
-    <HStack spacing={2}>
-      {isAuthenticated ? <UserMenu /> : <SignInAndSignUp />}
-    </HStack>
+    <>
+      <Button
+        size={"sm"}
+        variant={"unstyled"}
+        onClick={() => void userManager.signinRedirect()}
+      >
+        {t("login")}
+      </Button>
+      <Button size={"sm"} variant={"unstyled"} onClick={() => signOut()}>
+        {t("sign up")}
+      </Button>
+      <IconButton
+        size={"sm"}
+        variant={"unstyled"}
+        aria-label={"Dark mode"}
+        icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+        onClick={() => toggleColorMode()}
+      />
+    </>
   );
 };
 
-const SimpleLayout = ({
-  maxW = "9xl",
-  maxWidth = "9xl",
-}: HTMLChakraProps<"header">) => {
+const SimpleLayout = () => {
+  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+
   return (
     <>
-      <Box
+      <HStack
         as="header"
-        boxShadow={"md"}
         position={"sticky"}
         top={0}
-        bg={"white"}
+        spacing={4}
         px={4}
+        borderBottom={"1px"}
       >
-        <Flex maxW={maxW} maxWidth={maxWidth} mx={"auto"}>
-          <HeaderActionsStart />
-          <Spacer />
-          <HeaderActionsEnd />
-        </Flex>
-      </Box>
-      <Box bg={"gray.100"} py={6} px={8}>
-        <View />
-      </Box>
+        <Heading size={"md"}>Broccoli</Heading>
+        <Spacer />
+        {isAuthenticated ? <UserMenu /> : <SignInAndSignUp />}
+      </HStack>
+      <View />
     </>
   );
 };

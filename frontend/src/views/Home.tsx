@@ -1,14 +1,11 @@
-import { useSearchVertices } from "../gens/backend/api";
+import ReactFlow, { Background, Controls } from "reactflow";
 
 const Home = () => {
-  const { data, isSuccess } = useSearchVertices({
-    q: "test",
-  });
-
   return (
-    isSuccess && (
-      <ul>{data?.data.content.map((it) => <li key={it.id}>{it.name}</li>)}</ul>
-    )
+    <ReactFlow>
+      <Background />
+      <Controls />
+    </ReactFlow>
   );
 };
 

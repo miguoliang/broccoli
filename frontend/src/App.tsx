@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Layout from "components/layout";
 import { chakraTheme } from "configs";
 import { BrowserRouter } from "react-router-dom";
+import './i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {

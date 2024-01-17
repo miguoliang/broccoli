@@ -7,10 +7,8 @@ const Layout = () => {
   const location = useLocation();
 
   const AppLayout = useMemo(() => {
-    return location.pathname.startsWith("/dashboard")
-      ? lazy(() => import("./ModernLayout"))
-      : lazy(() => import("./SimpleLayout"));
-  }, [location.pathname.startsWith("/dashboard")]);
+    return lazy(() => import("./SimpleLayout"));
+  }, []);
 
   const auth = useAuth();
   useEffect(() => {
