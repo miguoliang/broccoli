@@ -1,5 +1,6 @@
 {
   "name": "broccoli",
+  "description": "Sometimes, people love to ask the same question to different guys.",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -33,14 +34,14 @@
     "react-query-kit": "^3.1.0",
     "react-router-dom": "^6.8.2",
     "react-select": "^5.7.0",
-    "reactflow": "^11.8.3",
+    "reactflow": "^11.10.1",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.10",
     "zustand": "^4.3.8"
   },
   "scripts": {
     "start": "run-p watch:css start:vite",
-    "start:vite": "vite --mode cognito",
+    "start:vite": "vite --mode keycloak",
     "build": "orval && npm run compile && npm run build:css && npm run build:vite",
     "build:vite": "vite build",
     "serve": "vite preview",

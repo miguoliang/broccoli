@@ -14,5 +14,5 @@ import io.micronaut.serde.annotation.Serdeable;
 @Serdeable
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record QueryVertexRequest(HttpRequest<?> request, @QueryValue @Nullable String q,
-                                 Pageable pageable) {
+                                 @Nullable Pageable pageable) {
 }

@@ -13,7 +13,7 @@ async function deferRender() {
     return;
   }
 
-  const { worker } = await import("mock");
+  const { worker } = await import("./mock");
 
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.

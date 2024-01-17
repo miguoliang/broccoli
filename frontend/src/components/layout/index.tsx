@@ -14,14 +14,11 @@ const Layout = () => {
 
   const auth = useAuth();
   useEffect(() => {
-    if (
-      window.location.pathname === "/" &&
-      window.location.href.indexOf("code") !== -1
-    ) {
+    if (window.location.href.indexOf("code") !== -1) {
       auth.userManager
         .signinRedirectCallback()
         .then(async () => {
-          window.history.replaceState({}, document.title, "/");
+          window.history.replaceState({}, document.title, location.pathname);
           const user = await auth.userManager.getUser();
           auth.setUser(user ?? undefined);
           auth.setAuthenticated(true);

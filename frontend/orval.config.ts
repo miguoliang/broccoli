@@ -6,7 +6,7 @@ export default {
       schemas: "src/gens/backend/model",
       client: "react-query",
       mock: true,
-      baseUrl: "/api/v1",
+      baseUrl: "http://localhost:3000",
       prettier: true,
       tslint: true,
       override: {

@@ -6,18 +6,23 @@ import macrosPlugin from "vite-plugin-babel-macros";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "./",
-  plugins: [
-    macrosPlugin(),
-    react(),
-  ],
+  plugins: [macrosPlugin(), react()],
   build: {
     outDir: "build",
     sourcemap: process.env.NODE_ENV !== "production",
     minify: "esbuild",
   },
   server: {
-    port: 3000, watch: {
+    port: 3000,
+    watch: {
       usePolling: true,
+    },
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
     },
   },
   define: {
