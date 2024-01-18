@@ -7,6 +7,15 @@ const baseStyle = helpers.definePartsStyle({
   dialog: {
     bg: "chakra-body-bg",
   },
+  header: {
+    px: 4,
+    py: 2,
+  },
+  body: {
+    px: 3,
+    pt: 1,
+    pb: 4,
+  },
 });
 
 export const modalTheme = helpers.defineMultiStyleConfig({

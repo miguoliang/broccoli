@@ -20,6 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
+import useStore from "../hooks/useReactFlowState";
 
 interface BlockLibraryModalProps {
   isOpen: boolean;
@@ -76,9 +77,11 @@ const LibraryFilter = () => {
   return (
     <SimpleGrid columns={4} gap={4}>
       <GridItem as={VStack} alignItems={"stretch"}>
-        <Input variant={"filled"} placeholder={t("search")} />
+        <Input size={"sm"} variant={"filled"} placeholder={t("search")} />
         {library.map(({ name }) => (
-          <Button key={name}>{t(name)}</Button>
+          <Button key={name} variant={"ghost"} size={"sm"}>
+            {t(name)}
+          </Button>
         ))}
       </GridItem>
       <GridItem as={VStack} colSpan={3} alignItems={"stretch"}>
@@ -92,12 +95,32 @@ const LibraryFilter = () => {
 
 const LibraryCategory = ({ name, blocks }: Readonly<(typeof library)[0]>) => {
   const { t } = useTranslation();
+  const { nodes, setNodes } = useStore();
   return (
     <>
       <Heading size={"sm"}>{t(name)}</Heading>
       <SimpleGrid columns={3} gap={4}>
         {blocks.map(({ name, description }) => (
-          <Card key={name} as={GridItem}>
+          <Card
+            key={name}
+            as={GridItem}
+            size={"sm"}
+            cursor={"pointer"}
+            border={"1px"}
+            borderColor={"transparent"}
+            transition="transform 0.1s ease-in-out"
+            _hover={{ transform: "scale(1.02)", borderColor: "gray.500" }}
+            onClick={() =>
+              setNodes([
+                ...nodes,
+                {
+                  id: name,
+                  data: {},
+                  position: { x: 10 * nodes.length, y: 10 * nodes.length },
+                },
+              ])
+            }
+          >
             <CardHeader>
               <Heading>{t(name)}</Heading>
             </CardHeader>

@@ -6,6 +6,7 @@ import mapValues from "lodash-es/mapValues";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../tailwind.config";
 import { modalTheme } from "./modal";
+import { buttonTheme } from "./button";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
@@ -46,5 +47,6 @@ export default extendTheme({
   zIndices: tailwindTheme.zIndex,
   components: {
     Modal: modalTheme,
+    Button: buttonTheme,
   },
 });
