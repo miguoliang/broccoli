@@ -5,36 +5,61 @@ import {
   Button,
   Heading,
   HStack,
+  Icon,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Spacer,
   useColorMode,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { MdDarkMode, MdLanguage, MdLightMode } from "react-icons/md";
 
 const SignInAndSignUp = () => {
   const { userManager, signOut } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
       <Button
-        size={"sm"}
         variant={"unstyled"}
         onClick={() => void userManager.signinRedirect()}
       >
         {t("login")}
       </Button>
-      <Button size={"sm"} variant={"unstyled"} onClick={() => signOut()}>
+      <Button variant={"unstyled"} onClick={() => signOut()}>
         {t("sign up")}
       </Button>
       <IconButton
-        size={"sm"}
         variant={"unstyled"}
         aria-label={"Dark mode"}
-        icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+        icon={
+          colorMode === "dark" ? (
+            <Icon as={MdLightMode} />
+          ) : (
+            <Icon as={MdDarkMode} />
+          )
+        }
         onClick={() => toggleColorMode()}
       />
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          aria-label={"Language"}
+          variant={"unstyled"}
+          icon={<Icon as={MdLanguage} />}
+        ></MenuButton>
+        <MenuList>
+          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("en")}>
+            English
+          </MenuItem>
+          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("zh")}>
+            中文
+          </MenuItem>
+        </MenuList>
+      </Menu>
     </>
   );
 };
@@ -46,7 +71,6 @@ const SimpleLayout = () => {
     <>
       <HStack
         as="header"
-        position={"sticky"}
         top={0}
         spacing={4}
         px={4}

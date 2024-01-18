@@ -1,4 +1,6 @@
 {
-  "login": "login",
-  "sign up": "sign up"
+  "translation": {
+    "login": "login",
+    "sign up": "sign up"
+  }
 }

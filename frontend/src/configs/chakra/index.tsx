@@ -1,16 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
-import { menuTheme } from "./menu";
-import { tableTheme } from "./table";
-import { inputTheme } from "./input";
-import { formLabelTheme } from "./form-label";
-import { formErrorTheme } from "./form-error";
-import { cardTheme } from "./card";
-import { buttonTheme } from "./button";
-import { tooltipTheme } from "./tooltip";
 import first from "lodash-es/first";
 import join from "lodash-es/join";
 import mapValues from "lodash-es/mapValues";
-import { tabsTheme } from "./tabs";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../tailwind.config";
@@ -52,15 +43,4 @@ export default extendTheme({
   fonts: mapValues(tailwindTheme.fontFamily, (value) => join(value, ",")),
   fontSizes: mapValues(tailwindTheme.fontSize, first),
   zIndices: tailwindTheme.zIndex,
-  components: {
-    Menu: menuTheme,
-    Table: tableTheme,
-    Input: inputTheme,
-    FormLabel: formLabelTheme,
-    FormError: formErrorTheme,
-    Card: cardTheme,
-    Button: buttonTheme,
-    Tooltip: tooltipTheme,
-    Tabs: tabsTheme,
-  },
 });

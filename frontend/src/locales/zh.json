@@ -1,4 +1,6 @@
 {
-  "login": "登录",
-  "sign up": "注册"
+  "translation": {
+    "login": "登录",
+    "sign up": "注册"
+  }
 }

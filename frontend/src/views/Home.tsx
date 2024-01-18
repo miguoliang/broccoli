@@ -1,11 +1,15 @@
-import ReactFlow, { Background, Controls } from "reactflow";
+import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
+import { Box } from "@chakra-ui/react";
 
 const Home = () => {
   return (
-    <ReactFlow>
-      <Background />
-      <Controls />
-    </ReactFlow>
+    <Box h={"500px"}>
+      <ReactFlow proOptions={{ hideAttribution: true }}>
+        <Background />
+        <Controls />
+        <MiniMap />
+      </ReactFlow>
+    </Box>
   );
 };
 
