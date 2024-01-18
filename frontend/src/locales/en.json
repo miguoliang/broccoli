@@ -1,6 +1,8 @@
 {
   "translation": {
     "login": "login",
-    "sign up": "sign up"
+    "sign up": "sign up",
+    "block": "block",
+    "block library": "block library"
   }
 }

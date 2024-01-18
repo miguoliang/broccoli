@@ -1,6 +1,8 @@
 {
   "translation": {
     "login": "登录",
-    "sign up": "注册"
+    "sign up": "注册",
+    "block": "节点",
+    "block library": "节点库"
   }
 }

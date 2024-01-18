@@ -5,6 +5,7 @@ import mapValues from "lodash-es/mapValues";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../tailwind.config";
+import { modalTheme } from "./modal";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
@@ -19,7 +20,7 @@ function addMissingBaseField(
 }
 
 export default extendTheme({
-  initialColorMode: 'system',
+  initialColorMode: "system",
   useSystemColorMode: true,
   blur: addMissingBaseField(tailwindTheme.blur),
   breakpoints: addMissingBaseField(tailwindTheme.screens, "0px"),
@@ -43,4 +44,7 @@ export default extendTheme({
   fonts: mapValues(tailwindTheme.fontFamily, (value) => join(value, ",")),
   fontSizes: mapValues(tailwindTheme.fontSize, first),
   zIndices: tailwindTheme.zIndex,
+  components: {
+    Modal: modalTheme,
+  },
 });

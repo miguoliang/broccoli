@@ -52,10 +52,16 @@ const SignInAndSignUp = () => {
           icon={<Icon as={MdLanguage} />}
         ></MenuButton>
         <MenuList>
-          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("en")}>
+          <MenuItem
+            fontSize={"sm"}
+            onClick={() => void i18n.changeLanguage("en")}
+          >
             English
           </MenuItem>
-          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("zh")}>
+          <MenuItem
+            fontSize={"sm"}
+            onClick={() => void i18n.changeLanguage("zh")}
+          >
             中文
           </MenuItem>
         </MenuList>
