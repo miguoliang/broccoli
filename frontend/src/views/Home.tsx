@@ -1,12 +1,19 @@
-import ReactFlow, { Background, Controls, MiniMap, Panel } from "reactflow";
+import ReactFlow, { Background, Panel } from "reactflow";
 import { useSizes } from "@chakra-ui/react-use-size";
 import { useMemo } from "react";
-import { Box, Button, Icon, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Icon,
+  useColorModeValue,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import BlockLibraryModal from "./BlockLibraryModal";
 import "reactflow/dist/style.css";
 import useStore from "hooks/useReactFlowState";
+import { StyledControls, StyledMiniMap } from "../components/ui";
 
 const Home = () => {
   const { t } = useTranslation();
@@ -28,6 +35,38 @@ const Home = () => {
     return bodySize.height - headerSize.height;
   }, [bodySize, headerSize]);
 
+  const minimapStyles = {
+    "&.react-flow__minimap": {
+      backgroundColor: useColorModeValue("white", "gray.800"),
+      borderRadius: "sm",
+      overflow: "hidden",
+    },
+    "path": {
+      fill: useColorModeValue("gray.100", "whiteAlpha.100"),
+    },
+  };
+
+  const controlsStyles = {
+    "&.react-flow__controls": {
+      borderRadius: "sm",
+      overflow: "hidden",
+      shadow: "none",
+    },
+    "&.react-flow__controls > button:last-child": {
+      borderBottom: "none",
+    },
+    ".react-flow__controls-button": {
+      backgroundColor: useColorModeValue("gray.100", "whiteAlpha.200"),
+      borderBottom: "none",
+    },
+    ".react-flow__controls-button > svg": {
+      fill: useColorModeValue("gray.800", "whiteAlpha.900"),
+    },
+    ".react-flow__controls-button:hover": {
+      backgroundColor: useColorModeValue("gray.200", "gray.600"),
+    },
+  };
+
   return (
     <>
       <Box h={reactFlowHeight}>
@@ -40,8 +79,8 @@ const Home = () => {
           onEdgesChange={onEdgesChange}
         >
           <Background />
-          <Controls />
-          <MiniMap />
+          <StyledControls sx={controlsStyles} />
+          <StyledMiniMap sx={minimapStyles} />
           <Panel position={"top-left"}>
             <Button
               size={"sm"}

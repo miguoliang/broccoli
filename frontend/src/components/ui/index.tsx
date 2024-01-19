@@ -5,3 +5,4 @@ export {
 } from "./PopoverMenu";
 export { default as SideNav } from "./SideNav";
 export { default as SimpleTable } from "./SimpleTable";
+export * from "./StyledReactFlow";

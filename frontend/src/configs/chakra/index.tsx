@@ -7,6 +7,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../tailwind.config";
 import { modalTheme } from "./modal";
 import { buttonTheme } from "./button";
+import { cardTheme } from "./card";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
@@ -48,5 +49,6 @@ export default extendTheme({
   components: {
     Modal: modalTheme,
     Button: buttonTheme,
+    Card: cardTheme,
   },
 });
