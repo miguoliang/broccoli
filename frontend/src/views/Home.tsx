@@ -1,19 +1,18 @@
 import ReactFlow, { Background, Panel } from "reactflow";
 import { useSizes } from "@chakra-ui/react-use-size";
 import { useMemo } from "react";
-import {
-  Box,
-  Button,
-  Icon,
-  useColorModeValue,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Icon, useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import BlockLibraryModal from "./BlockLibraryModal";
 import "reactflow/dist/style.css";
 import useStore from "hooks/useReactFlowState";
 import { StyledControls, StyledMiniMap } from "../components/ui";
+import ProductNode from "../components/ui/blocks/ProductNode";
+import ManufacturerNode from "../components/ui/blocks/ManufacturerNode";
+import ApplicationNode from "../components/ui/blocks/ApplicationNode";
+import MarketNode from "../components/ui/blocks/MarketNode";
+import OriginNode from "../components/ui/blocks/OriginNode";
 
 const Home = () => {
   const { t } = useTranslation();
@@ -67,6 +66,17 @@ const Home = () => {
     },
   };
 
+  const nodeTypes = useMemo(
+    () => ({
+      product: ProductNode,
+      manufacturer: ManufacturerNode,
+      application: ApplicationNode,
+      market: MarketNode,
+      origin: OriginNode,
+    }),
+    [],
+  );
+
   return (
     <>
       <Box h={reactFlowHeight}>
@@ -77,16 +87,13 @@ const Home = () => {
           onConnect={onConnect}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
         >
           <Background />
           <StyledControls sx={controlsStyles} />
           <StyledMiniMap sx={minimapStyles} />
           <Panel position={"top-left"}>
-            <Button
-              size={"sm"}
-              leftIcon={<Icon as={FaPlus} />}
-              onClick={onOpen}
-            >
+            <Button size={"sm"} leftIcon={<Icon as={FaPlus} />} onClick={onOpen}>
               {t("block")}
             </Button>
           </Panel>

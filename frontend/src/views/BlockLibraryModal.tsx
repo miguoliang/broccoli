@@ -3,13 +3,9 @@
  * Otherwise, it's just power. And power is not leadership. -- Jim Collins
  */
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
-  GridItem,
-  Heading,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,7 +13,6 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  VStack,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import useStore from "../hooks/useReactFlowState";
@@ -29,25 +24,24 @@ interface BlockLibraryModalProps {
 
 const library = [
   {
-    name: "data source",
-    blocks: [
-      {
-        name: "file",
-        description: "read data from file",
-      },
-      {
-        name: "web",
-        description: "read data from web",
-      },
-      {
-        name: "image",
-        description: "read data from image",
-      },
-      {
-        name: "database",
-        description: "read data from database",
-      },
-    ],
+    name: "product",
+    description: "read data from file",
+  },
+  {
+    name: "manufacturer",
+    description: "read data from web",
+  },
+  {
+    name: "application",
+    description: "read data from image",
+  },
+  {
+    name: "origin",
+    description: "read data from database",
+  },
+  {
+    name: "market",
+    description: "read data from database",
   },
 ];
 
@@ -56,6 +50,20 @@ const BlockLibraryModal = ({
   onClose,
 }: Readonly<BlockLibraryModalProps>) => {
   const { t } = useTranslation();
+  const { nodes, setNodes } = useStore();
+
+  const onNodePicked = (name: string) => {
+    setNodes([
+      ...nodes,
+      {
+        id: Date.now().toString(),
+        type: name,
+        position: { x: 250, y: 250 },
+        data: {},
+      },
+    ]);
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={"4xl"}>
@@ -64,71 +72,38 @@ const BlockLibraryModal = ({
         <ModalHeader>{t("block library")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <LibraryFilter />
+          <LibraryFilter onNodePicked={onNodePicked} />
         </ModalBody>
       </ModalContent>
     </Modal>
   );
 };
 
-const LibraryFilter = () => {
+interface LibraryFilterProps {
+  onNodePicked: (name: string) => void;
+}
+
+const LibraryFilter = ({ onNodePicked }: LibraryFilterProps) => {
   const { t } = useTranslation();
 
   return (
-    <SimpleGrid columns={4} gap={4}>
-      <GridItem as={VStack} alignItems={"stretch"}>
-        <Input size={"sm"} variant={"filled"} placeholder={t("search")} />
-        {library.map(({ name }) => (
-          <Button key={name} variant={"ghost"} size={"sm"}>
-            {t(name)}
-          </Button>
-        ))}
-      </GridItem>
-      <GridItem as={VStack} colSpan={3} alignItems={"stretch"}>
-        {library.map((category) => (
-          <LibraryCategory key={category.name} {...category} />
-        ))}
-      </GridItem>
+    <SimpleGrid columns={4} spacing={4}>
+      {library.map(({ name, description }) => (
+        <Card
+          key={name}
+          onClick={() => onNodePicked(name)}
+          size={"sm"}
+          cursor={"pointer"}
+          border={"1px"}
+          borderColor={"transparent"}
+          transition="transform 0.1s ease-in-out"
+          _hover={{ transform: "scale(1.02)", borderColor: "gray.500" }}
+        >
+          <CardHeader>{t(name)}</CardHeader>
+          <CardBody>{t(description)}</CardBody>
+        </Card>
+      ))}
     </SimpleGrid>
-  );
-};
-
-const LibraryCategory = ({ name, blocks }: Readonly<(typeof library)[0]>) => {
-  const { t } = useTranslation();
-  const { nodes, setNodes } = useStore();
-  return (
-    <>
-      <Heading size={"sm"}>{t(name)}</Heading>
-      <SimpleGrid columns={3} gap={4}>
-        {blocks.map(({ name, description }) => (
-          <Card
-            key={name}
-            as={GridItem}
-            size={"sm"}
-            cursor={"pointer"}
-            border={"1px"}
-            borderColor={"transparent"}
-            transition="transform 0.1s ease-in-out"
-            _hover={{ transform: "scale(1.02)", borderColor: "gray.500" }}
-            onClick={() =>
-              setNodes([
-                ...nodes,
-                {
-                  id: name,
-                  data: {},
-                  position: { x: 10 * nodes.length, y: 10 * nodes.length },
-                },
-              ])
-            }
-          >
-            <CardHeader>
-              <Heading>{t(name)}</Heading>
-            </CardHeader>
-            <CardBody>{t(description)}</CardBody>
-          </Card>
-        ))}
-      </SimpleGrid>
-    </>
   );
 };
 
