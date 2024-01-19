@@ -1,4 +1,3 @@
-import { UserMenu } from "components/ui";
 import View from "views";
 import { useAuth } from "hooks";
 import {
@@ -16,22 +15,17 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { MdDarkMode, MdLanguage, MdLightMode } from "react-icons/md";
+import { FaRegUser } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import React from "react";
 
-const SignInAndSignUp = () => {
-  const { userManager, signOut } = useAuth();
-  const { t, i18n } = useTranslation();
+const RightButtons = () => {
+  const { isAuthenticated } = useAuth();
+  const { i18n } = useTranslation();
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
-      <Button
-        variant={"unstyled"}
-        onClick={() => void userManager.signinRedirect()}
-      >
-        {t("login")}
-      </Button>
-      <Button variant={"unstyled"} onClick={() => signOut()}>
-        {t("sign up")}
-      </Button>
+      {isAuthenticated ? <AuthorizedButtons /> : <UnauthorizedButtons />}
       <IconButton
         variant={"unstyled"}
         aria-label={"Dark mode"}
@@ -70,13 +64,44 @@ const SignInAndSignUp = () => {
   );
 };
 
-const SimpleLayout = () => {
-  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+const UnauthorizedButtons = () => {
+  const { userManager } = useAuth();
+  const { t } = useTranslation();
+  return (
+    <>
+      <Button
+        size={"sm"}
+        variant={"unstyled"}
+        onClick={() => void userManager.signinRedirect()}
+      >
+        {t("login")}
+      </Button>
+      <Link to={"/"}>{t("sign up")}</Link>
+    </>
+  );
+};
 
+const AuthorizedButtons = () => {
+  const { user, signOut } = useAuth();
+  const { t } = useTranslation();
+  return (
+    <>
+      <Icon as={FaRegUser} fontSize={"xs"} />
+      <Link to={"/"}>{user?.profile.preferred_username}</Link>
+      <Button size={"sm"} variant={"unstyled"} onClick={signOut}>
+        {t("sign out")}
+      </Button>
+    </>
+  );
+};
+
+const SimpleLayout = () => {
   return (
     <>
       <HStack
         as="header"
+        fontSize={"sm"}
+        fontWeight={"semibold"}
         top={0}
         spacing={4}
         px={4}
@@ -84,7 +109,7 @@ const SimpleLayout = () => {
       >
         <Heading size={"md"}>Broccoli</Heading>
         <Spacer />
-        {isAuthenticated ? <UserMenu /> : <SignInAndSignUp />}
+        <RightButtons />
       </HStack>
       <View />
     </>

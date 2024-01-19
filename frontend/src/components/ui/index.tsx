@@ -1,5 +1,4 @@
 export { default as Pagination } from "./Pagination";
-export { default as UserMenu } from "./UserMenu";
 export {
   Menu as PopoverMenu,
   MenuItem as PopoverMenuItem,

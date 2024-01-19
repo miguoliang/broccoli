@@ -20,7 +20,7 @@ export const useAuth = create<UseAuth>((set) => ({
     if (SIGN_OUT_URL) {
       window.location.replace(SIGN_OUT_URL);
     } else {
-      void userManager.signoutRedirect();
+      void userManager.signoutRedirect({ post_logout_redirect_uri: "http://localhost:3000" });
     }
   },
 }));
