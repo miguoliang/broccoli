@@ -59,7 +59,7 @@ const BlockLibraryModal = ({
         id: Date.now().toString(),
         type: name,
         position: { x: 250, y: 250 },
-        data: {},
+        data: { name: name },
       },
     ]);
     onClose();

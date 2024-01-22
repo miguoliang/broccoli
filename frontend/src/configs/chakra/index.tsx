@@ -8,6 +8,7 @@ import tailwindConfig from "../../../tailwind.config";
 import { modalTheme } from "./modal";
 import { buttonTheme } from "./button";
 import { cardTheme } from "./card";
+import { editableTheme } from "./editable";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
@@ -50,5 +51,6 @@ export default extendTheme({
     Modal: modalTheme,
     Button: buttonTheme,
     Card: cardTheme,
+    Editable: editableTheme,
   },
 });

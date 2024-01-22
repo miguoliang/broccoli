@@ -1,19 +1,15 @@
-import EditableControls from "../EditableControls";
-import { Editable, EditableInput, EditablePreview, Input } from "@chakra-ui/react";
+import { Card, CardHeader } from "@chakra-ui/react";
+import { NodeProps } from "reactflow";
+import { GeneralNodeProps } from "./types";
+import CustomNodeHeader from "./CustomNodeHeader";
 
-const ApplicationNode = () => {
+const ApplicationNode = (props: NodeProps<GeneralNodeProps>) => {
   return (
-    <Editable
-      textAlign="center"
-      defaultValue="Rasengan ⚡️"
-      fontSize="2xl"
-      isPreviewFocusable={false}
-    >
-      <EditablePreview />
-      {/* Here is the custom input */}
-      <Input as={EditableInput} />
-      <EditableControls />
-    </Editable>
+    <Card size={"xs"} colorScheme={"red"}>
+      <CardHeader>
+        <CustomNodeHeader {...props} />
+      </CardHeader>
+    </Card>
   );
 };
 

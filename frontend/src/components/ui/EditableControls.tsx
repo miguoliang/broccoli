@@ -7,13 +7,31 @@ const EditableControls = () => {
   const submitButtonProps = getSubmitButtonProps();
   const cancelButtonProps = getCancelButtonProps();
   return isEditing ? (
-    <ButtonGroup justifyContent="center" size="sm">
-      <IconButton icon={<CheckIcon />} {...submitButtonProps} aria-label={"check"} />
-      <IconButton icon={<CloseIcon />} {...cancelButtonProps} aria-label={"close"} />
+    <ButtonGroup justifyContent="center">
+      <IconButton
+        variant={"plain"}
+        size={"xs"}
+        icon={<CheckIcon />}
+        {...submitButtonProps}
+        aria-label={"check"}
+      />
+      <IconButton
+        variant={"plain"}
+        size={"xs"}
+        icon={<CloseIcon />}
+        {...cancelButtonProps}
+        aria-label={"close"}
+      />
     </ButtonGroup>
   ) : (
     <Flex justifyContent="center">
-      <IconButton size="sm" icon={<EditIcon />} {...getEditButtonProps()} aria-label={"edit"} />
+      <IconButton
+        variant={"plain"}
+        size="xs"
+        icon={<EditIcon />}
+        {...getEditButtonProps()}
+        aria-label={"edit"}
+      />
     </Flex>
   );
 };
