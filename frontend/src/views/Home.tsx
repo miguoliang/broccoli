@@ -40,7 +40,7 @@ const Home = () => {
       borderRadius: "sm",
       overflow: "hidden",
     },
-    "path": {
+    path: {
       fill: useColorModeValue("gray.100", "whiteAlpha.100"),
     },
   };
@@ -79,7 +79,29 @@ const Home = () => {
 
   return (
     <>
-      <Box h={reactFlowHeight}>
+      <Box
+        h={reactFlowHeight}
+        sx={{
+          ".react-flow__handle": {
+            width: "0.5rem",
+            height: "0.5rem",
+            backgroundColor: useColorModeValue("gray.200", "whiteAlpha.200"),
+            borderColor: useColorModeValue("gray.200", "gray.600"),
+          },
+          ".react-flow__handle.react-flow__handle-top": {
+            top: "-0.75rem",
+          },
+          ".react-flow__handle.react-flow__handle-right": {
+            right: "-0.75rem",
+          },
+          ".react-flow__handle.react-flow__handle-bottom": {
+            bottom: "-0.75rem",
+          },
+          ".react-flow__handle.react-flow__handle-left": {
+            left: "-0.75rem",
+          },
+        }}
+      >
         <ReactFlow
           proOptions={{ hideAttribution: true }}
           nodes={nodes}
