@@ -5,3 +5,5 @@ export type GeneralNodeProps = {
   name: string;
   type: NodeType;
 }
+
+export type ColorSchemes = Record<NodeType, string>;

@@ -2,11 +2,12 @@ import { Card, CardHeader } from "@chakra-ui/react";
 import { GeneralNodeProps } from "./types";
 import { Handle, NodeProps, Position } from "reactflow";
 import CustomNodeHeader from "./CustomNodeHeader";
+import { colorSchemes } from "./index";
 
 const ManufacturerNode = (props: NodeProps<GeneralNodeProps>) => {
   return (
     <>
-      <Card size={"xs"}>
+      <Card size={"xs"} colorScheme={colorSchemes.manufacturer}>
         <CardHeader>
           <CustomNodeHeader {...props} />
         </CardHeader>
