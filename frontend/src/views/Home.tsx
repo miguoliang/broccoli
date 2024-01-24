@@ -1,6 +1,6 @@
-import ReactFlow, { Background, Panel } from "reactflow";
+import ReactFlow, { Background, Node, Panel, ReactFlowInstance } from "reactflow";
 import { useSizes } from "@chakra-ui/react-use-size";
-import { useMemo } from "react";
+import { DragEvent, DragEventHandler, useCallback, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -26,11 +26,11 @@ import {
   OriginNode,
   ProductNode,
 } from "../components/ui/blocks";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 
 const Home = () => {
-  const { nodes, onNodesChange, edges, onConnect, onEdgesChange } = useStore();
-
+  const { nodes, setNodes, onNodesChange, edges, onConnect, onEdgesChange } = useStore();
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [bodySize, headerSize] = useSizes({
     getNodes: () => [
       document.querySelector("div#root") as HTMLElement,
@@ -89,6 +89,37 @@ const Home = () => {
     [],
   );
 
+  const onDragOver = useCallback<DragEventHandler<HTMLDivElement>>((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+
+    const type = event.dataTransfer.getData("application/reactflow");
+
+    // check if the dropped element is valid
+    if (typeof type === "undefined" || !type || reactFlowInstance === null) {
+      return;
+    }
+
+    // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition,
+    // so you don't need to subtract the reactFlowBounds.left/top anymore
+    // details: https://reactflow.dev/whats-new/2023-11-10
+    const position = reactFlowInstance.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+    const newNode: Node = {
+      id: "temp-id",
+      type,
+      position,
+      data: { id: "temp-id", name: "", type },
+    };
+    setNodes(nodes.concat(newNode));
+  };
+
   return (
     <Box
       h={reactFlowHeight}
@@ -120,11 +151,15 @@ const Home = () => {
         onConnect={onConnect}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onInit={setReactFlowInstance}
         nodeTypes={nodeTypes}
+        fitView
       >
         <Background />
         <StyledControls sx={controlsStyles} />
-        <StyledMiniMap sx={minimapStyles} />
+        <StyledMiniMap sx={minimapStyles} zoomable pannable />
         <Panel position={"top-left"}>
           <AddBlockWidget />
         </Panel>
@@ -138,7 +173,7 @@ const AddBlockWidget = () => {
   const { isOpen, onToggle } = useDisclosure();
   const bg = useColorModeValue("gray.100", "whiteAlpha.200");
   return (
-    <Box bg={bg} overflow={"hidden"} transition={"all 0.2s ease-in-out"}>
+    <Box bg={bg} overflow={"hidden"}>
       <Button
         size={"sm"}
         variant={"plain"}
@@ -153,25 +188,27 @@ const AddBlockWidget = () => {
       >
         {t("block")}
       </Button>
-      <AnimatePresence>
-        {isOpen && (
-          <List
-            as={motion.ul}
-            spacing={2}
-            pb={2}
-            initial={{ opacity: 0, height: 0, width: 0 }}
-            animate={{ opacity: 1, height: "auto", width: "auto" }}
-            exit={{ opacity: 0, height: 0, width: 0 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-          >
-            <ListItem as={DragBlockWidget} type={"application"} />
-            <ListItem as={DragBlockWidget} type={"manufacturer"} />
-            <ListItem as={DragBlockWidget} type={"market"} />
-            <ListItem as={DragBlockWidget} type={"origin"} />
-            <ListItem as={DragBlockWidget} type={"product"} />
-          </List>
-        )}
-      </AnimatePresence>
+      <MotionConfig transition={{ duration: 0.1 }}>
+        <AnimatePresence>
+          {isOpen && (
+            <List
+              key={"list"}
+              as={motion.ul}
+              spacing={2}
+              pb={2}
+              initial={{ opacity: 0, height: 0, width: 0 }}
+              animate={{ opacity: 1, height: "auto", width: "auto" }}
+              exit={{ opacity: 0, height: 0, width: 0 }}
+            >
+              <ListItem as={DragBlockWidget} type={"application"} />
+              <ListItem as={DragBlockWidget} type={"manufacturer"} />
+              <ListItem as={DragBlockWidget} type={"market"} />
+              <ListItem as={DragBlockWidget} type={"origin"} />
+              <ListItem as={DragBlockWidget} type={"product"} />
+            </List>
+          )}
+        </AnimatePresence>
+      </MotionConfig>
     </Box>
   );
 };
@@ -182,8 +219,20 @@ interface DragBlockWidgetProps {
 
 const DragBlockWidget = ({ type }: DragBlockWidgetProps) => {
   const { t } = useTranslation();
+
+  const onDragStart = (event: DragEvent, nodeType: NodeType) => {
+    event.dataTransfer.setData("application/reactflow", nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
   return (
-    <Card size={"sm"} colorScheme={colorSchemes[type]} mx={2}>
+    <Card
+      size={"sm"}
+      colorScheme={colorSchemes[type]}
+      mx={2}
+      onDragStart={(event) => onDragStart(event, type)}
+      draggable
+    >
       <CardHeader overflowWrap={"initial"}>{t(type)}</CardHeader>
     </Card>
   );

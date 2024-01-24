@@ -1,22 +1,27 @@
 import { Editable, EditableInput, EditablePreview, HStack, Input } from "@chakra-ui/react";
 import EditableControls from "../EditableControls";
+import { FieldProps } from "formik";
 
-interface CustomEditableProps {
-  defaultValue: string;
-}
+type CustomEditableProps = {
+  startWithEditView?: boolean;
+  submitForm?: boolean;
+} & FieldProps<string>;
 
-const CustomEditable = ({ defaultValue }: CustomEditableProps) => {
+const CustomEditable = ({ field, form, startWithEditView, submitForm }: CustomEditableProps) => {
   return (
     <Editable
-      textAlign="center"
-      defaultValue={defaultValue}
-      fontSize="sm"
+      textAlign={"center"}
+      fontSize={"sm"}
       isPreviewFocusable={false}
+      startWithEditView={startWithEditView}
+      submitOnBlur={true}
       as={HStack}
+      onSubmit={() => submitForm && void form.submitForm()}
+      defaultValue={field.value}
     >
       <EditablePreview />
       {/* Here is the custom input */}
-      <Input size={"sm"} as={EditableInput} />
+      <Input size={"sm"} as={EditableInput} {...field} />
       <EditableControls />
     </Editable>
   );
