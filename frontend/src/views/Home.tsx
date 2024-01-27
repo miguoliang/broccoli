@@ -3,7 +3,7 @@ import ReactFlow, {
   Node,
   Panel,
   ReactFlowInstance,
-  ReactFlowProvider, useReactFlow,
+  ReactFlowProvider,
 } from "reactflow";
 import { DragEvent, DragEventHandler, useCallback } from "react";
 import {
@@ -21,25 +21,13 @@ import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import "reactflow/dist/style.css";
 import { StyledControls, StyledMiniMap } from "../components/ui";
-import {
-  ApplicationNode,
-  colorSchemes,
-  GeneralNodeProps,
-  ManufacturerNode,
-  MarketNode,
-  NodeType,
-  OriginNode,
-  ProductNode,
-} from "../components/ui/blocks";
+import { colorSchemes, GeneralNodeDataProps, NodeType } from "../components/ui/blocks";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { create } from "zustand";
+import GeneralNode from "../components/ui/blocks/GeneralNode";
 
 const nodeTypes = {
-  product: ProductNode,
-  manufacturer: ManufacturerNode,
-  application: ApplicationNode,
-  market: MarketNode,
-  origin: OriginNode,
+  general: GeneralNode,
 };
 
 const Home = () => {
@@ -101,7 +89,6 @@ const Home = () => {
 };
 
 const AddBlockWidget = () => {
-  const reactFlowInstance = useReactFlow();
   const { t } = useTranslation();
   const { isOpen, onToggle } = useDisclosure();
   const bg = useColorModeValue("gray.100", "whiteAlpha.200");
@@ -117,14 +104,6 @@ const AddBlockWidget = () => {
         >
           {t("block")}
         </Button>
-        <Button onClick={() => {
-          reactFlowInstance.addNodes({
-            id: "test",
-            type: "product",
-            position: { x: 100, y: 100 },
-            data: { id: "test", name: "test", type: "product" },
-          })
-        }}>Save</Button>
         <AnimatePresence>
           {isOpen && (
             <List
@@ -205,9 +184,9 @@ const Flow = () => {
       x: event.clientX,
       y: event.clientY,
     });
-    const newNode: Node<GeneralNodeProps> = {
+    const newNode: Node<GeneralNodeDataProps> = {
       id: `${type}-${id++}`,
-      type,
+      type: "general",
       position,
       focusable: true,
       data: { id: `${type}-${id++}`, name: "", type },
