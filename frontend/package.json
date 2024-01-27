@@ -41,7 +41,7 @@
     "translation-check": "^1.1.0",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.10",
-    "zustand": "^4.3.8"
+    "zustand": "^4.5.0"
   },
   "scripts": {
     "start": "run-p watch:css start:vite",

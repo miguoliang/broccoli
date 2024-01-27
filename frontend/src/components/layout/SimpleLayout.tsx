@@ -29,13 +29,7 @@ const RightButtons = () => {
       <IconButton
         variant={"unstyled"}
         aria-label={"Dark mode"}
-        icon={
-          colorMode === "dark" ? (
-            <Icon as={MdLightMode} />
-          ) : (
-            <Icon as={MdDarkMode} />
-          )
-        }
+        icon={colorMode === "dark" ? <Icon as={MdLightMode} /> : <Icon as={MdDarkMode} />}
         onClick={() => toggleColorMode()}
       />
       <Menu>
@@ -46,16 +40,10 @@ const RightButtons = () => {
           icon={<Icon as={MdLanguage} />}
         ></MenuButton>
         <MenuList>
-          <MenuItem
-            fontSize={"sm"}
-            onClick={() => void i18n.changeLanguage("en")}
-          >
+          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("en")}>
             English
           </MenuItem>
-          <MenuItem
-            fontSize={"sm"}
-            onClick={() => void i18n.changeLanguage("zh")}
-          >
+          <MenuItem fontSize={"sm"} onClick={() => void i18n.changeLanguage("zh")}>
             中文
           </MenuItem>
         </MenuList>
@@ -65,14 +53,13 @@ const RightButtons = () => {
 };
 
 const UnauthorizedButtons = () => {
-  const { userManager } = useAuth();
   const { t } = useTranslation();
   return (
     <>
       <Button
         size={"sm"}
         variant={"unstyled"}
-        onClick={() => void userManager.signinRedirect()}
+        onClick={() => void useAuth.getState().userManager.signinRedirect()}
       >
         {t("login")}
       </Button>
@@ -106,10 +93,11 @@ const SimpleLayout = () => {
         spacing={4}
         px={4}
         borderBottom={"1px"}
+        h={"2.5rem"}
       >
         <Heading size={"md"}>Broccoli</Heading>
         <Spacer />
-        <RightButtons />
+        {/*<RightButtons />*/}
       </HStack>
       <View />
     </>

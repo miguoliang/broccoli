@@ -1,17 +1,10 @@
-import { Card, CardHeader } from "@chakra-ui/react";
 import { Handle, NodeProps, Position } from "reactflow";
 import { GeneralNodeProps } from "./types";
-import CustomNodeHeader from "./CustomNodeHeader";
-import { colorSchemes } from "./constants";
 
 const OriginNode = (props: NodeProps<GeneralNodeProps>) => {
   return (
     <>
-      <Card size={"xs"} colorScheme={colorSchemes.origin}>
-        <CardHeader>
-          <CustomNodeHeader {...props} />
-        </CardHeader>
-      </Card>
+      <input autoFocus={true} />
       <Handle type="source" position={Position.Top} id="a" />
       <Handle type="source" position={Position.Right} id="b" />
       <Handle type="source" position={Position.Bottom} id="c" />

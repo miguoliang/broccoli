@@ -1,17 +1,17 @@
-import { Card, CardHeader } from "@chakra-ui/react";
 import { Handle, NodeProps, Position } from "reactflow";
 import { GeneralNodeProps } from "./types";
-import CustomNodeHeader from "./CustomNodeHeader";
-import { colorSchemes } from "./index";
+import { memo, useRef } from "react";
 
 const ApplicationNode = (props: NodeProps<GeneralNodeProps>) => {
+  const ref = useRef<HTMLInputElement>(null);
   return (
     <>
-      <Card size={"xs"} colorScheme={colorSchemes.application}>
-        <CardHeader>
-          <CustomNodeHeader {...props} />
-        </CardHeader>
-      </Card>
+      <input
+        ref={ref}
+        onFocus={() => console.log("onfocus")}
+        onBlur={() => console.log("onblur")}
+        onBlurCapture={() => console.log("onblur capture")}
+      />
       <Handle type="source" position={Position.Top} id="a" />
       <Handle type="source" position={Position.Right} id="b" />
       <Handle type="source" position={Position.Bottom} id="c" />
@@ -20,4 +20,4 @@ const ApplicationNode = (props: NodeProps<GeneralNodeProps>) => {
   );
 };
 
-export default ApplicationNode
+export default memo(ApplicationNode);
