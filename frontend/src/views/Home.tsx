@@ -1,5 +1,6 @@
 import ReactFlow, {
   Background,
+  ConnectionMode,
   Node,
   Panel,
   ReactFlowInstance,
@@ -25,10 +26,15 @@ import { colorSchemes, GeneralNodeDataProps, NodeType } from "../components/ui/b
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { create } from "zustand";
 import GeneralNode from "../components/ui/blocks/GeneralNode";
+import BiDirectionalEdge from "../components/ui/BiDirectionalEdge";
 
 const nodeTypes = {
   general: GeneralNode,
 };
+
+const edgeTypes = {
+  default: BiDirectionalEdge,
+}
 
 const Home = () => {
   return (
@@ -194,14 +200,19 @@ const Flow = () => {
     reactFlowInstance.addNodes(newNode);
   }, []);
 
+
+
   return (
     <ReactFlow
       proOptions={{ hideAttribution: true }}
       defaultNodes={[]}
+      defaultEdges={[]}
       onDrop={onDrop}
       onDragOver={onDragOver}
       onInit={(instance) => ReactFlowInstanceState.setState({ reactFlowInstance: instance })}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      connectionMode={ConnectionMode.Loose}
     >
       <Background />
       <StyledControls />

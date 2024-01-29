@@ -2,12 +2,7 @@ import { Suspense } from "react";
 import { protectedRoutes, publicRoutes } from "configs";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { HTMLChakraProps, Spinner } from "@chakra-ui/react";
-import {
-  AppRoute,
-  AuthorityGuard,
-  ProtectedRoute,
-  PublicRoute,
-} from "components/route";
+import { AppRoute, AuthorityGuard, ProtectedRoute, PublicRoute } from "components/route";
 
 const AllRoutes = () => {
   return (
@@ -19,11 +14,7 @@ const AllRoutes = () => {
             path={route.path}
             element={
               <AuthorityGuard authority={route.authority}>
-                <AppRoute
-                  routeKey={route.key}
-                  component={route.component}
-                  {...route.meta}
-                />
+                <AppRoute component={route.component} {...route.meta} />
               </AuthorityGuard>
             }
           />
@@ -34,13 +25,7 @@ const AllRoutes = () => {
           <Route
             key={route.key}
             path={route.path}
-            element={
-              <AppRoute
-                routeKey={route.key}
-                component={route.component}
-                {...route.meta}
-              />
-            }
+            element={<AppRoute component={route.component} {...route.meta} />}
           />
         ))}
       </Route>
