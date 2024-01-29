@@ -27,9 +27,11 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { create } from "zustand";
 import GeneralNode from "../components/ui/blocks/GeneralNode";
 import BiDirectionalEdge from "../components/ui/BiDirectionalEdge";
+import ApplicationNode from "../components/ui/blocks/ApplicationNode";
 
 const nodeTypes = {
   general: GeneralNode,
+  application: ApplicationNode,
 };
 
 const edgeTypes = {
@@ -105,7 +107,13 @@ const AddBlockWidget = () => {
           tabIndex={-1}
           size={"sm"}
           variant={"plain"}
-          leftIcon={<Icon as={FaPlus} />}
+          leftIcon={
+            <Icon
+              as={FaPlus}
+              transform={`rotate(${isOpen ? "45deg" : "0deg"})`}
+              transition={"transform 0.1s ease-in-out"}
+            />
+          }
           onClick={onToggle}
         >
           {t("block")}
@@ -192,7 +200,7 @@ const Flow = () => {
     });
     const newNode: Node<GeneralNodeDataProps> = {
       id: `${type}-${id++}`,
-      type: "general",
+      type,
       position,
       focusable: true,
       data: { id: `${type}-${id++}`, name: "", type },

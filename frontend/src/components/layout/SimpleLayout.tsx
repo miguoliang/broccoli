@@ -17,9 +17,9 @@ import { useTranslation } from "react-i18next";
 import { MdDarkMode, MdLanguage, MdLightMode } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { memo } from "react";
 
-const RightButtons = () => {
+const RightButtons = memo(() => {
   const { isAuthenticated } = useAuth();
   const { i18n } = useTranslation();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -50,7 +50,7 @@ const RightButtons = () => {
       </Menu>
     </>
   );
-};
+});
 
 const UnauthorizedButtons = () => {
   const { t } = useTranslation();
@@ -97,7 +97,7 @@ const SimpleLayout = () => {
       >
         <Heading size={"md"}>Broccoli</Heading>
         <Spacer />
-        {/*<RightButtons />*/}
+        <RightButtons />
       </HStack>
       <View />
     </>
