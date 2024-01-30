@@ -13,7 +13,7 @@
     <persistence-units>
       <persistence-unit name="Default">
         <packages>
-          <package value="broccoli.model.entity" />
+          <package value="broccoli.model.graph.entity" />
         </packages>
       </persistence-unit>
     </persistence-units>

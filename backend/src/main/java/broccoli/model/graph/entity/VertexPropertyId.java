@@ -7,17 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * The {@link EdgeId}.
+ * The {@link VertexPropertyId}.
  */
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
 @Introspected
-public class EdgeId {
+public class VertexPropertyId {
 
-  private Vertex inVertex;
-  private Vertex outVertex;
-  private String name;
+  private Vertex vertex;
   private String scope;
+  private String key;
 }

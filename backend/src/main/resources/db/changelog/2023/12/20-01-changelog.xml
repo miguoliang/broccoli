@@ -1,89 +1,132 @@
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
-        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+  objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="1703661881860-1"
-               author="miguoliang">
-        <createTable tableName="edge">
-            <column name="in_vertex_id"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"
-                             primaryKey="true"
-                             primaryKeyName="pk_edge"/>
-            </column>
-            <column name="out_vertex_id"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"
-                             primaryKey="true"
-                             primaryKeyName="pk_edge"/>
-            </column>
-            <column name="name"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"
-                             primaryKey="true"
-                             primaryKeyName="pk_edge"/>
-            </column>
-            <column name="scope"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"
-                             primaryKey="true"
-                             primaryKeyName="pk_edge"/>
-            </column>
-            <column name="version"
-                    type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_created"
-                    type="DATETIME"/>
-            <column name="date_updated"
-                    type="DATETIME"/>
-        </createTable>
-    </changeSet>
-    <changeSet id="1703661881860-2"
-               author="miguoliang">
-        <createTable tableName="vertex">
-            <column name="id"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"
-                             primaryKey="true"
-                             primaryKeyName="pk_vertex"/>
-            </column>
-            <column name="name"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="type"
-                    type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version"
-                    type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_created"
-                    type="DATETIME"/>
-            <column name="date_updated"
-                    type="DATETIME"/>
-        </createTable>
-    </changeSet>
-    <changeSet id="1703661881860-3"
-               author="miguoliang">
-        <addForeignKeyConstraint baseColumnNames="in_vertex_id"
-                                 baseTableName="edge"
-                                 constraintName="FK_EDGE_ON_IN_VERTEX"
-                                 referencedColumnNames="id"
-                                 referencedTableName="vertex"/>
-    </changeSet>
-    <changeSet id="1703661881860-4"
-               author="miguoliang">
-        <addForeignKeyConstraint baseColumnNames="out_vertex_id"
-                                 baseTableName="edge"
-                                 constraintName="FK_EDGE_ON_OUT_VERTEX"
-                                 referencedColumnNames="id"
-                                 referencedTableName="vertex"/>
-    </changeSet>
+  <changeSet id="1706601265481-1"
+             author="miguoliang">
+    <createTable tableName="edge">
+      <column name="in_vertex_id"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_edge"/>
+      </column>
+      <column name="out_vertex_id"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_edge"/>
+      </column>
+      <column name="name"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_edge"/>
+      </column>
+      <column name="scope"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_edge"/>
+      </column>
+      <column name="version"
+              type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created"
+              type="DATETIME"/>
+      <column name="date_updated"
+              type="DATETIME"/>
+    </createTable>
+  </changeSet>
+  <changeSet id="1706601265481-2"
+             author="miguoliang">
+    <createTable tableName="vertex">
+      <column name="id"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_vertex"/>
+      </column>
+      <column name="name"
+              type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type"
+              type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="version"
+              type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created"
+              type="DATETIME"/>
+      <column name="date_updated"
+              type="DATETIME"/>
+    </createTable>
+  </changeSet>
+  <changeSet id="1706601265481-3"
+             author="miguoliang">
+    <createTable tableName="vertex_property">
+      <column name="vertex_id"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_vertex_property"/>
+      </column>
+      <column name="scope"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_vertex_property"/>
+      </column>
+      <column name="key"
+              type="VARCHAR(255)">
+        <constraints nullable="false"
+                     primaryKey="true"
+                     primaryKeyName="pk_vertex_property"/>
+      </column>
+      <column name="value"
+              type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="version"
+              type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created"
+              type="DATETIME"/>
+      <column name="date_updated"
+              type="DATETIME"/>
+    </createTable>
+  </changeSet>
+  <changeSet id="1706601265481-4"
+             author="miguoliang">
+    <addForeignKeyConstraint baseColumnNames="in_vertex_id"
+                             baseTableName="edge"
+                             constraintName="FK_EDGE_ON_IN_VERTEX"
+                             referencedColumnNames="id"
+                             referencedTableName="vertex"/>
+  </changeSet>
+  <changeSet id="1706601265481-5"
+             author="miguoliang">
+    <addForeignKeyConstraint baseColumnNames="out_vertex_id"
+                             baseTableName="edge"
+                             constraintName="FK_EDGE_ON_OUT_VERTEX"
+                             referencedColumnNames="id"
+                             referencedTableName="vertex"/>
+  </changeSet>
+  <changeSet id="1706601265481-6"
+             author="miguoliang">
+    <addForeignKeyConstraint baseColumnNames="vertex_id"
+                             baseTableName="vertex_property"
+                             constraintName="FK_VERTEX_PROPERTY_ON_VERTEX"
+                             referencedColumnNames="id"
+                             referencedTableName="vertex"/>
+  </changeSet>
 
 </databaseChangeLog>

@@ -3,11 +3,14 @@ package broccoli.endpoint.restful.graph;
 import static broccoli.common.HttpStatusExceptions.conflict;
 
 import broccoli.common.HttpStatusExceptions;
+import broccoli.model.graph.entity.VertexProperty;
+import broccoli.model.graph.repository.VertexPropertyRepository;
 import broccoli.model.graph.repository.VertexRepository;
 import broccoli.model.graph.restful.request.CreateVertexRequest;
 import broccoli.model.graph.restful.request.DeleteVertexRequest;
 import broccoli.model.graph.restful.request.GetVertexRequest;
 import broccoli.model.graph.restful.request.QueryVertexRequest;
+import broccoli.model.graph.restful.request.SetVertexPropertyRequest;
 import broccoli.model.graph.restful.response.CreateVertexResponse;
 import broccoli.model.graph.restful.response.GetVertexResponse;
 import broccoli.model.graph.restful.response.QueryVertexResponse;
@@ -18,13 +21,16 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.RequestBean;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -36,9 +42,13 @@ public class VertexController {
 
   private final VertexRepository vertexRepository;
 
+  private final VertexPropertyRepository vertexPropertyRepository;
+
   @Inject
-  public VertexController(VertexRepository vertexRepository) {
+  public VertexController(VertexRepository vertexRepository,
+                          VertexPropertyRepository vertexPropertyRepository) {
     this.vertexRepository = vertexRepository;
+    this.vertexPropertyRepository = vertexPropertyRepository;
   }
 
   /**
@@ -98,5 +108,25 @@ public class VertexController {
     final var specs = VertexSpecifications.nameLike(queryVertexRequest.q());
     return vertexRepository.findAll(specs, queryVertexRequest.pageable())
         .map(QueryVertexResponse::of);
+  }
+
+  /**
+   * Set vertex property.
+   *
+   * @param setVertexPropertyRequest {@link SetVertexPropertyRequest}
+   */
+  @Put("/{id}/property")
+  @Status(HttpStatus.NO_CONTENT)
+  @Transactional
+  public void setProperty(@PathVariable @NotBlank String id,
+                          @Valid @Body SetVertexPropertyRequest setVertexPropertyRequest) {
+    final var vertex =
+        vertexRepository.findById(id).orElseThrow(HttpStatusExceptions::notFound);
+    final var property = new VertexProperty();
+    property.setVertex(vertex);
+    property.setScope(setVertexPropertyRequest.scope());
+    property.setKey(setVertexPropertyRequest.key());
+    property.setValue(setVertexPropertyRequest.value());
+    vertexPropertyRepository.save(property);
   }
 }

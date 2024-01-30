@@ -80,4 +80,15 @@ public class GraphTestHelper {
     edge.setScope(scope);
     edgeRepository.saveAndFlush(edge);
   }
+
+  /**
+   * Get a vertex.
+   *
+   * @param name Vertex name
+   * @param type Vertex type
+   * @return Vertex
+   */
+  public Vertex getVertex(String name, String type) {
+    return vertexRepository.findById(Vertex.getId(name, type)).orElseThrow();
+  }
 }
