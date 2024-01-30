@@ -1,15 +1,14 @@
 // calculate sha512 hex string
 import { NodeType } from "../components/ui/blocks";
 
-export function sha512(str: string) {
+async function sha512(str: string) {
   // We transform the string into an arraybuffer.
   const buffer = new TextEncoder().encode(str);
-  return crypto.subtle.digest("SHA-512", buffer).then((hash) => {
-    return hex(hash);
-  });
+  const hash = await crypto.subtle.digest("SHA-512", buffer);
+  return hex(hash);
 }
 
-export function id(type: NodeType, name: string) {
+export function getVertexId(type: NodeType, name: string) {
   return sha512(`${type}_${name}`);
 }
 

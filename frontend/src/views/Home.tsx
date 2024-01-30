@@ -1,11 +1,4 @@
-import ReactFlow, {
-  Background,
-  ConnectionMode,
-  Node,
-  Panel,
-  ReactFlowInstance,
-  ReactFlowProvider,
-} from "reactflow";
+import ReactFlow, { Background, ConnectionMode, Node, Panel, ReactFlowProvider } from "reactflow";
 import { DragEvent, DragEventHandler, useCallback } from "react";
 import {
   Box,
@@ -24,10 +17,10 @@ import "reactflow/dist/style.css";
 import { StyledControls, StyledMiniMap } from "../components/ui";
 import { colorSchemes, GeneralNodeDataProps, NodeType } from "../components/ui/blocks";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
-import { create } from "zustand";
 import GeneralNode from "../components/ui/blocks/GeneralNode";
 import BiDirectionalEdge from "../components/ui/BiDirectionalEdge";
 import ApplicationNode from "../components/ui/blocks/ApplicationNode";
+import useReactFlowStore from "../hooks/useReactFlowStore";
 
 const nodeTypes = {
   general: GeneralNode,
@@ -167,14 +160,6 @@ const DragBlockWidget = ({ type }: DragBlockWidgetProps) => {
   );
 };
 
-type ReactFlowInstanceStateProps = {
-  reactFlowInstance?: ReactFlowInstance;
-};
-
-const ReactFlowInstanceState = create<ReactFlowInstanceStateProps>(() => ({
-  reactFlowInstance: undefined,
-}));
-
 let id = 0;
 
 const Flow = () => {
@@ -186,7 +171,7 @@ const Flow = () => {
   const onDrop = useCallback<DragEventHandler<HTMLDivElement>>((event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData("application/reactflow") as NodeType;
-    const reactFlowInstance = ReactFlowInstanceState.getState().reactFlowInstance;
+    const reactFlowInstance = useReactFlowStore.getState().instance;
     // check if the dropped element is valid
     if (typeof type === "undefined" || !type || !reactFlowInstance) {
       return;
@@ -217,7 +202,7 @@ const Flow = () => {
       defaultEdges={[]}
       onDrop={onDrop}
       onDragOver={onDragOver}
-      onInit={(instance) => ReactFlowInstanceState.setState({ reactFlowInstance: instance })}
+      onInit={(instance) => useReactFlowStore.setState({ instance })}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       connectionMode={ConnectionMode.Loose}

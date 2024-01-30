@@ -1,25 +1,13 @@
 import { Handle, NodeProps, Position, useNodesInitialized } from "reactflow";
-import { GeneralNodeDataProps } from "./types";
-import {
-  ChangeEventHandler,
-  forwardRef,
-  memo,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { GeneralNodeDataProps, NodeMode } from "./types";
+import { memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import {
   Badge,
   Card,
   CardHeader,
-  Heading,
   HStack,
   Icon,
   IconButton,
-  Input,
   Spacer,
   VStack,
 } from "@chakra-ui/react";
@@ -27,24 +15,33 @@ import { colorSchemes } from "./constants";
 import { useTranslation } from "react-i18next";
 import { CheckIcon, CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { BiRename } from "react-icons/bi";
+import useReactFlowStore from "../../../hooks/useReactFlowStore";
+import EditableInput from "../EditableInput";
 
 export type GeneralNodeProps = PropsWithChildren<NodeProps<GeneralNodeDataProps>>;
 
 const GeneralNode = (props: GeneralNodeProps) => {
-  const ref = useRef<EditableInputRef>(null);
+  const ref = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
   const nodesInitialized = useNodesInitialized({ includeHiddenNodes: false });
   const [nodeMode, setNodeMode] = useState<NodeMode>("renaming");
 
   useEffect(() => {
     if (nodesInitialized && nodeMode === "renaming") {
-      ref.current?.inputRef?.focus();
+      ref.current?.focus();
     }
   }, [nodesInitialized, nodeMode]);
 
-  const onRenameSubmit = useCallback(async () => {
+  const onRenameSubmit = useCallback(() => {
+    const instance = useReactFlowStore.getState().instance;
+    instance?.setNodes((nodes) => {
+      const node = nodes.find((node) => node.id === props.id);
+      if (node) {
+        node.data = { ...node.data, name: ref.current!.value };
+      }
+      return nodes;
+    });
     setNodeMode("normal");
-    return new Promise<boolean>(() => true);
   }, []);
 
   const onRenameCancel = useCallback(() => {
@@ -67,7 +64,13 @@ const GeneralNode = (props: GeneralNodeProps) => {
               onRenameCancel={onRenameCancel}
             />
           </HStack>
-          <EditableInput ref={ref} mode={nodeMode} />
+          <EditableInput
+            ref={ref}
+            value={props.data.name}
+            isEditing={nodeMode === "renaming"}
+            onEnter={onRenameSubmit}
+            onEscape={onRenameCancel}
+          />
           {props.children}
         </CardHeader>
       </Card>
@@ -79,12 +82,10 @@ const GeneralNode = (props: GeneralNodeProps) => {
   );
 };
 
-type NodeMode = "renaming" | "normal";
-
 type ToolbarProps = Readonly<{
   mode?: NodeMode;
   setMode?: (mode: NodeMode) => void;
-  onRenameSubmit?: () => Promise<boolean>;
+  onRenameSubmit?: () => void;
   onRenameCancel?: () => void;
   onDelete?: () => Promise<boolean>;
 }>;
@@ -143,35 +144,5 @@ const Toolbar = ({
       );
   }
 };
-
-type EditableInputProps = Readonly<{
-  value?: string;
-  mode?: NodeMode;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-}>;
-
-type EditableInputRef = {
-  inputRef: HTMLInputElement | null;
-};
-
-const EditableInput = forwardRef<EditableInputRef, EditableInputProps>(
-  ({ value = "", mode = "renaming", onChange }, ref) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    useImperativeHandle(ref, () => ({
-      inputRef: inputRef.current,
-    }));
-    return mode === "renaming" ? (
-      <Input
-        ref={inputRef}
-        size={"xs"}
-        defaultValue={value}
-        textAlign={"center"}
-        onChange={onChange}
-      />
-    ) : (
-      <Heading as={"h6"}>{value}</Heading>
-    );
-  },
-);
 
 export default memo(GeneralNode);

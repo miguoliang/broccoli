@@ -10,9 +10,11 @@ export type GeneralNodeDataProps = {
 
 export type ColorSchemes = Record<NodeType, string>;
 
-export type ConcreteNodeDataProps<T = NodeType> = Omit<
+export type ConcreteNodeDataProps<T extends string = NodeType> = Omit<
   GeneralNodeProps,
-  "children" | "data" | "type"
-> & { type: T } & {
+  "children" | "data"
+> & {
   data: Omit<GeneralNodeProps["data"], "type"> & { type: T };
 };
+
+export type NodeMode = "renaming" | "normal";
