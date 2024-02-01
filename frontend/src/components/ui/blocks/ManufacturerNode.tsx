@@ -5,8 +5,8 @@ import { memo } from "react";
 import { ConcreteNodeDataProps } from "./types";
 import PropertyUnit from "./PropertyUnit";
 
-type ApplicationNodeProps = ConcreteNodeDataProps<"application">;
-const ApplicationNode = (props: ApplicationNodeProps) => {
+type ManufacturerNodeProps = ConcreteNodeDataProps<"manufacturer">;
+const ManufacturerNode = (props: ManufacturerNodeProps) => {
   const { t } = useTranslation();
   return (
     <GeneralNode {...props}>
@@ -17,5 +17,4 @@ const ApplicationNode = (props: ApplicationNodeProps) => {
   );
 };
 
-
-export default memo(ApplicationNode);
+export default memo(ManufacturerNode);

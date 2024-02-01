@@ -17,14 +17,20 @@ import "reactflow/dist/style.css";
 import { StyledControls, StyledMiniMap } from "../components/ui";
 import { colorSchemes, GeneralNodeDataProps, NodeType } from "../components/ui/blocks";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
-import GeneralNode from "../components/ui/blocks/GeneralNode";
 import BiDirectionalEdge from "../components/ui/BiDirectionalEdge";
 import ApplicationNode from "../components/ui/blocks/ApplicationNode";
 import useReactFlowStore from "../hooks/useReactFlowStore";
+import ManufacturerNode from "../components/ui/blocks/ManufacturerNode";
+import ProductNode from "../components/ui/blocks/ProductNode";
+import OriginNode from "../components/ui/blocks/OriginNode";
+import MarketNode from "../components/ui/blocks/MarketNode";
 
 const nodeTypes = {
-  general: GeneralNode,
   application: ApplicationNode,
+  manufacturer: ManufacturerNode,
+  product: ProductNode,
+  origin: OriginNode,
+  market: MarketNode,
 };
 
 const edgeTypes = {
