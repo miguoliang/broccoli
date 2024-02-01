@@ -34,10 +34,10 @@ public class VertexProperty {
   private String scope = "default";
 
   @Id
-  @Column(name = "key", nullable = false)
+  @Column(name = "property_key", nullable = false)
   private String key;
 
-  @Column(name = "value", nullable = false)
+  @Column(name = "property_value", nullable = false)
   private String value = "";
 
   @Embedded

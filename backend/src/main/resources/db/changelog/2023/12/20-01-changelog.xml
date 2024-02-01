@@ -1,11 +1,11 @@
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
-  objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-  <changeSet id="1706601265481-1"
+  <changeSet id="1706751963292-1"
              author="miguoliang">
     <createTable tableName="edge">
       <column name="in_vertex_id"
@@ -42,7 +42,7 @@
               type="DATETIME"/>
     </createTable>
   </changeSet>
-  <changeSet id="1706601265481-2"
+  <changeSet id="1706751963292-2"
              author="miguoliang">
     <createTable tableName="vertex">
       <column name="id"
@@ -69,7 +69,7 @@
               type="DATETIME"/>
     </createTable>
   </changeSet>
-  <changeSet id="1706601265481-3"
+  <changeSet id="1706751963292-3"
              author="miguoliang">
     <createTable tableName="vertex_property">
       <column name="vertex_id"
@@ -84,13 +84,13 @@
                      primaryKey="true"
                      primaryKeyName="pk_vertex_property"/>
       </column>
-      <column name="key"
+      <column name="property_key"
               type="VARCHAR(255)">
         <constraints nullable="false"
                      primaryKey="true"
                      primaryKeyName="pk_vertex_property"/>
       </column>
-      <column name="value"
+      <column name="property_value"
               type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
@@ -104,7 +104,7 @@
               type="DATETIME"/>
     </createTable>
   </changeSet>
-  <changeSet id="1706601265481-4"
+  <changeSet id="1706751963292-4"
              author="miguoliang">
     <addForeignKeyConstraint baseColumnNames="in_vertex_id"
                              baseTableName="edge"
@@ -112,7 +112,7 @@
                              referencedColumnNames="id"
                              referencedTableName="vertex"/>
   </changeSet>
-  <changeSet id="1706601265481-5"
+  <changeSet id="1706751963292-5"
              author="miguoliang">
     <addForeignKeyConstraint baseColumnNames="out_vertex_id"
                              baseTableName="edge"
@@ -120,7 +120,7 @@
                              referencedColumnNames="id"
                              referencedTableName="vertex"/>
   </changeSet>
-  <changeSet id="1706601265481-6"
+  <changeSet id="1706751963292-6"
              author="miguoliang">
     <addForeignKeyConstraint baseColumnNames="vertex_id"
                              baseTableName="vertex_property"

@@ -54,6 +54,7 @@ dependencies {
 
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation("com.github.dasniko:testcontainers-keycloak:${testcontainersKeycloakVersion}")
