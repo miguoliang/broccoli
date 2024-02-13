@@ -1,7 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.2.1"
-    id("io.micronaut.aot") version "4.2.1"
+    id("io.micronaut.application") version "4.3.2"
+    id("io.micronaut.aot") version "4.3.2"
     id("checkstyle")
     id("jacoco")
 }
@@ -13,7 +13,6 @@ val keycloakVersion by extra("23.0.3")
 val hibernateVersion by extra("6.2.13.Final")
 val logbackGelfVersion by extra("5.0.1")
 val minioVersion by extra("8.5.7")
-val testcontainersKeycloakVersion by extra("3.2.0")
 
 extensions.getByType(CheckstyleExtension::class.java).apply {
     toolVersion = "10.12.5"
@@ -57,7 +56,6 @@ dependencies {
     runtimeOnly("com.h2database:h2")
 
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
-    testImplementation("com.github.dasniko:testcontainers-keycloak:${testcontainersKeycloakVersion}")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
