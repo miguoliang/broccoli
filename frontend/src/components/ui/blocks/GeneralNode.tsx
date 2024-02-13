@@ -17,6 +17,7 @@ import { CheckIcon, CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { BiRename } from "react-icons/bi";
 import useReactFlowStore from "../../../hooks/useReactFlowStore";
 import EditableInput from "../EditableInput";
+import { useCreateVertex } from "../../../gens/backend/api";
 
 export type GeneralNodeProps = PropsWithChildren<NodeProps<GeneralNodeDataProps>>;
 
@@ -25,6 +26,7 @@ const GeneralNode = (props: GeneralNodeProps) => {
   const { t } = useTranslation();
   const nodesInitialized = useNodesInitialized({ includeHiddenNodes: false });
   const [nodeMode, setNodeMode] = useState<NodeMode>("renaming");
+  const mutation = useCreateVertex();
 
   useEffect(() => {
     if (nodesInitialized && nodeMode === "renaming") {
@@ -40,6 +42,12 @@ const GeneralNode = (props: GeneralNodeProps) => {
         node.data = { ...node.data, name: ref.current!.value };
       }
       return nodes;
+    });
+    mutation.mutate({
+      data: {
+        name: ref.current!.value,
+        type: props.type,
+      },
     });
     setNodeMode("normal");
   }, []);
@@ -91,12 +99,12 @@ type ToolbarProps = Readonly<{
 }>;
 
 const Toolbar = ({
-  mode = "normal",
-  setMode,
-  onRenameSubmit,
-  onRenameCancel,
-  onDelete,
-}: ToolbarProps) => {
+                   mode = "normal",
+                   setMode,
+                   onRenameSubmit,
+                   onRenameCancel,
+                   onDelete,
+                 }: ToolbarProps) => {
   const { t } = useTranslation();
   switch (mode) {
     case "renaming":

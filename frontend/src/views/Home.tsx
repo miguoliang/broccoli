@@ -1,17 +1,17 @@
 import ReactFlow, { Background, ConnectionMode, Node, Panel, ReactFlowProvider } from "reactflow";
-import { DragEvent, DragEventHandler, useCallback } from "react";
+import { createContext, DragEvent, DragEventHandler, useCallback, useMemo } from "react";
 import {
   Box,
   Button,
   Card,
-  CardHeader,
-  Icon,
+  CardHeader, HStack,
+  Icon, IconButton,
   List,
-  ListItem,
+  ListItem, useBoolean,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FaPlus } from "react-icons/fa6";
+import { FaLock, FaLockOpen, FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import "reactflow/dist/style.css";
 import { StyledControls, StyledMiniMap } from "../components/ui";
@@ -35,7 +35,7 @@ const nodeTypes = {
 
 const edgeTypes = {
   default: BiDirectionalEdge,
-}
+};
 
 const Home = () => {
   return (
@@ -168,7 +168,14 @@ const DragBlockWidget = ({ type }: DragBlockWidgetProps) => {
 
 let id = 0;
 
+type FlowContextProps = {
+  isLocked?: boolean;
+};
+
+const FlowContext = createContext<FlowContextProps>({});
+
 const Flow = () => {
+  const [isLocked, setIsLocked] = useBoolean(false);
   const onDragOver = useCallback<DragEventHandler<HTMLDivElement>>((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -199,27 +206,34 @@ const Flow = () => {
     reactFlowInstance.addNodes(newNode);
   }, []);
 
-
+  const context = useMemo(() => ({ isLocked }), [isLocked]);
 
   return (
-    <ReactFlow
-      proOptions={{ hideAttribution: true }}
-      defaultNodes={[]}
-      defaultEdges={[]}
-      onDrop={onDrop}
-      onDragOver={onDragOver}
-      onInit={(instance) => useReactFlowStore.setState({ instance })}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      connectionMode={ConnectionMode.Loose}
-    >
-      <Background />
-      <StyledControls />
-      <StyledMiniMap zoomable pannable />
-      <Panel position={"top-left"}>
-        <AddBlockWidget />
-      </Panel>
-    </ReactFlow>
+    <FlowContext.Provider value={context}>
+      <ReactFlow
+        proOptions={{ hideAttribution: true }}
+        defaultNodes={[]}
+        defaultEdges={[]}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onInit={(instance) => useReactFlowStore.setState({ instance })}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionMode={ConnectionMode.Loose}
+      >
+        <Background />
+        <StyledControls />
+        <StyledMiniMap zoomable pannable />
+        <Panel position={"top-left"}>
+          <HStack alignItems={"start"}>
+            <AddBlockWidget />
+            <IconButton size={"sm"} aria-label={isLocked ? "locked" : "unlocked"}
+                        icon={<Icon as={isLocked ? FaLock : FaLockOpen} />}
+                        onClick={setIsLocked.toggle} />
+          </HStack>
+        </Panel>
+      </ReactFlow>
+    </FlowContext.Provider>
   );
 };
 

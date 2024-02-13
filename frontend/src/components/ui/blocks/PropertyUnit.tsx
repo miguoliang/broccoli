@@ -2,6 +2,8 @@ import { IconButton, Text, useBoolean } from "@chakra-ui/react";
 import { useRef } from "react";
 import EditableInput from "../EditableInput";
 import { CheckIcon, CloseIcon, EditIcon, RepeatClockIcon } from "@chakra-ui/icons";
+import { useSetProperty } from "../../../gens/backend/api";
+import { useNodeId } from "reactflow";
 
 type PropertyUnitProps = {
   title: string;
@@ -9,10 +11,25 @@ type PropertyUnitProps = {
   value: string;
 };
 
-const PropertyUnit = ({ title, value }: PropertyUnitProps) => {
+const PropertyUnit = ({ title, key, value }: PropertyUnitProps) => {
   const [isEditing, setEditing] = useBoolean(false);
   const ref = useRef<HTMLInputElement>(null);
-  const onSubmit = () => setEditing.off();
+  const nodeId = useNodeId();
+  const mutation = useSetProperty();
+  const onSubmit = () => {
+    if (!nodeId) {
+      return;
+    }
+    mutation.mutate({
+      id: nodeId,
+      data: {
+        key,
+        value: ref.current?.value ?? "",
+        scope: "default",
+      },
+    });
+    setEditing.off();
+  };
   const onCancel = () => setEditing.off();
   return (
     <>
