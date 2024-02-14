@@ -32,7 +32,6 @@ dependencies {
     implementation("de.siegmar:logback-gelf:${logbackGelfVersion}")
     implementation("io.micrometer:context-propagation")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    implementation("io.micronaut.graphql:micronaut-graphql")
     implementation("io.micronaut.liquibase:micronaut-liquibase")
     implementation("io.micronaut.micrometer:micronaut-micrometer-core")
     implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
