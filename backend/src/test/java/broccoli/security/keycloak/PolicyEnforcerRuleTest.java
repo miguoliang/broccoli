@@ -38,7 +38,7 @@ import org.keycloak.test.FluentTestsHelper;
 /**
  * The {@link PolicyEnforcerRuleTest} class.
  */
-@MicronautTest(transactional = false)
+@MicronautTest(transactional = false, environments = {"dev", "test"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Property(name = "micronaut.security.enabled", value = "true")
 @Property(name = "keycloak.default.realm", value = PolicyEnforcerRuleTest.TEST_REALM)

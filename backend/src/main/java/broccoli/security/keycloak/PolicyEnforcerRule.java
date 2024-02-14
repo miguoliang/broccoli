@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 /**
  * The {@link PolicyEnforcerRule} class.
  */
-@Requires(classes = {PolicyEnforcer.class, HttpRequest.class})
+@Requires(env = "dev")
 @Singleton
 @Slf4j
 public class PolicyEnforcerRule implements SecurityRule<HttpRequest<?>> {

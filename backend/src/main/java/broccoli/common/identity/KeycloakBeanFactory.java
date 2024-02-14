@@ -1,12 +1,14 @@
 package broccoli.common.identity;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 import org.keycloak.admin.client.Keycloak;
 
 /**
  * The {@link KeycloakBeanFactory} class.
  */
+@Requires(env = "dev")
 @Factory
 public class KeycloakBeanFactory {
 

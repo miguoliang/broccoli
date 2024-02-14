@@ -1,6 +1,7 @@
 package broccoli.security.keycloak;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import org.keycloak.adapters.authorization.PolicyEnforcer;
@@ -10,6 +11,7 @@ import org.keycloak.util.JsonSerialization;
 /**
  * The {@link PolicyEnforcerBeanFactory} class.
  */
+@Requires(env = "dev")
 @Factory
 public class PolicyEnforcerBeanFactory {
 
